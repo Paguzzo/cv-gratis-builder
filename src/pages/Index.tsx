@@ -36,9 +36,11 @@ const Index = () => {
             Crie currículos impressionantes com a ajuda da nossa IA especializada. 
             Gratuito, simples e profissional.
           </p>
-          <Button size="lg" className="text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-            <FileText className="mr-2" />
-            Começar agora gratuitamente
+          <Button asChild size="lg" className="text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <a href="/criar-curriculo">
+              <FileText className="mr-2" />
+              Começar agora gratuitamente
+            </a>
           </Button>
         </div>
       </section>
@@ -149,8 +151,8 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
-          <Button size="lg" className="text-lg px-8 py-6">
-            Quero transformar minha carreira agora
+          <Button asChild size="lg" className="text-lg px-8 py-6">
+            <a href="/criar-curriculo">Quero transformar minha carreira agora</a>
           </Button>
         </div>
       </section>
@@ -353,9 +355,11 @@ const Index = () => {
             Milhares de pessoas já conseguiram seus empregos dos sonhos. 
             Sua vez está chegando!
           </p>
-          <Button size="lg" variant="secondary" className="text-lg px-8 py-6">
-            <Clock className="mr-2" />
-            Criar meu currículo agora - É GRÁTIS
+          <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6">
+            <a href="/criar-curriculo">
+              <Clock className="mr-2" />
+              Criar meu currículo agora - É GRÁTIS
+            </a>
           </Button>
         </div>
       </section>
