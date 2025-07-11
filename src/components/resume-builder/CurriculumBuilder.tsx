@@ -4,7 +4,12 @@ import { ProgressIndicator } from './ProgressIndicator';
 import { StepNavigation } from './StepNavigation';
 import { PersonalInfo } from './steps/PersonalInfo';
 import { ProfessionalObjective } from './steps/ProfessionalObjective';
-import { Card, CardContent } from '@/components/ui/card';
+import { Education } from './steps/Education';
+import { Experience } from './steps/Experience';
+import { Skills } from './steps/Skills';
+import { Languages } from './steps/Languages';
+import { Courses } from './steps/Courses';
+import { ProjectsAchievements } from './steps/ProjectsAchievements';
 
 export function CurriculumBuilder() {
   const { state, setCurrentStep } = useCurriculum();
@@ -40,59 +45,17 @@ export function CurriculumBuilder() {
       case 'objective':
         return <ProfessionalObjective />;
       case 'education':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Educação</h3>
-              <p className="text-muted-foreground">Em desenvolvimento...</p>
-            </CardContent>
-          </Card>
-        );
+        return <Education />;
       case 'experience':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Experiência Profissional</h3>
-              <p className="text-muted-foreground">Em desenvolvimento...</p>
-            </CardContent>
-          </Card>
-        );
+        return <Experience />;
       case 'skills':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Habilidades</h3>
-              <p className="text-muted-foreground">Em desenvolvimento...</p>
-            </CardContent>
-          </Card>
-        );
+        return <Skills />;
       case 'languages':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Idiomas</h3>
-              <p className="text-muted-foreground">Em desenvolvimento...</p>
-            </CardContent>
-          </Card>
-        );
+        return <Languages />;
       case 'courses':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Cursos</h3>
-              <p className="text-muted-foreground">Em desenvolvimento...</p>
-            </CardContent>
-          </Card>
-        );
+        return <Courses />;
       case 'projects-achievements':
-        return (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Projetos & Conquistas</h3>
-              <p className="text-muted-foreground">Em desenvolvimento...</p>
-            </CardContent>
-          </Card>
-        );
+        return <ProjectsAchievements />;
       default:
         return <PersonalInfo />;
     }
