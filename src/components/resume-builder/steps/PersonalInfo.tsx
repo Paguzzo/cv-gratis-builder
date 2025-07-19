@@ -4,8 +4,10 @@ import { z } from 'zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useCurriculum } from '@/contexts/CurriculumContext';
-import { useEffect } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { PhotoUpload } from '@/components/ui/photo-upload';
+import { usePersonalInfo } from '@/contexts/PersonalInfoContext';
+import { useEffect, useState } from 'react';
 
 const personalInfoSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -13,16 +15,19 @@ const personalInfoSchema = z.object({
   phone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
   whatsapp: z.string().optional(),
   address: z.string().optional(),
+  photo: z.string().optional(),
+  isRoundPhoto: z.boolean().optional(),
 });
 
 type PersonalInfoForm = z.infer<typeof personalInfoSchema>;
 
 export function PersonalInfo() {
-  const { state, updatePersonalInfo } = useCurriculum();
+  const { state, updatePersonalInfo } = usePersonalInfo();
+  const [sameAsPhone, setSameAsPhone] = useState(false);
   
   const form = useForm<PersonalInfoForm>({
     resolver: zodResolver(personalInfoSchema),
-    defaultValues: state.data.personalInfo,
+    defaultValues: state.data,
   });
 
   // Update context when form values change
@@ -32,6 +37,24 @@ export function PersonalInfo() {
     });
     return () => subscription.unsubscribe();
   }, [form, updatePersonalInfo]);
+
+  // Sync WhatsApp with phone when checkbox is checked
+  useEffect(() => {
+    if (sameAsPhone) {
+      const phoneValue = form.watch('phone');
+      form.setValue('whatsapp', phoneValue);
+    }
+  }, [sameAsPhone, form.watch('phone'), form]);
+
+  const handleSameAsPhoneChange = (checked: boolean) => {
+    setSameAsPhone(checked);
+    if (checked) {
+      const phoneValue = form.getValues('phone');
+      form.setValue('whatsapp', phoneValue);
+    } else {
+      form.setValue('whatsapp', '');
+    }
+  };
 
   return (
     <Card>
@@ -43,7 +66,51 @@ export function PersonalInfo() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Campo de Foto */}
+            <FormField
+              control={form.control}
+              name="photo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Foto do Perfil</FormLabel>
+                  <FormControl>
+                    <PhotoUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="w-full"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Opção de Foto Redonda */}
+            <FormField
+              control={form.control}
+              name="isRoundPhoto"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="cursor-pointer">
+                      Foto Redonda
+                    </FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Marque para que sua foto apareça em formato circular nos templates
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+            
+            <div className="space-y-4">
             <FormField
               control={form.control}
               name="name"
@@ -94,12 +161,30 @@ export function PersonalInfo() {
                   <FormItem>
                     <FormLabel>WhatsApp</FormLabel>
                     <FormControl>
-                      <Input placeholder="(11) 99999-9999" {...field} />
+                      <Input 
+                        placeholder="(11) 99999-9999" 
+                        {...field} 
+                        disabled={sameAsPhone}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="same-as-phone"
+                checked={sameAsPhone}
+                onCheckedChange={handleSameAsPhoneChange}
+              />
+              <label 
+                htmlFor="same-as-phone" 
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                WhatsApp é o mesmo número do telefone
+              </label>
             </div>
 
             <FormField
@@ -115,6 +200,7 @@ export function PersonalInfo() {
                 </FormItem>
               )}
             />
+            </div>
           </div>
         </Form>
       </CardContent>

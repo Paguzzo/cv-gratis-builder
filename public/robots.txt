@@ -1,14 +1,24 @@
+User-agent: *
+Allow: /
+
+# Permitir páginas principais
+Allow: /criar-curriculo
+Allow: /templates
+Allow: /premium-editor
+
+# Bloquear áreas administrativas
+Disallow: /admin/
+Disallow: /api/
+
+# Permitir crawlers específicos
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
-User-agent: Twitterbot
-Allow: /
+# Sitemap
+Sitemap: https://www.curriculogratisonline.com/sitemap.xml
 
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: *
-Allow: /
+# Crawl-delay para evitar sobrecarga
+Crawl-delay: 1

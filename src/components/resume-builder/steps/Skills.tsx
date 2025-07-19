@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useCurriculum } from '@/contexts/CurriculumContext';
+import { useSkills } from '@/contexts/SkillsContext';
 import { X, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -52,8 +52,8 @@ const predefinedSkills = [
 ];
 
 export function Skills() {
-  const { state, updateSkills } = useCurriculum();
-  const [selectedSkills, setSelectedSkills] = useState(state.data.skills);
+  const { state, setSkills } = useSkills();
+  const [selectedSkills, setSelectedSkills] = useState(state.skills);
   const [filteredSkills, setFilteredSkills] = useState(predefinedSkills);
   
   const form = useForm<SkillsFormData>({
@@ -66,8 +66,8 @@ export function Skills() {
   const searchValue = form.watch('search') || '';
 
   useEffect(() => {
-    updateSkills(selectedSkills);
-  }, [selectedSkills, updateSkills]);
+    setSkills(selectedSkills);
+  }, [selectedSkills, setSkills]);
 
   useEffect(() => {
     if (searchValue) {

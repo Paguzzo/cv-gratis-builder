@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useCurriculum } from '@/contexts/CurriculumContext';
+import { useSkills } from '@/contexts/SkillsContext';
 import { Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -41,12 +41,12 @@ const commonLanguages = [
 ];
 
 export function Languages() {
-  const { state, updateLanguages } = useCurriculum();
+  const { state, setLanguages } = useSkills();
   
   const form = useForm<LanguagesFormData>({
     resolver: zodResolver(languagesSchema),
     defaultValues: {
-      languages: state.data.languages.length > 0 ? state.data.languages : []
+      languages: state.languages.length > 0 ? state.languages : []
     }
   });
 
@@ -61,12 +61,12 @@ export function Languages() {
     const validLanguages = watchedLanguages.filter(lang => 
       lang.name && lang.level
     );
-    updateLanguages(validLanguages.map((lang, index) => ({
+    setLanguages(validLanguages.map((lang, index) => ({
       id: `lang-${index}`,
       name: lang.name,
       level: lang.level
     })));
-  }, [watchedLanguages, updateLanguages]);
+  }, [watchedLanguages, setLanguages]);
 
   const addLanguage = () => {
     append({

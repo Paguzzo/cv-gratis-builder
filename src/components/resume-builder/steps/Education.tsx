@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useCurriculum } from '@/contexts/CurriculumContext';
-import { Plus, Trash2 } from 'lucide-react';
+import { MonthYearPicker } from '@/components/ui/month-year-picker';
+import { useEducation } from '@/contexts/EducationContext';
+import { Plus, Trash2, GraduationCap } from 'lucide-react';
 import { useEffect } from 'react';
 
 const educationSchema = z.object({
@@ -33,12 +34,12 @@ const levelLabels = {
 };
 
 export function Education() {
-  const { state, updateEducation } = useCurriculum();
+  const { state, setEducation } = useEducation();
   
   const form = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
-      education: state.data.education.length > 0 ? state.data.education : [
+      education: state.data.length > 0 ? state.data : [
         {
           course: '',
           institution: '',
@@ -61,7 +62,7 @@ export function Education() {
     const validEducation = watchedEducation.filter(edu => 
       edu.course && edu.institution && edu.startDate && edu.endDate
     );
-    updateEducation(validEducation.map((edu, index) => ({
+          setEducation(validEducation.map((edu, index) => ({
       id: `edu-${index}`,
       course: edu.course,
       institution: edu.institution,
@@ -69,7 +70,7 @@ export function Education() {
       endDate: edu.endDate,
       level: edu.level
     })));
-  }, [watchedEducation, updateEducation]);
+  }, [watchedEducation, setEducation]);
 
   const addEducation = () => {
     append({
@@ -178,13 +179,18 @@ export function Education() {
                     name={`education.${index}.startDate`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Data de Início</FormLabel>
+                        <FormLabel>Data de Início *</FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
-                            {...field}
+                          <MonthYearPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="AAAA-MM"
+                            className="cursor-pointer"
                           />
                         </FormControl>
+                        <p className="text-xs text-muted-foreground">
+                          📅 Clique para selecionar mês e ano
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -195,13 +201,18 @@ export function Education() {
                     name={`education.${index}.endDate`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Data de Conclusão</FormLabel>
+                        <FormLabel>Data de Conclusão *</FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
-                            {...field}
+                          <MonthYearPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="AAAA-MM"
+                            className="cursor-pointer"
                           />
                         </FormControl>
+                        <p className="text-xs text-muted-foreground">
+                          📅 Clique para selecionar mês e ano
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}

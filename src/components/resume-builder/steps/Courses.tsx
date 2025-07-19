@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useCurriculum } from '@/contexts/CurriculumContext';
+import { useExtras } from '@/contexts/ExtrasContext';
 import { Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -20,12 +20,12 @@ const coursesSchema = z.object({
 type CoursesFormData = z.infer<typeof coursesSchema>;
 
 export function Courses() {
-  const { state, updateCourses } = useCurriculum();
+  const { state, setCourses } = useExtras();
   
   const form = useForm<CoursesFormData>({
     resolver: zodResolver(coursesSchema),
     defaultValues: {
-      courses: state.data.courses.length > 0 ? state.data.courses : []
+      courses: state.courses.length > 0 ? state.courses : []
     }
   });
 
@@ -40,13 +40,13 @@ export function Courses() {
     const validCourses = watchedCourses.filter(course => 
       course.name
     );
-    updateCourses(validCourses.map((course, index) => ({
+    setCourses(validCourses.map((course, index) => ({
       id: `course-${index}`,
       name: course.name,
       institution: course.institution,
       year: course.year
     })));
-  }, [watchedCourses, updateCourses]);
+  }, [watchedCourses, setCourses]);
 
   const addCourse = () => {
     append({

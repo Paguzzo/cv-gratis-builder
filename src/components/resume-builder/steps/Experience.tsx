@@ -7,8 +7,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useCurriculum } from '@/contexts/CurriculumContext';
-import { Plus, Trash2, Sparkles } from 'lucide-react';
+import { MonthYearPicker } from '@/components/ui/month-year-picker';
+import { useExperience } from '@/contexts/ExperienceContext';
+import { AIService } from '@/services/aiService';
+import { Plus, Trash2, Briefcase, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const experienceSchema = z.object({
@@ -26,13 +28,13 @@ const experienceSchema = z.object({
 type ExperienceFormData = z.infer<typeof experienceSchema>;
 
 export function Experience() {
-  const { state, updateExperience } = useCurriculum();
+  const { state, setExperience } = useExperience();
   const [isGeneratingAI, setIsGeneratingAI] = useState<number | null>(null);
   
   const form = useForm<ExperienceFormData>({
     resolver: zodResolver(experienceSchema),
     defaultValues: {
-      experience: state.data.experience.length > 0 ? state.data.experience : [
+      experience: state.data.length > 0 ? state.data : [
         {
           position: '',
           company: '',
@@ -57,7 +59,7 @@ export function Experience() {
     const validExperience = watchedExperience.filter(exp => 
       exp.position && exp.company && exp.startDate
     );
-    updateExperience(validExperience.map((exp, index) => ({
+    setExperience(validExperience.map((exp, index) => ({
       id: `exp-${index}`,
       position: exp.position,
       company: exp.company,
@@ -67,7 +69,7 @@ export function Experience() {
       keywords: exp.keywords,
       description: exp.description
     })));
-  }, [watchedExperience, updateExperience]);
+  }, [watchedExperience, setExperience]);
 
   const addExperience = () => {
     append({
@@ -88,13 +90,13 @@ export function Experience() {
     setIsGeneratingAI(index);
     
     try {
-      // Simular chamada de IA (implementar integração real depois)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const generatedDescription = `• Responsável por ${experience.keywords.toLowerCase()}
-• Desenvolveu e implementou soluções inovadoras no cargo de ${experience.position}
-• Colaborou com equipes multifuncionais para alcançar objetivos estratégicos
-• Contribuiu para o crescimento e sucesso da empresa através de iniciativas proativas`;
+      const generatedDescription = await AIService.generateText(
+        'experience', 
+        experience.description || '', 
+        experience.keywords,
+        experience.position,
+        experience.company
+      );
 
       form.setValue(`experience.${index}.description`, generatedDescription);
     } catch (error) {
@@ -109,8 +111,26 @@ export function Experience() {
       <div>
         <h2 className="text-2xl font-bold text-foreground">Experiência Profissional</h2>
         <p className="text-muted-foreground">
-          Adicione suas experiências de trabalho e use IA para gerar descrições
+          Adicione suas experiências de trabalho e transforme-as em descrições poderosas com nossa IA JobAI
         </p>
+      </div>
+
+      {/* Orientações da IA para Experiência */}
+      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+        <div className="flex items-start gap-3">
+          <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-white text-sm font-bold">🚀</span>
+          </div>
+          <div>
+            <h4 className="font-semibold text-green-900 mb-2">Como usar a IA JobAI para criar descrições de experiência impactantes:</h4>
+            <div className="space-y-2 text-sm text-green-800">
+              <p><strong>1. Preencha cargo e empresa:</strong> Informações básicas são essenciais para contextualizar a experiência.</p>
+              <p><strong>2. Palavras-chave específicas:</strong> Liste tecnologias, metodologias ou competências usadas (ex: "Python, Scrum, análise de dados, automação").</p>
+              <p><strong>3. Descrição base:</strong> Escreva o que você fazia no dia a dia. A IA transformará em conquistas estratégicas com métricas.</p>
+              <p><strong>4. A IA criará:</strong> Bullets profissionais focados em resultados, liderança e impacto mensurável na empresa.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <Form {...form}>
@@ -176,13 +196,18 @@ export function Experience() {
                     name={`experience.${index}.startDate`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Data de Início</FormLabel>
+                        <FormLabel>Data de Início *</FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
-                            {...field}
+                          <MonthYearPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="AAAA-MM"
+                            className="cursor-pointer"
                           />
                         </FormControl>
+                        <p className="text-xs text-muted-foreground">
+                          📅 Clique para selecionar
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -195,12 +220,17 @@ export function Experience() {
                       <FormItem>
                         <FormLabel>Data de Fim</FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
-                            {...field}
+                          <MonthYearPicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="AAAA-MM"
                             disabled={watchedExperience[index]?.current}
+                            className="cursor-pointer"
                           />
                         </FormControl>
+                        <p className="text-xs text-muted-foreground">
+                          📅 {watchedExperience[index]?.current ? 'Trabalho atual' : 'Clique para selecionar'}
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -214,11 +244,16 @@ export function Experience() {
                         <FormControl>
                           <Checkbox
                             checked={field.value}
-                            onCheckedChange={field.onChange}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked);
+                              if (checked) {
+                                form.setValue(`experience.${index}.endDate`, '');
+                              }
+                            }}
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>
+                          <FormLabel className="cursor-pointer">
                             Trabalho atual
                           </FormLabel>
                         </div>
@@ -232,13 +267,16 @@ export function Experience() {
                   name={`experience.${index}.keywords`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Palavras-chave</FormLabel>
+                      <FormLabel>Competências e tecnologias utilizadas</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Ex: marketing digital, campanhas, análise de dados"
+                          placeholder="Ex: Python, SQL, liderança de equipes, metodologia ágil, gestão de projetos, automação"
                           {...field}
                         />
                       </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        💡 <strong>Para melhores resultados:</strong> Use termos técnicos, ferramentas, metodologias e soft skills específicas da função
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -249,36 +287,43 @@ export function Experience() {
                   name={`experience.${index}.description`}
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Descrição das Atividades</FormLabel>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => generateDescription(index)}
-                          disabled={!watchedExperience[index]?.keywords || !watchedExperience[index]?.position || isGeneratingAI === index}
-                          className="h-8"
-                        >
-                          {isGeneratingAI === index ? (
-                            <>
-                              <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full mr-2" />
-                              Gerando...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="h-3 w-3 mr-2" />
-                              Gerar com IA
-                            </>
-                          )}
-                        </Button>
+                      <FormLabel>O que você fazia no dia a dia?</FormLabel>
+                      <div className="space-y-3">
+                        <FormControl>
+                          <Textarea
+                            placeholder="Descreva suas atividades, projetos e responsabilidades principais. Ex: 'Desenvolvia sistemas web, coordenava equipe de 5 pessoas, implementava melhorias nos processos...' A IA transformará isso em conquistas estratégicas com métricas de impacto."
+                            className="min-h-[120px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs text-muted-foreground">
+                            💡 <strong>Dica:</strong> Foque no que você <em>fazia</em>, não no que <em>conquistou</em> - a IA criará os resultados
+                          </p>
+                          
+                          <Button
+                            type="button"
+                            variant="default"
+                            size="sm"
+                            onClick={() => generateDescription(index)}
+                            disabled={!watchedExperience[index]?.keywords || !watchedExperience[index]?.position || isGeneratingAI === index}
+                            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                          >
+                            {isGeneratingAI === index ? (
+                              <>
+                                <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full mr-2" />
+                                Criando conquistas...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="h-3 w-3 mr-2" />
+                                🚀 Transformar com IA
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </div>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Descreva suas principais responsabilidades e conquistas..."
-                          className="min-h-[100px]"
-                          {...field}
-                        />
-                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

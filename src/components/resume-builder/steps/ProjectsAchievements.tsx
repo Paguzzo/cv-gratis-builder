@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useCurriculum } from '@/contexts/CurriculumContext';
+import { useExtras } from '@/contexts/ExtrasContext';
 import { Plus, Trash2, Trophy, Briefcase } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -25,13 +25,13 @@ const projectsAchievementsSchema = z.object({
 type ProjectsAchievementsFormData = z.infer<typeof projectsAchievementsSchema>;
 
 export function ProjectsAchievements() {
-  const { state, updateProjects, updateAchievements } = useCurriculum();
+  const { state, setProjects, setAchievements } = useExtras();
   
   const form = useForm<ProjectsAchievementsFormData>({
     resolver: zodResolver(projectsAchievementsSchema),
     defaultValues: {
-      projects: state.data.projects.length > 0 ? state.data.projects : [],
-      achievements: state.data.achievements.length > 0 ? state.data.achievements : []
+      projects: state.projects.length > 0 ? state.projects : [],
+      achievements: state.achievements.length > 0 ? state.achievements : []
     }
   });
 
@@ -52,23 +52,23 @@ export function ProjectsAchievements() {
     const validProjects = watchedProjects.filter(project => 
       project.name && project.description
     );
-    updateProjects(validProjects.map((project, index) => ({
+    setProjects(validProjects.map((project, index) => ({
       id: `project-${index}`,
       name: project.name,
       description: project.description
     })));
-  }, [watchedProjects, updateProjects]);
+  }, [watchedProjects, setProjects]);
 
   useEffect(() => {
     const validAchievements = watchedAchievements.filter(achievement => 
       achievement.title && achievement.description
     );
-    updateAchievements(validAchievements.map((achievement, index) => ({
+    setAchievements(validAchievements.map((achievement, index) => ({
       id: `achievement-${index}`,
       title: achievement.title,
       description: achievement.description
     })));
-  }, [watchedAchievements, updateAchievements]);
+  }, [watchedAchievements, setAchievements]);
 
   const addProject = () => {
     appendProject({

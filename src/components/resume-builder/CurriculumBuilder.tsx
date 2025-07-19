@@ -1,5 +1,6 @@
-import { useCurriculum } from '@/contexts/CurriculumContext';
+import { useBase } from '@/contexts/BaseContext';
 import { CURRICULUM_STEPS } from '@/types/curriculum';
+import { useNavigate } from 'react-router-dom';
 import { ProgressIndicator } from './ProgressIndicator';
 import { StepNavigation } from './StepNavigation';
 import { PersonalInfo } from './steps/PersonalInfo';
@@ -12,8 +13,9 @@ import { Courses } from './steps/Courses';
 import { ProjectsAchievements } from './steps/ProjectsAchievements';
 
 export function CurriculumBuilder() {
-  const { state, setCurrentStep } = useCurriculum();
+  const { state, setCurrentStep, setComplete } = useBase();
   const { currentStep } = state;
+  const navigate = useNavigate();
 
   const currentStepIndex = CURRICULUM_STEPS.findIndex(step => step.id === currentStep);
   const isFirstStep = currentStepIndex === 0;
@@ -34,8 +36,8 @@ export function CurriculumBuilder() {
   };
 
   const handleFinish = () => {
-    // Navigate to template selection or final page
-    console.log('Curriculum finished!');
+    // Navigate to template selection
+    navigate('/templates');
   };
 
   const renderCurrentStep = () => {

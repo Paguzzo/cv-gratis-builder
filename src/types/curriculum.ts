@@ -4,6 +4,8 @@ export interface PersonalInfo {
   phone: string;
   whatsapp?: string;
   address?: string;
+  photo?: string; // Base64 string da foto
+  isRoundPhoto?: boolean; // Se foto deve ser redonda
 }
 
 export interface ProfessionalObjective {

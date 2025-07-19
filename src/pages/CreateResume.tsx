@@ -1,10 +1,10 @@
-import { CurriculumProvider } from '@/contexts/CurriculumContext';
+import { CombinedProvider } from '@/contexts/CombinedProvider';
 import { CurriculumBuilder } from '@/components/resume-builder/CurriculumBuilder';
 import { CurriculumPreview } from '@/components/resume-builder/CurriculumPreview';
 
 export default function CreateResume() {
   return (
-    <CurriculumProvider>
+    <CombinedProvider>
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -25,6 +25,6 @@ export default function CreateResume() {
           </div>
         </div>
       </div>
-    </CurriculumProvider>
+    </CombinedProvider>
   );
 }
