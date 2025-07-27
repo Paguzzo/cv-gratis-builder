@@ -1,12 +1,14 @@
+
 import React from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, FileText, Zap, Download, Mail, Printer, Crown, Star, Users, TrendingUp } from 'lucide-react';
+import { ArrowRight, FileText, Zap, Download, Mail, Printer, Crown, Star, Users, TrendingUp, Shield, Clock, Award, CheckCircle } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
 import FloatingLiveCounter from '@/components/FloatingLiveCounter';
 import CookieConsent from '@/components/CookieConsent';
+import Logo from '@/components/Logo';
 
 export default function Index() {
   const [, setLocation] = useLocation();
@@ -59,6 +61,46 @@ export default function Index() {
     { number: "4.9", label: "Avaliação Média", icon: <Star className="w-5 h-5" /> }
   ];
 
+  const testimonials = [
+    {
+      name: "Maria Silva",
+      position: "Desenvolvedora",
+      text: "Consegui meu emprego dos sonhos usando este currículo! O template premium fez toda a diferença.",
+      rating: 5
+    },
+    {
+      name: "João Santos",
+      position: "Gerente de Vendas",
+      text: "Interface intuitiva e resultado profissional. Recomendo para todos os meus colegas.",
+      rating: 5
+    },
+    {
+      name: "Ana Costa",
+      position: "Designer",
+      text: "Templates lindos e modernos. O processo de criação é super simples e rápido.",
+      rating: 5
+    }
+  ];
+
+  const benefits = [
+    {
+      icon: <Shield className="w-5 h-5 text-green-500" />,
+      text: "100% Seguro e Privado"
+    },
+    {
+      icon: <Clock className="w-5 h-5 text-blue-500" />,
+      text: "Criação em 5 Minutos"
+    },
+    {
+      icon: <Award className="w-5 h-5 text-purple-500" />,
+      text: "Templates Aprovados por RH"
+    },
+    {
+      icon: <CheckCircle className="w-5 h-5 text-green-500" />,
+      text: "Garantia de Satisfação"
+    }
+  ];
+
   return (
     <>
       <SEOHead 
@@ -67,6 +109,28 @@ export default function Index() {
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-6xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Logo />
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">CurriculumGratisOnline</h1>
+                  <p className="text-xs text-gray-600">Seu currículo profissional em minutos</p>
+                </div>
+              </div>
+              <nav className="hidden md:flex items-center space-x-6">
+                <Button variant="ghost" onClick={() => setLocation('/templates')}>Templates</Button>
+                <Button variant="ghost" onClick={() => setLocation('/criar-curriculo')}>Criar Currículo</Button>
+                <Button onClick={() => setLocation('/templates')} className="bg-blue-600 hover:bg-blue-700">
+                  Começar Grátis
+                </Button>
+              </nav>
+            </div>
+          </div>
+        </header>
+
         {/* Hero Section */}
         <section className="pt-20 pb-16 px-4">
           <div className="max-w-6xl mx-auto">
@@ -84,7 +148,7 @@ export default function Index() {
                   if (clicks === 5) {
                     localStorage.setItem('admin_access_enabled', 'true');
                     alert('🔓 Modo administrativo ativado! Acesse /admin');
-                    localStorage.setItem('headline_clicks', '0'); // Reset counter
+                    localStorage.setItem('headline_clicks', '0');
                   } else if (clicks < 5) {
                     console.log(`🔢 Cliques na headline: ${clicks}/5`);
                   }
@@ -99,8 +163,18 @@ export default function Index() {
 
               <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Templates modernos, exportação em PDF, envio por email e recursos premium. 
-                Tudo o que você precisa para impressionar recrutadores.
+                Tudo o que você precisa para impressionar recrutadores e conseguir sua vaga dos sonhos.
               </p>
+
+              {/* Benefits Icons */}
+              <div className="flex flex-wrap justify-center gap-4 mb-8">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-sm">
+                    {benefit.icon}
+                    <span className="text-sm font-medium text-gray-700">{benefit.text}</span>
+                  </div>
+                ))}
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
@@ -122,6 +196,10 @@ export default function Index() {
                   Ver Templates
                 </Button>
               </div>
+
+              <p className="text-sm text-gray-500 mt-4">
+                ⚡ Sem cadastro necessário • 🔒 100% seguro • 💰 Sempre gratuito
+              </p>
             </div>
 
             {/* Stats */}
@@ -147,7 +225,7 @@ export default function Index() {
                 Recursos Poderosos
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Tudo o que você precisa para criar um currículo que se destaca
+                Tudo o que você precisa para criar um currículo que se destaca da concorrência
               </p>
             </div>
 
@@ -166,6 +244,39 @@ export default function Index() {
                     <CardDescription className="text-gray-600 leading-relaxed">
                       {feature.description}
                     </CardDescription>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="py-16 px-4 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                O que nossos usuários dizem
+              </h2>
+              <p className="text-xl text-gray-600">
+                Mais de 25.000 profissionais já conseguiram suas vagas dos sonhos
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <Card key={index} className="p-6 bg-white">
+                  <CardContent className="pt-6">
+                    <div className="flex mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                    <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
+                    <div>
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-600">{testimonial.position}</p>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -194,6 +305,62 @@ export default function Index() {
             </Button>
           </div>
         </section>
+
+        {/* Footer */}
+        <footer className="bg-gray-900 text-white py-12 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="col-span-1 md:col-span-2">
+                <div className="flex items-center space-x-3 mb-4">
+                  <Logo />
+                  <div>
+                    <h3 className="text-xl font-bold">CurriculumGratisOnline</h3>
+                    <p className="text-gray-400 text-sm">Seu currículo profissional em minutos</p>
+                  </div>
+                </div>
+                <p className="text-gray-400 mb-4 max-w-md">
+                  A plataforma mais completa para criar currículos profissionais. 
+                  Templates modernos, recursos premium e resultados garantidos.
+                </p>
+                <div className="flex space-x-4">
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    ✅ 100% Gratuito
+                  </Badge>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    🔒 Dados Seguros
+                  </Badge>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-4">Produto</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li><Button variant="link" onClick={() => setLocation('/templates')} className="text-gray-400 hover:text-white p-0">Templates</Button></li>
+                  <li><Button variant="link" onClick={() => setLocation('/criar-curriculo')} className="text-gray-400 hover:text-white p-0">Criar Currículo</Button></li>
+                  <li><Button variant="link" onClick={() => setLocation('/templates')} className="text-gray-400 hover:text-white p-0">Premium</Button></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-4">Empresa</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li><Button variant="link" onClick={() => setLocation('/privacidade')} className="text-gray-400 hover:text-white p-0">Política de Privacidade</Button></li>
+                  <li><Button variant="link" onClick={() => setLocation('/termos')} className="text-gray-400 hover:text-white p-0">Termos de Uso</Button></li>
+                  <li><Button variant="link" onClick={() => setLocation('/cookies')} className="text-gray-400 hover:text-white p-0">Política de Cookies</Button></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+              <p className="text-gray-400">
+                © {new Date().getFullYear()} CurriculumGratisOnline. Todos os direitos reservados.
+              </p>
+              <p className="text-gray-500 text-sm mt-2">
+                Feito com ❤️ para ajudar profissionais a conseguirem suas vagas dos sonhos
+              </p>
+            </div>
+          </div>
+        </footer>
 
         <FloatingLiveCounter />
         <CookieConsent />
