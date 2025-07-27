@@ -447,11 +447,19 @@ export default function AdminPanel() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Button 
-                    onClick={() => window.open('/premium-editor', '_blank')} 
+                    onClick={() => {
+                      // Liberar acesso premium temporário
+                      localStorage.setItem('admin_premium_access', 'true');
+                      localStorage.setItem('template_purchased_executivo', 'true');
+                      localStorage.setItem('premium_access_executivo', 'true');
+                      
+                      // Redirecionar para premium
+                      window.location.href = '/premium-editor?template=executivo';
+                    }} 
                     className="w-full bg-purple-600 hover:bg-purple-700"
                   >
                     <Crown className="w-4 h-4 mr-2" />
-                    Acessar Editor Premium
+                    Acessar Editor Premium (Admin)
                   </Button>
 
                   <Button 

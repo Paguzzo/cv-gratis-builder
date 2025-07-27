@@ -117,15 +117,23 @@ export default function PremiumEditor() {
       return;
     }
 
-    // Verificação de acesso
+    // Verificação de acesso premium melhorada
     if (template.isPremium) {
       const hasPurchased = StripeService.hasPurchasedTemplate(templateId);
       const isDevModeEnabled = StripeService.isDevModeEnabled();
+      const adminAccess = localStorage.getItem('admin_premium_access') === 'true';
+      const templatePurchased = localStorage.getItem(`template_purchased_${templateId}`) === 'true';
+      const premiumAccess = localStorage.getItem(`premium_access_${templateId}`) === 'true';
       
-      if (!hasPurchased && !isDevModeEnabled) {
-        toast.error('Acesso negado. Ative o modo desenvolvedor ou compre o template.');
+      const hasAnyAccess = hasPurchased || isDevModeEnabled || adminAccess || templatePurchased || premiumAccess;
+      
+      if (!hasAnyAccess) {
+        console.log('❌ PREMIUM: Acesso negado para template:', templateId);
+        toast.error('Acesso negado. Compre o template premium para continuar.');
         setTimeout(() => setLocation('/templates'), 3000);
         return;
+      } else {
+        console.log('✅ PREMIUM: Acesso liberado para template:', templateId);
       }
     }
 

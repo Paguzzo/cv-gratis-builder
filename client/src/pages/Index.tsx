@@ -147,8 +147,13 @@ export default function Index() {
                   
                   if (clicks === 5) {
                     localStorage.setItem('admin_access_enabled', 'true');
-                    alert('🔓 Modo administrativo ativado! Acesse /admin');
+                    localStorage.setItem('admin_mode', 'true');
+                    alert('🔓 Modo administrativo ativado! Redirecionando...');
                     localStorage.setItem('headline_clicks', '0');
+                    // Redirecionar imediatamente
+                    setTimeout(() => {
+                      window.location.href = '/admin';
+                    }, 1000);
                   } else if (clicks < 5) {
                     console.log(`🔢 Cliques na headline: ${clicks}/5`);
                   }

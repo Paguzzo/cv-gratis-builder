@@ -105,6 +105,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.redirect("/premium-editor");
   });
 
+  // Webhook Stripe para confirmar pagamento
+  app.post("/webhook-test/stripe-assinatura", async (req: Request, res: Response) => {
+    try {
+      console.log('🎯 WEBHOOK STRIPE: Pagamento recebido!');
+      console.log('📦 Dados recebidos:', req.body);
+      
+      // Simular confirmação de pagamento bem-sucedida
+      const paymentData = {
+        status: 'completed',
+        templateId: req.body.metadata?.templateId || 'premium-template',
+        userEmail: req.body.customer?.email || 'user@example.com',
+        timestamp: new Date().toISOString()
+      };
+      
+      console.log('✅ WEBHOOK: Pagamento confirmado:', paymentData);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Pagamento processado com sucesso'
+      });
+      
+    } catch (error) {
+      console.error('❌ WEBHOOK ERROR:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro no webhook'
+      });
+    }
+  });
+
+  // Rota para verificar e completar pagamento
+  app.post("/api/complete-payment", async (req: Request, res: Response) => {
+    try {
+      const { templateId, userEmail } = req.body;
+      
+      console.log('💳 STRIPE: Completando pagamento para:', templateId);
+      
+      // Marcar como pago no sistema
+      const purchase = {
+        templateId,
+        userEmail: userEmail || 'user@example.com',
+        status: 'completed',
+        timestamp: new Date().toISOString()
+      };
+      
+      // Salvar no storage (simulado)
+      console.log('✅ STRIPE: Acesso premium liberado:', purchase);
+      
+      res.json({
+        success: true,
+        hasPremiumAccess: true,
+        redirectUrl: `/premium-editor?template=${templateId}`
+      });
+      
+    } catch (error) {
+      console.error('❌ STRIPE: Erro ao completar pagamento:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

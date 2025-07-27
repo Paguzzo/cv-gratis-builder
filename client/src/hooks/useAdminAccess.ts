@@ -1,9 +1,6 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { useLocation } from 'wouter';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from 'react';
 
 export function useAdminAccess() {
-  const [, setLocation] = useLocation();
   const [isAdminMode, setIsAdminMode] = useState(false);
 
   useEffect(() => {
@@ -18,7 +15,8 @@ export function useAdminAccess() {
     if (adminEnabled) {
       localStorage.setItem('admin_mode', 'true');
       setIsAdminMode(true);
-      setLocation('/admin');
+      // Navegação direta via window.location
+      window.location.href = '/admin';
     } else {
       alert('❌ Acesso administrativo não autorizado. Clique 5 vezes na headline da página inicial.');
     }
@@ -27,7 +25,7 @@ export function useAdminAccess() {
   const exitAdminMode = () => {
     localStorage.removeItem('admin_mode');
     setIsAdminMode(false);
-    setLocation('/');
+    window.location.href = '/';
   };
 
   return {

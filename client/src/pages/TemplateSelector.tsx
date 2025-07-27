@@ -229,21 +229,31 @@ function TemplateSelectorContent() {
     if (checkPremiumAccess(template)) {
       action();
     } else {
-      // 🎯 REDIRECIONAMENTO PARA PÁGINA PREMIUM
-      console.log('🎯 TEMPLATE SELECTOR - PREMIUM DETECTADO');
-      console.log('🎯 Template ID:', template.id);
-
-      const targetUrl = `/premium-editor?template=${template.id}`;
-      console.log('🎯 REDIRECIONANDO PARA:', targetUrl);
-
-      // Usar o hook de navegação do Wouter
-      setLocation(targetUrl);
+      // 🚀 SOLUÇÃO DEFINITIVA: Redirecionamento direto para Stripe
+      console.log('💳 STRIPE: Iniciando pagamento para template:', template.id);
       
-      // Marcar template como liberado no modo dev
-      localStorage.setItem(`template_purchased_${template.id}`, 'true');
-      localStorage.setItem(`premium_access_${template.id}`, 'true');
+      // Marcar template como sendo comprado
+      localStorage.setItem('stripe_pending_payment', JSON.stringify({
+        templateId: template.id,
+        timestamp: Date.now()
+      }));
       
-      console.log('✅ REDIRECIONAMENTO EXECUTADO VIA WOUTER');
+      // Redirecionar diretamente para o link do Stripe
+      const stripeUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
+      const params = new URLSearchParams({
+        client_reference_id: `user_${Date.now()}`,
+        metadata: JSON.stringify({
+          templateId: template.id,
+          templateName: template.name,
+          source: 'curriculum_gratis_online'
+        })
+      });
+      
+      const finalUrl = `${stripeUrl}?${params}`;
+      console.log('🎯 Redirecionando para Stripe:', finalUrl);
+      
+      // Redirecionar para o Stripe
+      window.location.href = finalUrl;
     }
   };
 
