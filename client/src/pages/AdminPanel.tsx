@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,7 +32,7 @@ interface UserEntry {
   name: string;
   email: string;
   whatsapp: string;
-  actionType: 'download' | 'print' | 'email';
+  actionType: 'download' | 'print' | 'email' | 'premium';
   timestamp: string;
   source: string;
 }
@@ -52,7 +53,6 @@ export default function AdminPanel() {
     const database = userDataService.getDatabase();
     const statistics = userDataService.getStatistics();
 
-    // 🔧 DEBUG: Logs para identificar problema
     console.log('🔍 ADMIN DEBUG - Carregando dados...');
     console.log('📊 Database carregada:', database);
     console.log('📈 Statistics:', statistics);
@@ -121,6 +121,8 @@ export default function AdminPanel() {
         return <Badge className="bg-green-100 text-green-800"><FileText className="w-3 h-3 mr-1" />Impressão</Badge>;
       case 'email':
         return <Badge className="bg-purple-100 text-purple-800"><Mail className="w-3 h-3 mr-1" />Email</Badge>;
+      case 'premium':
+        return <Badge className="bg-yellow-100 text-yellow-800"><Crown className="w-3 h-3 mr-1" />Premium</Badge>;
       default:
         return <Badge variant="secondary">{action}</Badge>;
     }
@@ -221,13 +223,13 @@ export default function AdminPanel() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Emails</CardTitle>
-                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Premium</CardTitle>
+                  <Crown className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.byAction?.email || 0}</div>
+                  <div className="text-2xl font-bold">{stats.byAction?.premium || 0}</div>
                   <p className="text-xs text-muted-foreground">
-                    Enviados por email
+                    Acessos premium
                   </p>
                 </CardContent>
               </Card>
@@ -238,7 +240,7 @@ export default function AdminPanel() {
               <CardHeader>
                 <CardTitle>Últimos Usuários Cadastrados</CardTitle>
                 <CardDescription>
-                  Os 5 usuários mais recentes que baixaram currículos gratuitos
+                  Os 5 usuários mais recentes que interagiram com a plataforma
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -267,7 +269,7 @@ export default function AdminPanel() {
                     <div className="text-center py-8 text-gray-500">
                       <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       <p>Nenhum usuário cadastrado ainda.</p>
-                      <p className="text-sm">Os dados aparecerão aqui quando usuários baixarem templates gratuitos.</p>
+                      <p className="text-sm">Os dados aparecerão aqui quando usuários interagirem com a plataforma.</p>
                     </div>
                   )}
                 </div>
@@ -300,6 +302,7 @@ export default function AdminPanel() {
                     <option value="download">Download</option>
                     <option value="print">Impressão</option>
                     <option value="email">Email</option>
+                    <option value="premium">Premium</option>
                   </select>
                 </div>
               </CardContent>
@@ -407,18 +410,6 @@ export default function AdminPanel() {
                     <LogOut className="w-4 h-4 mr-2" />
                     Sair do Modo Administrativo
                   </Button>
-
-                  <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <h4 className="font-medium text-yellow-800 mb-2">⚡ Acesso via Console</h4>
-                    <p className="text-sm text-yellow-700">
-                      Para acessar dados via console do navegador (F12):
-                    </p>
-                    <div className="mt-2 p-2 bg-gray-900 text-green-400 text-xs rounded font-mono">
-                      <div>cvgratisData.view() // Ver dados</div>
-                      <div>cvgratisData.download() // Baixar CSV</div>
-                      <div>cvgratisData.clear() // Limpar dados</div>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -498,17 +489,13 @@ export default function AdminPanel() {
                         <div className="text-2xl font-bold">{count as number}</div>
                       </div>
                     ))}
-
-                    {/* Adicionar contador de premium */}
-                    <div className="flex items-center justify-between border-t pt-3">
-                      <div className="flex items-center gap-2">
-                        <Badge className="bg-purple-100 text-purple-800">
-                          <Crown className="w-3 h-3 mr-1" />
-                          Premium
-                        </Badge>
-                      </div>
-                      <div className="text-2xl font-bold">{stats.byAction?.premium || 0}</div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -144,7 +143,7 @@ export default function Index() {
                 onClick={() => {
                   const clicks = parseInt(localStorage.getItem('headline_clicks') || '0') + 1;
                   localStorage.setItem('headline_clicks', clicks.toString());
-                  
+
                   if (clicks === 5) {
                     localStorage.setItem('admin_access_enabled', 'true');
                     localStorage.setItem('admin_mode', 'true');
@@ -373,3 +372,4 @@ export default function Index() {
     </>
   );
 }
+import { navigate } from 'wouter/use-location';
