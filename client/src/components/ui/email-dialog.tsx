@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { EmailService } from "@/services/emailService";
-import MCPEmailService from "@/services/mcpEmailService";
 import { PDFExportService } from "@/services/pdfExportService";
 import MCPEmailService, { CurriculumEmailData } from "@/services/mcpEmailService";
 import { Mail, Send, Loader2 } from "lucide-react";

@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, FileText, Zap, Download, Mail, Printer, Crown, Star, Users, TrendingUp } from 'lucide-react';
-import { SEOHead } from '@/components/SEOHead';
-import { FloatingLiveCounter } from '@/components/FloatingLiveCounter';
-import { CookieConsent } from '@/components/CookieConsent';
+import SEOHead from '@/components/SEOHead';
+import FloatingLiveCounter from '@/components/FloatingLiveCounter';
+import CookieConsent from '@/components/CookieConsent';
 
 export default function Index() {
   const [, setLocation] = useLocation();
@@ -76,11 +76,11 @@ export default function Index() {
               </Badge>
 
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Crie seu{' '}
+                Crie seu{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   Currículo Profissional
                 </span>
-                {' '}gratuitamente
+                {" "}gratuitamente
               </h1>
 
               <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">

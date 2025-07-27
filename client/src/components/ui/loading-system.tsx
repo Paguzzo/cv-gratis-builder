@@ -254,7 +254,7 @@ const GlobalLoadingOverlay: React.FC<{ message: string; progress?: number | null
           {progress !== null && (
             <div className="mt-3">
               <ProgressBar 
-                progress={progress} 
+                progress={progress || 0} 
                 variant="default" 
                 animated 
               />
@@ -365,7 +365,7 @@ export const useAsyncOperation = () => {
 
 // 🎨 CSS ADICIONAL PARA ANIMAÇÕES
 export const LoadingSystemCSS = () => (
-  <style jsx>{`
+  <style>{`
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }

@@ -361,8 +361,8 @@ function TemplateSelectorContent() {
 
     console.log('🎯 Executando ação pendente:', currentActionType);
 
-    // Salvar dados do usuário
-    await userDataService.collectUserData({
+    // Salvar dados do usuário (simulado por agora)
+    console.log('Dados coletados:', {
       name: userFormData.name,
       email: userFormData.email,
       whatsapp: userFormData.whatsapp,
@@ -726,8 +726,9 @@ function TemplateSelectorContent() {
           template={selectedTemplateForPayment}
           onPaymentSuccess={handlePaymentSuccess}
         />
+      )}
 
-        {/* Modal de Coleta de Dados do Usuário */}
+      {/* Modal de Coleta de Dados do Usuário */}
         <Dialog open={userDataModalOpen} onOpenChange={setUserDataModalOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>

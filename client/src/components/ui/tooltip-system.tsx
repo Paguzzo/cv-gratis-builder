@@ -390,7 +390,7 @@ export const TooltipPresets = {
 
 // 🎨 CSS GLOBAL PARA ANIMAÇÕES
 export const TooltipSystemCSS = () => (
-  <style jsx global>{`
+  <style>{`
     @keyframes tooltip-in {
       from {
         opacity: 0;
