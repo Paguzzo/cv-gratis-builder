@@ -50,35 +50,52 @@ REGRAS DE OURO:
 
 Crie um objetivo profissional único e memorável:`,
 
-  experience: `Você é um headhunter executivo com especialização em otimização de currículos para grandes corporações. Transforme esta experiência em uma narrativa poderosa de conquistas.
+  experience: `Você é um especialista em RH com 15 anos de experiência em recrutamento e análise de currículos. Sua missão é transformar experiências profissionais em descrições impactantes e autênticas.
 
-CONTEXTO DA POSIÇÃO:
+CONTEXTO DA EXPERIÊNCIA:
 Cargo: {position}  
 Empresa: {company}
-Descrição atual: {userInput}
-Competências-chave: {keywords}
+Descrição fornecida: {userInput}
+Palavras-chave específicas: {keywords}
 
-METODOLOGIA DE TRANSFORMAÇÃO:
-1. ANÁLISE: Identifique as responsabilidades core e conquistas implícitas
-2. QUANTIFICAÇÃO: Adicione métricas realistas quando não especificadas
-3. INTEGRAÇÃO: Incorpore palavras-chave naturalmente nas conquistas
-4. IMPACTO: Transforme tarefas em resultados de negócio
+DIRETRIZES CRÍTICAS:
+1. AUTENTICIDADE: Baseie-se EXCLUSIVAMENTE na descrição fornecida pelo usuário
+2. CONTEXTUALIZAÇÃO: Adapte a linguagem ao setor específico (saúde, tecnologia, gestão, etc.)
+3. DIVERSIDADE: Crie bullets únicos e variados para cada palavra-chave
+4. REALISMO: NUNCA invente percentuais ou métricas não mencionadas
+5. COERÊNCIA: Mantenha consistência com o cargo e tempo de experiência
 
-ESTRUTURA ESTRATÉGICA:
-• Bullet 1: Principal conquista/impacto (inclua métricas se possível)
-• Bullet 2: Competência técnica + resultado específico (integre palavras-chave)
-• Bullet 3: Liderança/colaboração + benefício organizacional
-• Bullet 4: Inovação/melhoria de processo + resultado mensurável
-• Bullet 5: Desenvolvimento/capacitação + impacto na equipe/empresa
+METODOLOGIA DE CRIAÇÃO:
+• Analise o setor profissional pelo cargo e palavras-chave
+• Para cada palavra-chave, crie um bullet específico e contextual
+• Use verbos de ação apropriados ao setor
+• Integre palavras-chave naturalmente na narrativa
+• Mantenha linguagem profissional e impactante
 
-FÓRMULA DE CADA BULLET:
-[VERBO DE AÇÃO] + [O QUE FEZ] + [COMO/MÉTODO] + [RESULTADO MENSURÁVEL]
+ESTRUTURA POR SETOR:
 
-VERBOS ESTRATÉGICOS: Liderou, Implementou, Otimizou, Desenvolveu, Gerenciou, Arquitetou, Coordenou, Estabeleceu, Transformou
+SAÚDE/ENFERMAGEM:
+- Verbos: Prestou, Realizou, Administrou, Executou, Manteve, Participou
+- Foco: Cuidado ao paciente, segurança, protocolos, qualidade assistencial
+- Evite: Métricas corporativas, linguagem empresarial genérica
 
-MÉTRICAS INTELIGENTES: Use % de melhoria, tempo economizado, custos reduzidos, pessoas impactadas, projetos entregues, indicadores de qualidade
+TECNOLOGIA:
+- Verbos: Desenvolveu, Implementou, Otimizou, Projetou, Integrou
+- Foco: Soluções técnicas, sistemas, performance, inovação
 
-Crie 4-5 bullets poderosos que demonstrem o candidato como um profissional de alto impacto:`
+GESTÃO:
+- Verbos: Liderou, Coordenou, Supervisionou, Desenvolveu, Estabeleceu
+- Foco: Equipes, processos, resultados organizacionais
+
+REGRAS OBRIGATÓRIAS:
+✅ Máximo 4-5 bullets
+✅ Cada bullet deve ser único e contextual
+✅ Integre TODAS as palavras-chave fornecidas
+✅ Use linguagem específica do setor
+✅ NÃO invente dados, percentuais ou métricas
+✅ Mantenha coerência com a descrição original
+
+Transforme esta experiência em bullets profissionais e autênticos:`
 };
 
 // Integração real com OpenAI API
@@ -173,53 +190,183 @@ function getFallbackResponse(prompt: string): string {
     
     return objectiveText;
   } else {
-    // NOVA LÓGICA: IA de Experiência - Uma competência por bullet
+    // LÓGICA COMPLETAMENTE NOVA: Geração contextual baseada no cargo e setor
     const positionMatch = prompt.match(/Cargo: (.+)/);
     const companyMatch = prompt.match(/Empresa: (.+)/);
     const keywordsMatch = prompt.match(/Competências-chave: (.+)/);
-    const userTextMatch = prompt.match(/Descrição atual: (.+?)(?=\n|$)/);
+    const userTextMatch = prompt.match(/Descrição atual: (.+?)(?=Competências-chave|$)/s);
     
     const position = positionMatch ? positionMatch[1].trim() : 'Profissional';
     const company = companyMatch ? companyMatch[1].trim() : '';
-    const keywords = keywordsMatch ? keywordsMatch[1].split(',').map(k => k.trim()).filter(k => k) : [];
-    const userText = userTextMatch ? userTextMatch[1] : '';
+    const keywords = keywordsMatch ? keywordsMatch[1].split(',').map(k => k.trim()).filter(k => k.length > 1) : [];
+    const userText = userTextMatch ? userTextMatch[1].trim() : '';
     
-    // Mapear contexto por tipo de cargo
-    const cargoContexts = {
-      'coordenador': { action: 'Coordenou', focus: 'equipes e processos', metrics: ['eficiência', 'produtividade', 'qualidade'] },
-      'analista': { action: 'Analisou', focus: 'dados e processos', metrics: ['precisão', 'otimização', 'insights'] },
-      'gerente': { action: 'Gerenciou', focus: 'operações e estratégias', metrics: ['crescimento', 'receita', 'performance'] },
-      'desenvolvedor': { action: 'Desenvolveu', focus: 'soluções e sistemas', metrics: ['performance', 'automação', 'escalabilidade'] },
-      'consultor': { action: 'Consultou', focus: 'estratégias e melhorias', metrics: ['resultados', 'satisfação', 'transformação'] }
-    };
+    // Detectar setor profissional baseado no cargo e palavras-chave
+    const healthcareTerms = ['enfermagem', 'hospital', 'clínica', 'medicamentos', 'pacientes', 'sinais vitais', 'curativos', 'biossegurança', 'atendimento humanizado', 'prontuário'];
+    const techTerms = ['desenvolvimento', 'programação', 'sistema', 'software', 'dados', 'tecnologia', 'algoritmo', 'database'];
+    const managementTerms = ['gestão', 'liderança', 'coordenação', 'supervisão', 'equipe', 'projeto', 'estratégia'];
     
-    const cargoKey = Object.keys(cargoContexts).find(key => position.toLowerCase().includes(key)) || 'analista';
-    const context = cargoContexts[cargoKey];
+    const isHealthcare = healthcareTerms.some(term => 
+      position.toLowerCase().includes(term) || 
+      keywords.some(k => k.toLowerCase().includes(term)) ||
+      userText.toLowerCase().includes(term)
+    );
     
-    // Gerar bullets contextualizados - uma competência por bullet
-    const bullets = [];
-    for (let i = 0; i < Math.min(keywords.length, 4); i++) {
-      const keyword = keywords[i];
-      const metric = context.metrics[i % context.metrics.length];
-      
-      if (i === 0) {
-        bullets.push(`• ${context.action} ${context.focus} com foco em ${keyword}, resultando em melhoria de 25% em ${metric}`);
-      } else if (i === 1) {
-        bullets.push(`• Implementou soluções de ${keyword} que otimizaram processos críticos, gerando impacto positivo de 30% nos indicadores`);
-      } else if (i === 2) {
-        bullets.push(`• Liderou iniciativas de ${keyword} em colaboração com equipes multidisciplinares, alcançando 95% de satisfação dos stakeholders`);
-      } else {
-        bullets.push(`• Desenvolveu metodologias e práticas de ${keyword} que aceleraram entregas em 40% e melhoraram qualidade geral`);
-      }
+    const isTech = techTerms.some(term => 
+      position.toLowerCase().includes(term) || 
+      keywords.some(k => k.toLowerCase().includes(term))
+    );
+    
+    const isManagement = managementTerms.some(term => 
+      position.toLowerCase().includes(term) || 
+      keywords.some(k => k.toLowerCase().includes(term))
+    );
+    
+    // Gerar descrições contextuais baseadas no setor
+    if (isHealthcare) {
+      return generateHealthcareExperience(position, company, keywords, userText);
+    } else if (isTech) {
+      return generateTechExperience(position, company, keywords, userText);
+    } else if (isManagement) {
+      return generateManagementExperience(position, company, keywords, userText);
+    } else {
+      return generateGenericExperience(position, company, keywords, userText);
     }
-    
-    // Adicionar bullet de desenvolvimento se houver espaço
-    if (bullets.length < 5) {
-      bullets.push(`• Capacitou equipes em melhores práticas, contribuindo para retenção de talentos e crescimento da produtividade em 25%`);
-    }
-    
-    return bullets.join('\n');
   }
+}
+
+// Função específica para experiências na área da saúde
+function generateHealthcareExperience(position: string, company: string, keywords: string[], userText: string): string {
+  const healthcareActions = [
+    'Prestou assistência integral aos pacientes',
+    'Executou procedimentos técnicos de enfermagem',
+    'Realizou controle rigoroso de sinais vitais',
+    'Administrou medicamentos conforme prescrição médica',
+    'Desenvolveu planos de cuidados personalizados',
+    'Manteve registros detalhados em prontuários',
+    'Participou ativamente de rounds médicos',
+    'Implementou protocolos de biossegurança'
+  ];
+  
+  const healthcareImpacts = [
+    'garantindo segurança e bem-estar dos pacientes',
+    'seguindo rigorosamente protocolos institucionais',
+    'mantendo excelência na qualidade do atendimento',
+    'contribuindo para redução de intercorrências',
+    'promovendo ambiente terapêutico humanizado',
+    'assegurando conformidade com normas sanitárias',
+    'otimizando fluxos de atendimento',
+    'fortalecendo vínculos terapêuticos com pacientes'
+  ];
+  
+  const bullets = [];
+  const shuffledActions = [...healthcareActions].sort(() => 0.5 - Math.random());
+  const shuffledImpacts = [...healthcareImpacts].sort(() => 0.5 - Math.random());
+  
+  // Gerar bullets únicos baseados nas palavras-chave
+  keywords.slice(0, 4).forEach((keyword, index) => {
+    const action = shuffledActions[index % shuffledActions.length];
+    const impact = shuffledImpacts[index % shuffledImpacts.length];
+    
+    if (keyword.toLowerCase().includes('medicamento') || keyword.toLowerCase().includes('administração')) {
+      bullets.push(`• Administrou medicamentos e terapias prescritas com precisão e segurança, mantendo registro detalhado e monitoramento contínuo dos pacientes`);
+    } else if (keyword.toLowerCase().includes('curativos') || keyword.toLowerCase().includes('feridas')) {
+      bullets.push(`• Realizou curativos complexos e cuidados com feridas, aplicando técnicas especializadas e promovendo cicatrização adequada`);
+    } else if (keyword.toLowerCase().includes('sinais vitais') || keyword.toLowerCase().includes('monitoramento')) {
+      bullets.push(`• Monitorou sinais vitais e parâmetros clínicos dos pacientes, identificando alterações e comunicando à equipe médica prontamente`);
+    } else if (keyword.toLowerCase().includes('prontuário') || keyword.toLowerCase().includes('registro')) {
+      bullets.push(`• Manteve documentação completa e precisa dos cuidados prestados, assegurando continuidade assistencial e rastreabilidade`);
+    } else if (keyword.toLowerCase().includes('biossegurança') || keyword.toLowerCase().includes('infecção')) {
+      bullets.push(`• Implementou rigorosamente protocolos de biossegurança e prevenção de infecções, contribuindo para ambiente seguro`);
+    } else {
+      bullets.push(`• ${action} focando em ${keyword}, ${impact} e fortalecendo resultados assistenciais`);
+    }
+  });
+  
+  // Adicionar bullet de desenvolvimento profissional se necessário
+  if (bullets.length < 4) {
+    bullets.push(`• Participou de treinamentos continuados e capacitações técnicas, mantendo atualização profissional e excelência no atendimento`);
+  }
+  
+  return bullets.slice(0, 5).join('\n');
+}
+
+// Função específica para experiências em tecnologia
+function generateTechExperience(position: string, company: string, keywords: string[], userText: string): string {
+  const techActions = [
+    'Desenvolveu soluções tecnológicas inovadoras',
+    'Implementou arquiteturas escaláveis e robustas',
+    'Otimizou performance de sistemas críticos',
+    'Automatizou processos complexos',
+    'Projetou e implementou APIs eficientes',
+    'Desenvolveu interfaces intuitivas e responsivas',
+    'Integrou sistemas legados com novas tecnologias',
+    'Estabeleceu pipelines de CI/CD'
+  ];
+  
+  const bullets = [];
+  keywords.slice(0, 4).forEach((keyword, index) => {
+    const action = techActions[index % techActions.length];
+    bullets.push(`• ${action} utilizando ${keyword}, resultando em melhoria significativa na experiência do usuário e eficiência operacional`);
+  });
+  
+  if (bullets.length < 4) {
+    bullets.push(`• Colaborou com equipes multidisciplinares para entrega de projetos complexos, mantendo alta qualidade de código e documentação`);
+  }
+  
+  return bullets.slice(0, 5).join('\n');
+}
+
+// Função específica para experiências em gestão
+function generateManagementExperience(position: string, company: string, keywords: string[], userText: string): string {
+  const managementActions = [
+    'Liderou equipes multidisciplinares',
+    'Implementou estratégias organizacionais',
+    'Coordenou projetos complexos',
+    'Otimizou processos operacionais',
+    'Desenvolveu talentos da equipe',
+    'Estabeleceu métricas de performance',
+    'Gerenciou stakeholders estratégicos',
+    'Promoveu cultura de excelência'
+  ];
+  
+  const bullets = [];
+  keywords.slice(0, 4).forEach((keyword, index) => {
+    const action = managementActions[index % managementActions.length];
+    bullets.push(`• ${action} com foco em ${keyword}, alcançando objetivos estratégicos e fortalecendo resultados organizacionais`);
+  });
+  
+  if (bullets.length < 4) {
+    bullets.push(`• Capacitou e desenvolveu membros da equipe, contribuindo para crescimento profissional e retenção de talentos`);
+  }
+  
+  return bullets.slice(0, 5).join('\n');
+}
+
+// Função genérica para outras áreas
+function generateGenericExperience(position: string, company: string, keywords: string[], userText: string): string {
+  const genericActions = [
+    'Executou atividades especializadas',
+    'Colaborou efetivamente com equipes',
+    'Implementou melhorias processuais',
+    'Manteve padrões de qualidade elevados',
+    'Contribuiu para objetivos organizacionais',
+    'Desenvolveu competências técnicas',
+    'Participou de projetos estratégicos',
+    'Estabeleceu relacionamentos profissionais'
+  ];
+  
+  const bullets = [];
+  keywords.slice(0, 4).forEach((keyword, index) => {
+    const action = genericActions[index % genericActions.length];
+    bullets.push(`• ${action} relacionadas a ${keyword}, contribuindo para eficiência operacional e qualidade dos resultados`);
+  });
+  
+  if (bullets.length < 4) {
+    bullets.push(`• Manteve atualização profissional constante e participou de iniciativas de melhoria contínua`);
+  }
+  
+  return bullets.slice(0, 5).join('\n');
 }
 
 export class AIService {
