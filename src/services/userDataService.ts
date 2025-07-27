@@ -19,6 +19,11 @@ class UserDataService {
 
   // Salvar dados do usuário no "banco"
   async saveUser(userData: UserData, actionType: 'download' | 'print' | 'email'): Promise<UserDatabaseEntry> {
+    // 🔧 DEBUG: Logs detalhados para rastrear salvamento
+    console.log('🔍 SAVE DEBUG - Tentativa de salvar usuário:');
+    console.log('👤 UserData recebida:', userData);
+    console.log('🎯 ActionType:', actionType);
+    
     const entry: UserDatabaseEntry = {
       id: this.generateId(),
       ...userData,
@@ -29,13 +34,36 @@ class UserDataService {
     };
 
     const database = this.getDatabase();
+    console.log('📦 Database ANTES do push:', database.length, 'itens');
+    
     database.push(entry);
     this.saveDatabase(database);
+    
+    console.log('📦 Database DEPOIS do push:', database.length, 'itens');
+    console.log('✅ Entry salva:', entry);
 
     // Log para desenvolvimento
     console.log('✅ Usuário salvo no banco:', entry);
     
     return entry;
+  }
+
+  // 🔧 DEBUG: Método de teste para verificar se sistema funciona
+  testSaveUser(): void {
+    console.log('🧪 TESTE DEBUG - Simulando salvamento de usuário...');
+    
+    const testUserData = {
+      name: 'Teste Debug',
+      email: 'teste@debug.com',
+      whatsapp: '11999999999'
+    };
+    
+    this.saveUser(testUserData, 'download').then(result => {
+      console.log('✅ TESTE CONCLUÍDO - Usuário de teste salvo:', result);
+      console.log('📊 Total na database agora:', this.getDatabase().length);
+    }).catch(error => {
+      console.error('❌ ERRO NO TESTE:', error);
+    });
   }
 
   // Obter todos os usuários do "banco"
@@ -165,7 +193,13 @@ class UserDataService {
 // Instância singleton
 export const userDataService = new UserDataService();
 
-// Função helper para desenvolvimento - ver dados coletados
+// 🔧 DEBUG: Expor no console para testes (apenas em desenvolvimento)
+if (typeof window !== 'undefined') {
+  (window as any).debugUserDataService = userDataService;
+  console.log('🔧 DEBUG: userDataService disponível em window.debugUserDataService');
+}
+
+// Funções de conveniência para exportação
 export function viewCollectedData() {
   const stats = userDataService.getStatistics();
   console.log('📊 Estatísticas CVGratis:', stats);

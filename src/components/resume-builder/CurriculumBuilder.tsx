@@ -3,6 +3,7 @@ import { CURRICULUM_STEPS } from '@/types/curriculum';
 import { useNavigate } from 'react-router-dom';
 import { ProgressIndicator } from './ProgressIndicator';
 import { StepNavigation } from './StepNavigation';
+import { CurriculumPreview } from './CurriculumPreview';
 import { PersonalInfo } from './steps/PersonalInfo';
 import { ProfessionalObjective } from './steps/ProfessionalObjective';
 import { Education } from './steps/Education';
@@ -36,8 +37,22 @@ export function CurriculumBuilder() {
   };
 
   const handleFinish = () => {
-    // Navigate to template selection
-    navigate('/templates');
+    // 🔧 DEBUG: Log para rastrear finalização
+    console.log('🔍 FINISH DEBUG - Usuário finalizando currículo');
+    console.log('📝 Dados do usuário:', state);
+    
+    // 🎯 NOVO FLUXO: Verificar se há template premium selecionado
+    const premiumTemplateSelected = localStorage.getItem('premium-template-selected');
+    
+    if (premiumTemplateSelected) {
+      // Cliente está editando currículo premium - vai direto para configuração
+      console.log('🏆 Cliente premium: Redirecionando para configuração premium:', premiumTemplateSelected);
+      navigate(`/premium-editor?template=${premiumTemplateSelected}`);
+    } else {
+      // Cliente gratuito - vai para seleção de templates
+      console.log('🎁 Cliente gratuito: Redirecionando para templates');
+      navigate('/templates');
+    }
   };
 
   const renderCurrentStep = () => {
@@ -64,7 +79,7 @@ export function CurriculumBuilder() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
           Crie seu currículo profissional
@@ -74,24 +89,60 @@ export function CurriculumBuilder() {
         </p>
       </div>
 
-      <ProgressIndicator 
-        currentStep={currentStep} 
-        onStepClick={setCurrentStep}
-      />
+      {/* Layout de duas colunas: Formulário + Preview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Coluna do Formulário */}
+        <div className="space-y-6">
+          {/* Barra de progresso dentro da coluna do formulário */}
+          <ProgressIndicator 
+            currentStep={currentStep} 
+            onStepClick={setCurrentStep}
+          />
 
-      <div className="min-h-[400px]">
-        {renderCurrentStep()}
+          <div className="min-h-[400px]">
+            {renderCurrentStep()}
+          </div>
+
+          <StepNavigation
+            currentStep={currentStep}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            onFinish={handleFinish}
+            isFirstStep={isFirstStep}
+            isLastStep={isLastStep}
+            canProceed={true}
+          />
+        </div>
+
+        {/* Coluna do Preview - altura completa sem limitações */}
+        <div className="hidden lg:block">
+          <div className="sticky top-6">
+            <div className="bg-white rounded-lg shadow-lg p-4">
+              <div className="text-center mb-4">
+                <h3 className="text-sm font-semibold text-gray-600">
+                  Preview do Currículo
+                </h3>
+              </div>
+              
+              {/* Container sem limitação de altura para mostrar todo o conteúdo */}
+              <div className="w-full max-w-md mx-auto">
+                <div 
+                  className="w-full border rounded-lg overflow-auto bg-white shadow-sm"
+                  style={{ 
+                    aspectRatio: '210/297',
+                    minHeight: '500px',
+                    maxHeight: '80vh'
+                  }}
+                >
+                  <div className="w-full h-full">
+                    <CurriculumPreview />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <StepNavigation
-        currentStep={currentStep}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        onFinish={handleFinish}
-        isFirstStep={isFirstStep}
-        isLastStep={isLastStep}
-        canProceed={true}
-      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { EmailService, EmailData } from "@/services/emailService";
 import { PDFExportService } from "@/services/pdfExportService";
+import MCPEmailService, { CurriculumEmailData } from "@/services/mcpEmailService";
 import { Mail, Send, Loader2 } from "lucide-react";
 
 interface EmailDialogProps {
@@ -44,23 +45,21 @@ export function EmailDialog({ open, onOpenChange, templateId, senderName }: Emai
     setIsSending(true);
 
     try {
-      const emailData: EmailData = {
+      // Usar novo serviço MCP para envio
+      const curriculumData: CurriculumEmailData = {
         recipientEmail: formData.recipientEmail,
         recipientName: formData.recipientName,
         senderName: senderName,
         subject: formData.subject,
-        message: formData.message
+        message: formData.message,
+        templateId: templateId
       };
 
-      if (sendWithAttachment) {
-        // Gerar PDF e enviar como anexo
-        const pdfService = new PDFExportService();
-        const pdfBlob = await pdfService.exportTemplateAsBlob();
-        await EmailService.sendCurriculumByEmail(emailData, pdfBlob);
-      } else {
-        // Enviar apenas link (implementar compartilhamento depois)
-        const shareUrl = `${window.location.origin}/curriculum/${templateId}`;
-        await EmailService.sendCurriculumLink(emailData, shareUrl);
+      // Enviar via MCP (inclui geração automática de PDF e fallback)
+      const result = await MCPEmailService.sendCurriculumByEmail(curriculumData);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Falha no envio via MCP');
       }
 
       toast({

@@ -8,20 +8,18 @@ import { TemplateCarousel } from '@/components/templates/TemplateCarousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Check, Download, ArrowLeft, Loader2, Printer, Mail, Lock, BrainCircuit } from 'lucide-react';
+import { Crown, Check, Download, ArrowLeft, Loader2, Printer, Mail, Lock, BrainCircuit, X } from 'lucide-react';
 import { AVAILABLE_TEMPLATES, Template } from '@/types/templates';
 import { PDFExportService } from '@/services/pdfExportService';
 import { PrintService } from '@/services/printService';
-import { StripeService } from '@/services/stripeService';
+// import { StripeService } from '@/services/stripeService'; // 🚨 REMOVIDO
 import { EmailDialog } from '@/components/ui/email-dialog';
 import { PaymentDialog } from '@/components/ui/payment-dialog';
-import { DevModePanel } from '@/components/ui/dev-mode-panel';
-import { JobAIChat } from '@/components/ui/jobai-chat';
+
+// import { JobAIChat } from '@/components/ui/jobai-chat-fixed'; // 🚨 REMOVIDO DEFINITIVAMENTE
 import { toast } from 'sonner';
 
 // Importar sistema de coleta de dados
-import UserDataCollector from '@/components/UserDataCollector';
-import { useUserDataCollection } from '@/hooks/useUserDataCollection';
 import { userDataService } from '@/services/userDataService';
 
 function TemplateSelectorContent() {
@@ -35,24 +33,42 @@ function TemplateSelectorContent() {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedTemplateForPayment, setSelectedTemplateForPayment] = useState<Template | null>(null);
-  const [jobAIChatOpen, setJobAIChatOpen] = useState(false);
+  // const [jobAIChatOpen, setJobAIChatOpen] = useState(false); // 🚨 REMOVIDO DEFINITIVAMENTE
   
-  const allTemplates = AVAILABLE_TEMPLATES;
-
-  // Sistema de coleta de dados
-  const {
-    isModalOpen,
-    actionType,
-    hasUserData,
-    requestUserDataIfNeeded,
-    handleUserDataSubmit,
-    handleModalClose
-  } = useUserDataCollection();
+  // 🔧 SISTEMA SIMPLES DE COLETA DE DADOS
+  const [userDataModalOpen, setUserDataModalOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+  const [currentActionType, setCurrentActionType] = useState<'download' | 'print' | 'email'>('download');
+  const [userFormData, setUserFormData] = useState({
+    name: '',
+    email: '',
+    whatsapp: ''
+  });
+  
+  // 🎯 ORGANIZAÇÃO: Gratuitos primeiro, depois Premium
+  const allTemplates = [...AVAILABLE_TEMPLATES].sort((a, b) => {
+    // Gratuitos primeiro (isPremium = false primeiro)
+    if (a.isPremium === b.isPremium) return 0;
+    return a.isPremium ? 1 : -1;
+  });
 
   useEffect(() => {
     console.log('🔍 TemplateSelector: useEffect executado');
     console.log('🔍 Estado do template:', state);
     console.log('🔍 Dados do currículo context:', data);
+    
+    // 🧹 LIMPAR: Template premium selecionado (usuário está na seleção normal)
+    const premiumTemplateSelected = localStorage.getItem('premium-template-selected');
+    if (premiumTemplateSelected) {
+      localStorage.removeItem('premium-template-selected');
+      console.log('🧹 Template premium removido do localStorage:', premiumTemplateSelected);
+    }
+    
+    // 🔧 DEBUG: Verificar templates disponíveis
+    console.log('📋 TEMPLATES DISPONÍVEIS:');
+    allTemplates.forEach((template, index) => {
+      console.log(`${index + 1}. ${template.name} - Premium: ${template.isPremium}`);
+    });
     
     // Verificar dados no localStorage diretamente
     const personalInfoLS = localStorage.getItem('curriculum-personal-info');
@@ -63,6 +79,7 @@ function TemplateSelectorContent() {
       console.log('🔍 TemplateSelector: Selecionando template padrão...');
       const defaultTemplate = allTemplates[0];
       if (defaultTemplate) {
+        console.log('🎯 Template padrão selecionado:', defaultTemplate.name, 'Premium:', defaultTemplate.isPremium);
         selectTemplate(defaultTemplate.id);
       }
     }
@@ -104,6 +121,25 @@ function TemplateSelectorContent() {
             Preencher Dados
           </Button>
         </div>
+        {/* 🔧 CORREÇÃO: UserDataCollector para pop-ups de coleta */}
+        {/* <UserDataCollector
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          onSubmit={async (userData: any) => {
+            console.log('🔍 SUBMIT DEBUG - Dados do usuário:', userData);
+            console.log('🎯 Action type:', actionType);
+            try {
+              await userDataService.saveUser(userData, actionType);
+              toast.success(`Obrigado, ${userData.name}! Seus dados foram salvos.`);
+              handleUserDataSubmit(userData);
+            } catch (error) {
+              console.error('❌ Erro ao salvar:', error);
+              toast.error('Erro ao salvar dados.');
+            }
+          }}
+          actionType={actionType}
+          templateType="free"
+        /> */}
       </div>
     );
   }
@@ -114,51 +150,104 @@ function TemplateSelectorContent() {
     const template = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
     if (!template) return;
 
+    console.log('🎯 SELEÇÃO DE TEMPLATE - ANTES:');
+    console.log('🎯 Template clicado:', templateId, template.name);
+    console.log('🎯 Template atual no contexto:', state.selectedTemplate?.id);
+    console.log('🎯 Template no localStorage:', localStorage.getItem('cvgratis-selected-template'));
+
     if (template.isPremium && !state.isPremiumUnlocked) {
       alert(`Template Premium ${template.name} - R$ ${template.price?.toFixed(2)}\n\nEm breve: integração com pagamento!`);
       unlockPremium();
     }
     selectTemplate(templateId);
+    
+    // Verificar após a seleção
+    setTimeout(() => {
+      console.log('🎯 SELEÇÃO DE TEMPLATE - DEPOIS:');
+      console.log('🎯 Template no contexto:', state.selectedTemplate?.id);
+      console.log('🎯 Template no localStorage:', localStorage.getItem('cvgratis-selected-template'));
+    }, 100);
   };
 
   const handleCarouselDownload = async (templateId: string) => {
-    const originalSelected = state.selectedTemplate.id;
     const template = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
     
     if (!template) return;
     
-    selectTemplate(templateId);
+    console.log('🎠 CARROSSEL DOWNLOAD - Template:', template.name, 'Premium:', template.isPremium);
     
-    // Aguardar um pouco para a seleção ser processada
-    setTimeout(() => {
-      const executeDownload = async () => {
+    const executeDownload = async () => {
+      // Temporariamente selecionar o template
+      const originalSelected = state.selectedTemplate.id;
+      selectTemplate(templateId);
+      
+      setTimeout(async () => {
         await handleDownload(template);
-        // Voltar para o template originalmente selecionado se necessário
+        // Voltar para o template original
         if (originalSelected !== templateId) {
           selectTemplate(originalSelected);
         }
-      };
+      }, 100);
+    };
 
-      // Solicitar dados do usuário se for template gratuito
-      requestUserDataIfNeeded(executeDownload, 'download', template.isPremium);
-    }, 100);
+    // 🔧 CORREÇÃO: Verificar se é template gratuito
+    if (template.isPremium) {
+      console.log('🔑 Carrossel: Template premium - executando direto');
+      executeDownload();
+    } else {
+      // Se for gratuito, SEMPRE solicita dados do usuário
+      console.log('🎁 Carrossel: Template gratuito - abrindo pop-up');
+      setPendingAction(() => executeDownload);
+      setCurrentActionType('download');
+      setUserDataModalOpen(true);
+    }
   };
 
   const checkPremiumAccess = (template: Template): boolean => {
     if (!template.isPremium) return true;
     
-    // Verificar se modo desenvolvedor está ativo
-    if (StripeService.isDevModeEnabled()) return true;
-    
-    return StripeService.hasPurchasedTemplate(template.id);
+    // 🚨 SOLUÇÃO DEFINITIVA: Sistema de acesso 100% independente
+    const purchased1 = localStorage.getItem(`template_purchased_${template.id}`) === 'true';
+    const purchased2 = localStorage.getItem(`premium_access_${template.id}`) === 'true';
+    const hasAccess = purchased1 || purchased2;
+    console.log('💳 ACESSO INDEPENDENTE: Template', template.id, 'liberado?', hasAccess);
+    return hasAccess;
   };
 
   const handlePremiumAction = (template: Template, action: () => void) => {
     if (checkPremiumAccess(template)) {
       action();
     } else {
-      setSelectedTemplateForPayment(template);
-      setPaymentDialogOpen(true);
+      // 🎯 SOLUÇÃO DEFINITIVA - PREMIUM
+      console.log('🎯 TEMPLATE SELECTOR - PREMIUM DETECTADO');
+      console.log('🎯 Template ID:', template.id);
+      
+      const targetUrl = `/premium-editor?template=${template.id}`;
+      console.log('🎯 REDIRECIONAMENTO DEFINITIVO PARA:', targetUrl);
+      
+      // SOLUÇÃO DEFINITIVA: REDIRECIONAMENTO GARANTIDO
+      try {
+        // Método 1: Imediato
+        window.location.href = targetUrl;
+        console.log('🎯 TEMPLATE SELECTOR - MÉTODO 1 EXECUTADO: href');
+        
+        // Método 2: Backup imediato
+        setTimeout(() => {
+          window.location.replace(targetUrl);
+          console.log('🎯 TEMPLATE SELECTOR - MÉTODO 2 EXECUTADO: replace');
+        }, 50);
+        
+        // Método 3: Último recurso
+        setTimeout(() => {
+          window.open(targetUrl, '_self');
+          console.log('🎯 TEMPLATE SELECTOR - MÉTODO 3 EXECUTADO: open');
+        }, 150);
+        
+      } catch (error) {
+        console.error('🎯 TEMPLATE SELECTOR - ERRO NO REDIRECIONAMENTO:', error);
+        // Forçar navegação mesmo com erro
+        window.location.href = targetUrl;
+      }
     }
   };
 
@@ -173,11 +262,8 @@ function TemplateSelectorContent() {
     const executeDownload = async () => {
       setIsExporting(true);
       try {
-        // Salvar dados do usuário se for template gratuito e ainda não salvou
-        if (!targetTemplate.isPremium && !hasUserData) {
-          console.log('⚠️ Template gratuito sem dados do usuário - isto não deveria acontecer');
-        }
-
+        console.log('🔍 EXECUTANDO DOWNLOAD:', targetTemplate.name, 'Premium:', targetTemplate.isPremium);
+        
         const pdfService = new PDFExportService();
         const result = await pdfService.exportTemplate(targetTemplate);
         
@@ -194,12 +280,19 @@ function TemplateSelectorContent() {
       }
     };
 
+    // 🔧 CORREÇÃO: Verificar se é template gratuito
+    console.log('🔍 DEBUG DOWNLOAD - Template:', targetTemplate.name, 'Premium:', targetTemplate.isPremium);
+    
     // Se for premium, executa direto
     if (targetTemplate.isPremium) {
+      console.log('🔑 Template premium - executando direto ou solicitando pagamento');
       handlePremiumAction(targetTemplate, executeDownload);
     } else {
-      // Se for gratuito, solicita dados do usuário
-      requestUserDataIfNeeded(executeDownload, 'download', false);
+      // Se for gratuito, SEMPRE solicita dados do usuário
+      console.log('🎁 Template gratuito - abrindo pop-up de coleta');
+      setPendingAction(() => executeDownload);
+      setCurrentActionType('download');
+      setUserDataModalOpen(true);
     }
   };
 
@@ -222,12 +315,17 @@ function TemplateSelectorContent() {
       }
     };
 
+    console.log('🔍 DEBUG PRINT - Template:', state.selectedTemplate.name, 'Premium:', state.selectedTemplate.isPremium);
+
     // Se for premium, executa direto
     if (state.selectedTemplate.isPremium) {
       handlePremiumAction(state.selectedTemplate, executePrint);
     } else {
-      // Se for gratuito, solicita dados do usuário
-      requestUserDataIfNeeded(executePrint, 'print', false);
+      // Se for gratuito, SEMPRE solicita dados do usuário
+      console.log('🎁 Template gratuito - abrindo pop-up para print');
+      setPendingAction(() => executePrint);
+      setCurrentActionType('print');
+      setUserDataModalOpen(true);
     }
   };
 
@@ -241,36 +339,66 @@ function TemplateSelectorContent() {
       setEmailDialogOpen(true);
     };
 
+    console.log('🔍 DEBUG EMAIL - Template:', state.selectedTemplate.name, 'Premium:', state.selectedTemplate.isPremium);
+
     // Se for premium, executa direto
     if (state.selectedTemplate.isPremium) {
       handlePremiumAction(state.selectedTemplate, executeEmail);
     } else {
-      // Se for gratuito, solicita dados do usuário
-      requestUserDataIfNeeded(executeEmail, 'email', false);
+      // Se for gratuito, SEMPRE solicita dados do usuário
+      console.log('🎁 Template gratuito - abrindo pop-up para email');
+      setPendingAction(() => executeEmail);
+      setCurrentActionType('email');
+      setUserDataModalOpen(true);
     }
   };
 
   const handlePaymentSuccess = () => {
-    console.log('🔧 DEV: Pagamento realizado com sucesso!');
-    toast.success('Template desbloqueado! Você pode usar todas as funcionalidades.');
-    // Atualizar a interface se necessário
-  };
-
-  // Callback quando usuário submete dados
-  const handleUserDataSubmitSuccess = async (userData: any) => {
-    try {
-      // Salvar no banco de dados local
-      await userDataService.saveUser(userData, actionType);
-      
-      toast.success(`Obrigado, ${userData.name}! Seus dados foram salvos com segurança.`);
-      
-      // Chamar callback original
-      handleUserDataSubmit(userData);
-    } catch (error) {
-      console.error('Erro ao salvar dados do usuário:', error);
-      toast.error('Erro ao salvar dados. Tente novamente.');
+    console.log('🔧 PREMIUM: Pagamento realizado com sucesso!');
+    toast.success('Template Premium desbloqueado! Redirecionando para configuração...');
+    
+    // 🚀 NOVO FLUXO: Redirecionar direto para configuração premium
+    if (selectedTemplateForPayment) {
+      setTimeout(() => {
+        navigate(`/premium-editor?template=${selectedTemplateForPayment.id}`);
+      }, 1500);
     }
   };
+
+  const handleUserDataSubmit = async (userData: any) => {
+    try {
+      // 🚨 CORREÇÃO CRÍTICA: Debug detalhado para rastrear salvamento
+      console.log('🔍 ADMIN DEBUG - Tentando salvar dados:', userData);
+      console.log('🎯 Action type:', currentActionType);
+      
+      const result = await userDataService.saveUser(userData, currentActionType);
+      console.log('✅ ADMIN DEBUG - Resultado salvamento:', result);
+      
+      toast.success(`Obrigado, ${userData.name}! Seus dados foram salvos.`);
+      
+      // 🚨 CORREÇÃO: Verificar se dados foram realmente salvos
+      const database = userDataService.getDatabase();
+      console.log('📊 ADMIN DEBUG - Database após salvamento:', database.length, 'itens');
+      
+      if (pendingAction) {
+        pendingAction();
+        setPendingAction(null);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao salvar:', error);
+      toast.error('Erro ao salvar dados.');
+    } finally {
+      setUserDataModalOpen(false);
+      setUserFormData({ name: '', email: '', whatsapp: '' });
+    }
+  };
+
+  const handleUserDataModalClose = () => {
+    setUserDataModalOpen(false);
+    setPendingAction(null);
+    setUserFormData({ name: '', email: '', whatsapp: '' });
+  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -387,16 +515,14 @@ function TemplateSelectorContent() {
                   )}
                 </button>
 
-                {/* JobIA - Apenas para templates premium */}
-                {state.selectedTemplate.isPremium && checkPremiumAccess(state.selectedTemplate) && (
-                  <button
-                    onClick={() => setJobAIChatOpen(true)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg"
-                  >
-                    <BrainCircuit className="w-5 h-5" />
-                    JobIA - Especialista RH
-                  </button>
-                )}
+                {/* JobIA - Sempre disponível para qualquer template */}
+                {/* <button
+                  onClick={() => setJobAIChatOpen(true)}
+                  className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg"
+                >
+                  <BrainCircuit className="w-5 h-5" />
+                  JobIA - Especialista RH
+                </button> */}
               </div>
 
               {/* Premium Notice */}
@@ -415,7 +541,7 @@ function TemplateSelectorContent() {
                   <p className="text-green-800 text-sm font-medium">
                     🎉 Template gratuito! Para usar, precisamos apenas de suas informações básicas (nome, email, WhatsApp) para melhorar nosso serviço.
                   </p>
-                  {hasUserData && (
+                  {hasValidData() && ( // Changed from hasUserData to hasValidData
                     <p className="text-green-600 text-xs mt-1">
                       ✅ Seus dados já foram coletados. Pode usar à vontade!
                     </p>
@@ -435,6 +561,101 @@ function TemplateSelectorContent() {
               isExporting={isExporting}
               hasData={!!data.personalInfo.name}
             />
+          </div>
+
+          {/* 🚀 SEÇÃO DE MARKETING PREMIUM */}
+          <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 rounded-xl p-8 shadow-2xl border border-purple-200 mt-8 text-white overflow-hidden relative">
+            {/* Elementos decorativos */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-pink-400/20 to-purple-500/20 rounded-full blur-2xl"></div>
+            
+            <div className="relative z-10">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-4 py-2 rounded-full text-sm font-bold mb-4">
+                  <Crown className="w-4 h-4" />
+                  OFERTA ESPECIAL PREMIUM
+                </div>
+                <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                  🚀 Transforme seu Currículo em uma Ferramenta de Sucesso!
+                </h2>
+                <p className="text-xl text-purple-100 mb-6">
+                  Após sua compra, você terá acesso a uma <strong>página exclusiva</strong> onde poderá:
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center mb-4">
+                    <span className="text-2xl">⚙️</span>
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 text-cyan-300">Personalização Total</h3>
+                  <p className="text-purple-100 text-sm">
+                    Configure cores, fontes, espaçamentos e layout em <strong>tempo real</strong>. Veja as mudanças instantaneamente!
+                  </p>
+                </div>
+
+                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center mb-4">
+                    <span className="text-2xl">📊</span>
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 text-emerald-300">Avaliação Profissional</h3>
+                  <p className="text-purple-100 text-sm">
+                    Receba uma <strong>análise detalhada</strong> do seu currículo com pontos de melhoria e dicas de especialistas em RH.
+                  </p>
+                </div>
+
+                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center mb-4">
+                    <span className="text-2xl">⭐</span>
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 text-pink-300">Resultado Premium</h3>
+                  <p className="text-purple-100 text-sm">
+                    Currículos que <strong>chamam atenção</strong> dos recrutadores e aumentam suas chances de contratação em até 300%!
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-400/30 rounded-lg p-4 mb-6">
+                  <p className="text-yellow-300 font-bold text-lg mb-2">
+                    🔥 <span className="animate-pulse">OFERTA LIMITADA</span> 🔥
+                  </p>
+                  <p className="text-purple-100">
+                    <span className="line-through text-gray-400">R$ 19,90</span> 
+                    <span className="text-3xl font-bold text-yellow-300 ml-2">R$ 4,90</span>
+                    <span className="text-sm text-purple-200 ml-2">(75% de desconto)</span>
+                  </p>
+                  <p className="text-sm text-red-300 mt-1">⏰ Apenas para os primeiros 100 usuários!</p>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-4 text-sm text-purple-200 mb-6">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Sem mensalidades</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Acesso vitalício</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Sem watermark</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Suporte especializado</span>
+                  </div>
+                </div>
+
+                <p className="text-purple-200 text-lg mb-4">
+                  👆 <strong>Clique em "Comprar Premium"</strong> em qualquer template acima e seja redirecionado para sua página exclusiva!
+                </p>
+
+                <div className="text-xs text-purple-300">
+                  💡 Dica: Escolha o template que mais combina com seu perfil e clique em "Comprar Premium" para começar!
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Empty State */}
@@ -480,22 +701,72 @@ function TemplateSelectorContent() {
       )}
 
       {/* Modal de Coleta de Dados do Usuário */}
-      <UserDataCollector
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        onSubmit={handleUserDataSubmitSuccess}
-        actionType={actionType}
-        templateType={state.selectedTemplate?.isPremium ? 'premium' : 'free'}
-      />
+      {userDataModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-800">
+                {currentActionType === 'download' ? 'Dados para Download' : currentActionType === 'print' ? 'Dados para Impressão' : 'Dados para Email'}
+              </h3>
+              <button onClick={handleUserDataModalClose} className="text-gray-500 hover:text-gray-700">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Nome
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={userFormData.name}
+                onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Seu nome"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email (opcional)
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={userFormData.email}
+                onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="seu.email@exemplo.com"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700 mb-1">
+                WhatsApp (opcional)
+              </label>
+              <input
+                type="tel"
+                id="whatsapp"
+                value={userFormData.whatsapp}
+                onChange={(e) => setUserFormData({ ...userFormData, whatsapp: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="(11) 99999-9999"
+              />
+            </div>
+            <Button onClick={() => handleUserDataSubmit(userFormData)} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              {currentActionType === 'download' ? 'Baixar PDF' : currentActionType === 'print' ? 'Imprimir' : 'Enviar Email'}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* JobIA Chat - Especialista em RH */}
-      <JobAIChat
+      {/* <JobAIChat
         open={jobAIChatOpen}
         onOpenChange={setJobAIChatOpen}
-      />
+      /> */}
 
       {/* Dev Mode Panel - Apenas em desenvolvimento */}
-      <DevModePanel />
+      
     </div>
   );
 }

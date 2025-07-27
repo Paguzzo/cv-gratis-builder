@@ -50,6 +50,13 @@ export default function AdminPanel() {
   const loadData = () => {
     const database = userDataService.getDatabase();
     const statistics = userDataService.getStatistics();
+    
+    // 🔧 DEBUG: Logs para identificar problema
+    console.log('🔍 ADMIN DEBUG - Carregando dados...');
+    console.log('📊 Database carregada:', database);
+    console.log('📈 Statistics:', statistics);
+    console.log('📦 Total de usuários:', database.length);
+    
     setUsers(database);
     setStats(statistics);
   };

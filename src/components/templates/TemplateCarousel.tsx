@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TemplateRenderer } from './TemplateRenderer';
+import { useNavigate } from 'react-router-dom';
 
 interface TemplateCarouselProps {
   templates: Template[];
@@ -24,6 +25,7 @@ export function TemplateCarousel({
   isExporting = false,
   hasData = false
 }: TemplateCarouselProps) {
+  const navigate = useNavigate();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'center',
     containScroll: 'trimSnaps',
@@ -67,7 +69,51 @@ export function TemplateCarousel({
   };
 
   const handleDownloadClick = (e: React.MouseEvent, templateId: string) => {
+    console.log('🎯 CLIQUE DEFINITIVO - PREMIUM');
+    console.log('🎯 Template ID:', templateId);
+    
+    e.preventDefault();
     e.stopPropagation();
+    
+    const template = templates.find(t => t.id === templateId);
+    console.log('🎯 Template:', template?.name);
+    console.log('🎯 Premium?:', template?.isPremium);
+    
+    if (template?.isPremium) {
+      console.log('🎯 PREMIUM DETECTADO - REDIRECIONAMENTO DEFINITIVO');
+      
+      // SOLUÇÃO DEFINITIVA: REDIRECIONAMENTO GARANTIDO
+      const targetUrl = `/premium-editor?template=${templateId}`;
+      console.log('🎯 REDIRECIONANDO PARA:', targetUrl);
+      
+      // MÉTODO DEFINITIVO: FORÇAR NAVEGAÇÃO
+      try {
+        // Método 1: Imediato
+        window.location.href = targetUrl;
+        console.log('🎯 MÉTODO 1 EXECUTADO: href');
+        
+        // Método 2: Backup imediato
+        setTimeout(() => {
+          window.location.replace(targetUrl);
+          console.log('🎯 MÉTODO 2 EXECUTADO: replace');
+        }, 50);
+        
+        // Método 3: Último recurso
+        setTimeout(() => {
+          window.open(targetUrl, '_self');
+          console.log('🎯 MÉTODO 3 EXECUTADO: open');
+        }, 150);
+        
+      } catch (error) {
+        console.error('🎯 ERRO NO REDIRECIONAMENTO:', error);
+        // Forçar navegação mesmo com erro
+        window.location.href = targetUrl;
+      }
+      
+      return false;
+    }
+    
+    // Se for gratuito, usar função normal
     if (onDownload) {
       onDownload(templateId);
     }
@@ -86,25 +132,25 @@ export function TemplateCarousel({
           </p>
         </div>
         
-        {/* Navegação */}
-        <div className="flex items-center gap-2">
+        {/* Navegação - DESTACADA */}
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
             size="sm"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className="h-10 w-10 p-0"
+            className="h-12 w-12 p-0 border-2 border-blue-300 hover:border-blue-500 hover:bg-blue-50 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-30"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-6 w-6 text-blue-600" />
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className="h-10 w-10 p-0"
+            className="h-12 w-12 p-0 border-2 border-blue-300 hover:border-blue-500 hover:bg-blue-50 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-30"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-6 w-6 text-blue-600" />
           </Button>
         </div>
       </div>
@@ -212,7 +258,7 @@ export function TemplateCarousel({
                       {template.isPremium ? (
                         <>
                           <Crown className="w-3 h-3 mr-2" />
-                          Baixar Premium
+                          Comprar Premium
                         </>
                       ) : (
                         <>

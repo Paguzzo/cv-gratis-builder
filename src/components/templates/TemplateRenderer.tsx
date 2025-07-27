@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Template } from '@/types/templates';
 import { useCurriculumData } from '@/hooks/useCurriculumData';
-import { ModernTemplate } from './templates/ModernTemplate';
-import { ExecutiveTemplate } from './templates/ExecutiveTemplate';
-import { TechTemplate } from './templates/TechTemplate';
-import { CreativeTemplate } from './templates/CreativeTemplate';
-import { ClassicTemplate } from './templates/ClassicTemplate';
-import { MinimalTemplate } from './templates/MinimalTemplate';
-import { PastelTemplate } from './templates/PastelTemplate';
-import { FormalTemplate } from './templates/FormalTemplate';
-import { ProfessionalTemplate } from './templates/ProfessionalTemplate';
+import { Loader2 } from 'lucide-react';
+
+// 🚀 LAZY LOADING: Carregar templates apenas quando necessário
+const ModernTemplate = React.lazy(() => import('./templates/ModernTemplate').then(m => ({ default: m.ModernTemplate })));
+const ExecutiveTemplate = React.lazy(() => import('./templates/ExecutiveTemplate').then(m => ({ default: m.ExecutiveTemplate })));
+const TechTemplate = React.lazy(() => import('./templates/TechTemplate').then(m => ({ default: m.TechTemplate })));
+const CreativeTemplate = React.lazy(() => import('./templates/CreativeTemplate').then(m => ({ default: m.CreativeTemplate })));
+const ClassicTemplate = React.lazy(() => import('./templates/ClassicTemplate').then(m => ({ default: m.ClassicTemplate })));
+const MinimalTemplate = React.lazy(() => import('./templates/MinimalTemplate').then(m => ({ default: m.MinimalTemplate })));
+const PastelTemplate = React.lazy(() => import('./templates/PastelTemplate').then(m => ({ default: m.PastelTemplate })));
+const FormalTemplate = React.lazy(() => import('./templates/FormalTemplate').then(m => ({ default: m.FormalTemplate })));
+const ProfessionalTemplate = React.lazy(() => import('./templates/ProfessionalTemplate').then(m => ({ default: m.ProfessionalTemplate })));
+
+// 💾 PERFORMANCE: Loading component otimizado
+const TemplateLoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[400px] bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+    <div className="text-center space-y-3">
+      <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500" />
+      <p className="text-sm text-gray-600">Carregando template...</p>
+    </div>
+  </div>
+);
 
 interface TemplateRendererProps {
   template: Template;
@@ -46,11 +59,11 @@ export function TemplateRenderer({ template, className, forExport = false }: Tem
   };
 
   return (
-    <div 
-      className={className} 
-      id={forExport ? 'template-preview-container' : undefined}
-    >
-      {renderTemplate()}
+    <div className={className}>
+      {/* 🚀 SUSPENSE: Loading state enquanto carrega template */}
+      <Suspense fallback={<TemplateLoadingSpinner />}>
+        {renderTemplate()}
+      </Suspense>
     </div>
   );
 } 

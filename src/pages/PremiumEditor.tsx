@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { AVAILABLE_TEMPLATES, Template } from '@/types/templates';
 import { StripeService } from '@/services/stripeService';
 import { EmailService } from '@/services/emailService';
+import MCPEmailService, { CurriculumEmailData } from '@/services/mcpEmailService';
 import { 
   ArrowLeft, 
   Download, 
@@ -468,80 +469,35 @@ export default function PremiumEditor() {
     }
 
     try {
-      toast.success('Preparando envio de email...');
+      toast.success('Enviando via sistema integrado MCP + Resend...');
       
-      // Gerar PDF para anexar
-      const previewElement = document.querySelector('.template-premium-preview') as HTMLElement;
-      
-      if (previewElement) {
-        const html2canvas = await import('html2canvas');
-        const jsPDF = await import('jspdf');
-        
-        // Capturar elemento com melhor qualidade
-        const canvas = await html2canvas.default(previewElement, {
-          scale: 2,
-          backgroundColor: '#ffffff',
-          logging: false,
-          useCORS: true,
-          allowTaint: true
-        });
-        
-        // Gerar PDF
-        const pdf = new jsPDF.jsPDF();
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        const imgWidth = 190;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-        
-        // Baixar PDF automaticamente para anexar manualmente
-        const fileName = `curriculo-${selectedTemplate?.name || 'premium'}-${new Date().toISOString().slice(0,10)}.pdf`;
-        pdf.save(fileName);
-        
-        // Aguardar um pouco para download processar
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Usar EmailService para envio
-        const pdfBase64 = pdf.output('datauristring').split(',')[1];
-        const emailPayload = {
-          to_email: to,
-          subject: subject,
-          message: message,
-          attachment_name: fileName,
-          attachment_data: pdfBase64,
-          from_name: 'CV Grátis Builder'
-        };
+      // Usar novo sistema MCP integrado
+      const curriculumData: CurriculumEmailData = {
+        recipientEmail: to,
+        senderName: 'Usuário Premium',
+        subject: subject,
+        message: message,
+        templateId: selectedTemplate?.id || 'premium-template'
+      };
 
-        toast.success('Tentando envio automático...');
-        
-        // Tentar envio com fallback
-        const result = await EmailService.sendEmailWithFallback(emailPayload);
-        
-        if (result.success) {
-          setEmailModalOpen(false);
-          if (result.method === 'emailjs') {
-            toast.success(`✅ Email enviado automaticamente para ${to}!`);
-          } else {
-            toast.success(`📧 PDF baixado! Anexe o arquivo "${fileName}" no email que será aberto.`);
-            
-            // Criar link mailto mais detalhado
-            const detailedMessage = `${message}\n\n🔗 IMPORTANTE: Anexe o arquivo PDF "${fileName}" que foi baixado automaticamente na pasta Downloads.\n\n📎 O arquivo contém meu currículo profissional atualizado.\n\nObrigado!`;
-            
-            const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(detailedMessage)}`;
-            
-            // Aguardar um pouco mais antes de abrir o cliente
-            setTimeout(() => {
-              window.open(mailtoLink, '_blank');
-            }, 1500);
-          }
-          setEmailData(prev => ({...prev, to: ''}));
-        } else {
-          throw new Error('Falha no envio');
-        }
-      }
+      const result = await MCPEmailService.sendCurriculumByEmail(curriculumData);
       
+      if (result.success) {
+        setEmailModalOpen(false);
+        toast.success(`✅ Email enviado com sucesso! ID: ${result.emailId}`);
+        
+        // Limpar dados
+        setEmailData({
+          to: '',
+          subject: 'Meu Currículo Profissional',
+          message: 'Olá!\n\nSegue em anexo meu currículo atualizado para sua análise.\n\nAguardo seu retorno.\n\nAtenciosamente.'
+        });
+      } else {
+        throw new Error(result.error || 'Falha no envio via MCP');
+      }
     } catch (error) {
-      console.error('Erro no envio:', error);
-      toast.error('Erro ao enviar email. PDF foi baixado para anexar manualmente.');
+      console.error('Erro ao enviar email:', error);
+      toast.error('Erro ao enviar email via MCP. Tente novamente.');
       setEmailModalOpen(false);
     }
   };
@@ -708,35 +664,17 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                         />
                       </div>
                       
-                      <div className="bg-blue-50 p-3 rounded-lg border text-sm">
-                        <p className="font-medium text-blue-800 mb-1">🤖 Como funciona:</p>
-                        <p className="text-blue-700">• PDF será baixado automaticamente</p>
-                        <p className="text-blue-700">• Cliente de email abrirá com instruções</p>
-                        <p className="text-blue-700">• Anexe o PDF baixado antes de enviar</p>
+                      <div className="bg-green-50 p-3 rounded-lg border text-sm">
+                        <p className="font-medium text-green-800 mb-1">✅ Sistema Integrado MCP + Resend:</p>
+                        <p className="text-green-700">• Envio automático via curriculogratisonline.com</p>
+                        <p className="text-green-700">• PDF anexado automaticamente</p>
+                        <p className="text-green-700">• Notificação para administrador</p>
                       </div>
                       
                       <div className="flex gap-2">
-                        <Button onClick={handleSendEmail} className="flex-1">
+                        <Button onClick={handleSendEmail} className="flex-1 bg-green-600 hover:bg-green-700">
                           <Send className="w-4 h-4 mr-2" />
-                          Preparar Email
-                        </Button>
-                        <Button 
-                          onClick={() => {
-                            const { to, subject, message } = emailData;
-                            if (!to) {
-                              toast.error('Por favor, informe o email de destino');
-                              return;
-                            }
-                            const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-                            window.open(mailtoLink, '_blank');
-                            setEmailModalOpen(false);
-                            toast.success('Cliente de email aberto! Anexe o PDF manualmente.');
-                          }}
-                          variant="outline" 
-                          className="flex-1"
-                        >
-                          <Mail className="w-4 h-4 mr-2" />
-                          Só Email
+                          Enviar Email + PDF
                         </Button>
                       </div>
                     </div>

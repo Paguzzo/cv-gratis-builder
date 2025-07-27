@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { StripeService, PaymentData } from "@/services/stripeService";
+// import { StripeService, PaymentData } from "@/services/stripeService"; // 🚨 REMOVIDO
 import { CreditCard, Loader2, CheckCircle, Lock } from "lucide-react";
 import { Template } from "@/types/templates";
 
@@ -29,16 +29,19 @@ export function PaymentDialog({ open, onOpenChange, template, onPaymentSuccess }
     setIsProcessing(true);
 
     try {
-      const paymentData: PaymentData = {
-        templateId: template.id,
-        templateName: template.name,
-        price: template.price || 4.90,
-        userId: 'guest', // Em produção, pegar do contexto de usuário
-        userEmail: '' // Em produção, pegar do contexto de usuário
+      // 🚨 CORREÇÃO CRÍTICA: Simulação simples sem depender do Stripe
+      console.log('💳 PAGAMENTO: Processando template:', template.id);
+      
+      // Simular processamento
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Marcar como comprado
+      localStorage.setItem(`stripe_purchased_${template.id}`, 'true');
+      
+      const result = {
+        success: true,
+        paymentIntent: { status: 'succeeded' }
       };
-
-      console.log('🔧 DEV: Iniciando pagamento simulado para template:', template.id);
-      const result = await StripeService.processTemplatePayment(paymentData);
 
       if (result.success) {
         setPaymentComplete(true);
@@ -76,7 +79,7 @@ export function PaymentDialog({ open, onOpenChange, template, onPaymentSuccess }
         }, 3000);
 
       } else {
-        throw new Error(result.error || 'Erro no pagamento');
+        throw new Error('Erro no pagamento');
       }
 
     } catch (error) {

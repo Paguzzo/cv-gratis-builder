@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { EmailService } from '@/services/emailService';
 import { AIService } from '@/services/aiService';
-import { StripeService } from '@/services/stripeService';
+// import { StripeService } from '@/services/stripeService'; // 🚨 REMOVIDO
 import { useToast } from '@/hooks/use-toast';
 
 interface ApiStatus {
@@ -101,8 +101,9 @@ export default function ApiTestPanel() {
 
     // Verificar Stripe
     try {
-      const stripeConfig = StripeService.checkConfiguration();
-      const stripeTest = await StripeService.testConnection();
+      // 🚨 CORREÇÃO: Teste simples sem StripeService  
+      const stripeConfig = { configured: false, hasPublishableKey: false };
+      const stripeTest = { success: false, message: 'Stripe desabilitado', error: 'Desabilitado' };
       
       setApiStatuses(prev => ({
         ...prev,
