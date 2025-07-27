@@ -192,10 +192,19 @@ function TemplateSelectorContent() {
       }, 100);
     };
 
-    // 🔧 CORREÇÃO: Verificar se é template gratuito
+    // 🔧 CORREÇÃO: Verificar se é template premium
     if (template.isPremium) {
-      console.log('🔑 Carrossel: Template premium - executando direto');
-      executeDownload();
+      console.log('🔑 Carrossel: Template premium - redirecionando para configuração');
+      
+      // Redirecionar para página de configuração premium
+      const targetUrl = `/premium-editor?template=${templateId}`;
+      console.log('🎯 CARROSSEL: Redirecionando para:', targetUrl);
+      
+      // Marcar como liberado no modo dev
+      localStorage.setItem(`template_purchased_${templateId}`, 'true');
+      localStorage.setItem(`premium_access_${templateId}`, 'true');
+      
+      setLocation(targetUrl);
     } else {
       // Se for gratuito, SEMPRE solicita dados do usuário
       console.log('🎁 Carrossel: Template gratuito - abrindo pop-up');
@@ -220,36 +229,21 @@ function TemplateSelectorContent() {
     if (checkPremiumAccess(template)) {
       action();
     } else {
-      // 🎯 SOLUÇÃO DEFINITIVA - PREMIUM
+      // 🎯 REDIRECIONAMENTO PARA PÁGINA PREMIUM
       console.log('🎯 TEMPLATE SELECTOR - PREMIUM DETECTADO');
       console.log('🎯 Template ID:', template.id);
 
       const targetUrl = `/premium-editor?template=${template.id}`;
-      console.log('🎯 REDIRECIONAMENTO DEFINITIVO PARA:', targetUrl);
+      console.log('🎯 REDIRECIONANDO PARA:', targetUrl);
 
-      // SOLUÇÃO DEFINITIVA: REDIRECIONAMENTO GARANTIDO
-      try {
-        // Método 1: Imediato
-        window.location.href = targetUrl;
-        console.log('🎯 TEMPLATE SELECTOR - MÉTODO 1 EXECUTADO: href');
-
-        // Método 2: Backup imediato
-        setTimeout(() => {
-          window.location.replace(targetUrl);
-          console.log('🎯 TEMPLATE SELECTOR - MÉTODO 2 EXECUTADO: replace');
-        }, 50);
-
-        // Método 3: Último recurso
-        setTimeout(() => {
-          window.open(targetUrl, '_self');
-          console.log('🎯 TEMPLATE SELECTOR - MÉTODO 3 EXECUTADO: open');
-        }, 150);
-
-      } catch (error) {
-        console.error('🎯 TEMPLATE SELECTOR - ERRO NO REDIRECIONAMENTO:', error);
-        // Forçar navegação mesmo com erro
-        window.location.href = targetUrl;
-      }
+      // Usar o hook de navegação do Wouter
+      setLocation(targetUrl);
+      
+      // Marcar template como liberado no modo dev
+      localStorage.setItem(`template_purchased_${template.id}`, 'true');
+      localStorage.setItem(`premium_access_${template.id}`, 'true');
+      
+      console.log('✅ REDIRECIONAMENTO EXECUTADO VIA WOUTER');
     }
   };
 

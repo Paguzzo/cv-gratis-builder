@@ -35,8 +35,42 @@ export class MCPEmailService {
     console.log('📧 Iniciando envio de email via MCP + Resend');
     console.log('📧 Para:', emailData.to);
     console.log('📧 Assunto:', emailData.subject);
+    console.log('📧 De:', emailData.from);
 
     try {
+      // Tentar envio direto via fetch para o servidor backend
+      console.log('📧 Tentando envio direto via API backend...');
+      
+      try {
+        const response = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: emailData.to,
+            from: emailData.from,
+            subject: emailData.subject,
+            text: emailData.text,
+            html: emailData.html || emailData.text
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('✅ Email enviado via API backend com sucesso:', result);
+          
+          return {
+            success: true,
+            emailId: result.id || `api_${Date.now()}`
+          };
+        } else {
+          console.warn('⚠️ Erro na API backend:', response.status, response.statusText);
+        }
+      } catch (apiError) {
+        console.warn('⚠️ Erro na API backend, tentando MCP:', apiError);
+      }
+
       // Verificar se MCP está disponível
       if (typeof window !== 'undefined' && window.mcp_Email_sending_send_email) {
         console.log('📧 MCP Email disponível, tentando envio real...');
@@ -44,7 +78,7 @@ export class MCPEmailService {
         try {
           const result = await window.mcp_Email_sending_send_email({
             to: emailData.to,
-            from: this.DEFAULT_FROM,
+            from: emailData.from,
             subject: emailData.subject,
             text: emailData.text,
             html: emailData.html || emailData.text
@@ -57,32 +91,12 @@ export class MCPEmailService {
             emailId: result.id || `mcp_${Date.now()}`
           };
         } catch (mcpError) {
-          console.warn('⚠️ Erro no MCP, usando fallback:', mcpError);
+          console.warn('⚠️ Erro no MCP:', mcpError);
         }
       }
 
-      // Fallback: Simular envio para desenvolvimento
-      console.log('📧 Usando modo fallback/desenvolvimento');
-      
-      const emailId = `fallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Simular delay de envio real
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      
-      // Log detalhado para debug
-      console.log('📧 DADOS DO EMAIL PROCESSADO:');
-      console.log('- Para:', emailData.to);
-      console.log('- De:', emailData.from);
-      console.log('- Assunto:', emailData.subject);
-      console.log('- Conteúdo:', emailData.text.substring(0, 100) + '...');
-      console.log('- ID:', emailId);
-      
-      console.log('✅ Email processado com sucesso (modo desenvolvimento)');
-      
-      return {
-        success: true,
-        emailId: emailId
-      };
+      // Se chegou até aqui, houve erro nos métodos anteriores
+      throw new Error('Nenhum método de envio disponível funcionou');
       
     } catch (error) {
       console.error('❌ Erro no envio de email:', error);

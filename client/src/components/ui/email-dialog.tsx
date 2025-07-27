@@ -63,8 +63,8 @@ export function EmailDialog({ open, onOpenChange, templateId, senderName }: Emai
       }
 
       toast({
-        title: "Email enviado!",
-        description: "Seu currículo foi enviado com sucesso.",
+        title: "Email enviado com sucesso! ✅",
+        description: `Currículo enviado para ${formData.recipientEmail}. ID: ${result.emailId}`,
       });
 
       onOpenChange(false);
