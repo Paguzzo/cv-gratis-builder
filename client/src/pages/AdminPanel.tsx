@@ -21,7 +21,8 @@ import {
   TrendingUp,
   AlertCircle,
   LogOut,
-  Shield
+  Shield,
+  Crown
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -50,13 +51,13 @@ export default function AdminPanel() {
   const loadData = () => {
     const database = userDataService.getDatabase();
     const statistics = userDataService.getStatistics();
-    
+
     // 🔧 DEBUG: Logs para identificar problema
     console.log('🔍 ADMIN DEBUG - Carregando dados...');
     console.log('📊 Database carregada:', database);
     console.log('📈 Statistics:', statistics);
     console.log('📦 Total de usuários:', database.length);
-    
+
     setUsers(database);
     setStats(statistics);
   };
@@ -66,9 +67,9 @@ export default function AdminPanel() {
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.whatsapp.includes(searchTerm);
-    
+
     const matchesAction = selectedAction === 'all' || user.actionType === selectedAction;
-    
+
     return matchesSearch && matchesAction;
   });
 
@@ -146,7 +147,7 @@ export default function AdminPanel() {
                 Gerenciamento dos dados coletados dos usuários gratuitos
               </p>
             </div>
-            
+
             <div className="flex gap-3">
               <Button onClick={handleViewInConsole} variant="outline">
                 <Eye className="w-4 h-4 mr-2" />
@@ -261,7 +262,7 @@ export default function AdminPanel() {
                       </div>
                     </div>
                   ))}
-                  
+
                   {users.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
                       <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -332,7 +333,7 @@ export default function AdminPanel() {
                       ))}
                     </tbody>
                   </table>
-                  
+
                   {filteredUsers.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
                       <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -377,7 +378,7 @@ export default function AdminPanel() {
                     <Download className="w-4 h-4 mr-2" />
                     Exportar Dados para Excel
                   </Button>
-                  
+
                   <Button 
                     onClick={handleViewInConsole} 
                     variant="outline" 
@@ -386,7 +387,7 @@ export default function AdminPanel() {
                     <Eye className="w-4 h-4 mr-2" />
                     Ver Dados no Console
                   </Button>
-                  
+
                   <Button 
                     onClick={handleClearData} 
                     variant="destructive" 
@@ -397,7 +398,7 @@ export default function AdminPanel() {
                   </Button>
 
                   <hr className="my-4" />
-                  
+
                   <Button 
                     onClick={handleExitAdmin} 
                     variant="outline" 
@@ -406,7 +407,7 @@ export default function AdminPanel() {
                     <LogOut className="w-4 h-4 mr-2" />
                     Sair do Modo Administrativo
                   </Button>
-                  
+
                   <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <h4 className="font-medium text-yellow-800 mb-2">⚡ Acesso via Console</h4>
                     <p className="text-sm text-yellow-700">
@@ -433,8 +434,73 @@ export default function AdminPanel() {
               </Card>
             )}
           </TabsContent>
-        </Tabs>
-      </div>
-    </div>
-  );
-} 
+
+          {/* Teste APIs */}
+          <TabsContent value="apis" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Acesso Premium</CardTitle>
+                  <CardDescription>
+                    Ferramentas para acesso direto ao premium
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button 
+                    onClick={() => window.open('/premium-editor', '_blank')} 
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Acessar Editor Premium
+                  </Button>
+
+                  <Button 
+                    onClick={() => {
+                      localStorage.setItem('stripe_purchased_premium_template', 'true');
+                      localStorage.setItem('admin_premium_access', 'true');
+                      alert('✅ Acesso premium habilitado para esta sessão');
+                    }} 
+                    variant="outline" 
+                    className="w-full"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Habilitar Acesso Premium Temporário
+                  </Button>
+
+                  <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                    <p className="text-sm text-purple-700">
+                      <strong>💡 Dica:</strong> Use o botão acima para acessar o editor premium 
+                      diretamente sem passar pelo pagamento.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Distribuição por Ação</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Object.entries(stats.byAction || {}).map(([action, count]) => (
+                      <div key={action} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {getActionBadge(action)}
+                        </div>
+                        <div className="text-2xl font-bold">{count as number}</div>
+                      </div>
+                    ))}
+
+                    {/* Adicionar contador de premium */}
+                    <div className="flex items-center justify-between border-t pt-3">
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-purple-100 text-purple-800">
+                          <Crown className="w-3 h-3 mr-1" />
+                          Premium
+                        </Badge>
+                      </div>
+                      <div className="text-2xl font-bold">{stats.byAction?.premium || 0}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>

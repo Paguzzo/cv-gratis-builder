@@ -23,7 +23,7 @@ class UserDataService {
     console.log('🔍 SAVE DEBUG - Tentativa de salvar usuário:');
     console.log('👤 UserData recebida:', userData);
     console.log('🎯 ActionType:', actionType);
-    
+
     const entry: UserDatabaseEntry = {
       id: this.generateId(),
       ...userData,
@@ -35,29 +35,29 @@ class UserDataService {
 
     const database = this.getDatabase();
     console.log('📦 Database ANTES do push:', database.length, 'itens');
-    
+
     database.push(entry);
     this.saveDatabase(database);
-    
+
     console.log('📦 Database DEPOIS do push:', database.length, 'itens');
     console.log('✅ Entry salva:', entry);
 
     // Log para desenvolvimento
     console.log('✅ Usuário salvo no banco:', entry);
-    
+
     return entry;
   }
 
   // 🔧 DEBUG: Método de teste para verificar se sistema funciona
   testSaveUser(): void {
     console.log('🧪 TESTE DEBUG - Simulando salvamento de usuário...');
-    
+
     const testUserData = {
       name: 'Teste Debug',
       email: 'teste@debug.com',
       whatsapp: '11999999999'
     };
-    
+
     this.saveUser(testUserData, 'download').then(result => {
       console.log('✅ TESTE CONCLUÍDO - Usuário de teste salvo:', result);
       console.log('📊 Total na database agora:', this.getDatabase().length);
@@ -104,7 +104,7 @@ class UserDataService {
   // Exportar dados como CSV (para planilha)
   exportToCSV(): string {
     const database = this.getDatabase();
-    
+
     if (database.length === 0) {
       return 'Nenhum dado para exportar';
     }
@@ -132,7 +132,7 @@ class UserDataService {
     const csvContent = this.exportToCSV();
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    
+
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
@@ -148,7 +148,7 @@ class UserDataService {
   getStatistics() {
     const database = this.getDatabase();
     const total = database.length;
-    
+
     const byAction = database.reduce((acc, entry) => {
       acc[entry.actionType] = (acc[entry.actionType] || 0) + 1;
       return acc;
@@ -188,6 +188,57 @@ class UserDataService {
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
+
+  // Rastrear ação de usuário premium
+  trackPremiumAccess(userEmail: string): void {
+    const database = this.getDatabase();
+
+    const entry: UserDatabaseEntry = {
+      id: this.generateId(),
+      name: 'Usuário Premium',
+      email: userEmail,
+      whatsapp: '',
+      actionType: 'premium' as any,
+      timestamp: new Date().toISOString(),
+      source: 'premium_editor'
+    };
+
+    database.push(entry);
+    this.saveDatabase(database);
+
+    console.log('📊 USER DATA: Acesso premium rastreado:', entry);
+  }
+
+  // Rastrear ação de usuário gratuito
+  async saveUser(userData: UserData, actionType: 'download' | 'print' | 'email'): Promise<UserDatabaseEntry> {
+    // 🔧 DEBUG: Logs detalhados para rastrear salvamento
+    console.log('🔍 SAVE DEBUG - Tentativa de salvar usuário:');
+    console.log('👤 UserData recebida:', userData);
+    console.log('🎯 ActionType:', actionType);
+
+    const entry: UserDatabaseEntry = {
+      id: this.generateId(),
+      ...userData,
+      actionType,
+      timestamp: new Date().toISOString(),
+      source: 'cvgratis-free-template',
+      userAgent: navigator.userAgent,
+    };
+
+    const database = this.getDatabase();
+    console.log('📦 Database ANTES do push:', database.length, 'itens');
+
+    database.push(entry);
+    this.saveDatabase(database);
+
+    console.log('📦 Database DEPOIS do push:', database.length, 'itens');
+    console.log('✅ Entry salva:', entry);
+
+    // Log para desenvolvimento
+    console.log('✅ Usuário salvo no banco:', entry);
+
+    return entry;
+  }
 }
 
 // Instância singleton
@@ -203,10 +254,10 @@ if (typeof window !== 'undefined') {
 export function viewCollectedData() {
   const stats = userDataService.getStatistics();
   console.log('📊 Estatísticas CVGratis:', stats);
-  
+
   const database = userDataService.getDatabase();
   console.table(database);
-  
+
   return { stats, database };
 }
 
@@ -223,4 +274,4 @@ if (typeof window !== 'undefined') {
     clear: () => userDataService.clearDatabase(),
     service: userDataService
   };
-} 
+}

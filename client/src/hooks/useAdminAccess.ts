@@ -1,106 +1,38 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 
 export function useAdminAccess() {
-  const [clickCount, setClickCount] = useState(0);
-  const [isAdminMode, setIsAdminMode] = useState(false);
-  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
-  // Verificar se está no modo admin baseado na URL
-  const checkAdminMode = useCallback(() => {
-    const isInAdminPage = window.location.pathname === '/admin';
-    setIsAdminMode(isInAdminPage);
-    return isInAdminPage;
+  useEffect(() => {
+    // Verificar se está no modo admin
+    const adminMode = localStorage.getItem('admin_mode') === 'true';
+    const adminEnabled = localStorage.getItem('admin_access_enabled') === 'true';
+    setIsAdminMode(adminMode && adminEnabled);
   }, []);
 
-  // Manipular clique na headline
-  const handleHeadlineClick = useCallback(() => {
-    const newCount = clickCount + 1;
-    setClickCount(newCount);
-
-    // Limpar timeout anterior
-    if (clickTimeout.current) {
-      clearTimeout(clickTimeout.current);
+  const enableAdminMode = () => {
+    const adminEnabled = localStorage.getItem('admin_access_enabled') === 'true';
+    if (adminEnabled) {
+      localStorage.setItem('admin_mode', 'true');
+      setIsAdminMode(true);
+      setLocation('/admin');
+    } else {
+      alert('❌ Acesso administrativo não autorizado. Clique 5 vezes na headline da página inicial.');
     }
+  };
 
-    // Feedback visual baseado no número de cliques
-    if (newCount === 1) {
-      toast({
-        title: "🤔",
-        description: "Curioso...",
-        duration: 1000,
-      });
-    } else if (newCount === 2) {
-      toast({
-        title: "🧐",
-        description: "Hmm, interessante...",
-        duration: 1000,
-      });
-    } else if (newCount === 3) {
-      toast({
-        title: "🕵️",
-        description: "Você está procurando algo?",
-        duration: 1000,
-      });
-    } else if (newCount === 4) {
-      toast({
-        title: "🔍",
-        description: "Mais um clique...",
-        duration: 1000,
-      });
-    } else if (newCount === 5) {
-      // Acesso liberado!
-      toast({
-        title: "🔓 Acesso Administrativo Liberado!",
-        description: "Redirecionando para painel admin...",
-        duration: 2000,
-      });
-      
-      setTimeout(() => {
-        setLocation('/admin');
-        setIsAdminMode(true);
-      }, 1000);
-      
-      setClickCount(0);
-      return;
-    }
-
-    // Reset contador após 3 segundos sem cliques
-    clickTimeout.current = setTimeout(() => {
-      setClickCount(0);
-    }, 3000);
-  }, [clickCount, setLocation, toast]);
-
-  // Sair do modo admin
-  const exitAdminMode = useCallback(() => {
+  const exitAdminMode = () => {
+    localStorage.removeItem('admin_mode');
     setIsAdminMode(false);
-    setClickCount(0);
     setLocation('/');
-    toast({
-      title: "👋 Saindo do modo admin",
-      description: "Redirecionando para página inicial...",
-      duration: 2000,
-    });
-  }, [setLocation, toast]);
-
-  // Limpar estados
-  const resetAdminAccess = useCallback(() => {
-    setClickCount(0);
-    setIsAdminMode(false);
-    if (clickTimeout.current) {
-      clearTimeout(clickTimeout.current);
-    }
-  }, []);
+  };
 
   return {
-    clickCount,
     isAdminMode,
-    handleHeadlineClick,
-    exitAdminMode,
-    checkAdminMode,
-    resetAdminAccess
+    enableAdminMode,
+    exitAdminMode
   };
-} 
+}

@@ -75,7 +75,21 @@ export default function Index() {
                 ✨ Mais de 50.000 currículos criados
               </Badge>
 
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 
+                className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight cursor-pointer select-none"
+                onClick={() => {
+                  const clicks = parseInt(localStorage.getItem('headline_clicks') || '0') + 1;
+                  localStorage.setItem('headline_clicks', clicks.toString());
+                  
+                  if (clicks === 5) {
+                    localStorage.setItem('admin_access_enabled', 'true');
+                    alert('🔓 Modo administrativo ativado! Acesse /admin');
+                    localStorage.setItem('headline_clicks', '0'); // Reset counter
+                  } else if (clicks < 5) {
+                    console.log(`🔢 Cliques na headline: ${clicks}/5`);
+                  }
+                }}
+              >
                 Crie seu{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   Currículo Profissional

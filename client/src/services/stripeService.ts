@@ -126,65 +126,78 @@ export class StripeService {
   // Processar pagamento com Stripe Checkout real
   static async processTemplatePayment(paymentData: PaymentData): Promise<PaymentResult> {
     try {
-      if (!this.stripe) {
-        await this.initialize();
-      }
-
-      if (!this.stripe) {
-        // 🚨 CORREÇÃO CRÍTICA: Fallback para simulação se Stripe não inicializar
-        console.warn('⚠️ STRIPE: Não inicializado - usando simulação');
-        
-        // Simular pagamento bem-sucedido
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        localStorage.setItem(`stripe_purchased_${paymentData.templateId}`, 'true');
-        
-        return {
-          success: true,
-          paymentIntent: { status: 'succeeded_simulation' }
-        };
-      }
-
-      // 🚨 CORREÇÃO CRÍTICA: Usar Stripe Checkout real
-      console.log('💳 STRIPE CHECKOUT: Redirecionando para pagamento real do template:', paymentData.templateId);
+      console.log('💳 STRIPE: Redirecionando para pagamento do template:', paymentData.templateId);
       
-      // Criar sessão de checkout do Stripe (simplificado)
-      const { error } = await this.stripe.redirectToCheckout({
-        mode: 'payment',
-        lineItems: [{
-          price: 'price_1234567890', // Price ID criado no dashboard Stripe
-          quantity: 1,
-        }],
-        successUrl: `${window.location.origin}/premium-editor?template=${paymentData.templateId}&success=true`,
-        cancelUrl: `${window.location.origin}/templates?canceled=true`,
-      } as any); // Type assertion para evitar erro
-
-      if (error) {
-        console.error('❌ STRIPE CHECKOUT: Erro ao redirecionar:', error);
-        throw new Error(error.message);
-      }
-
-      // Se chegou aqui sem erro, redirecionamento foi bem-sucedido
-      console.log('✅ STRIPE CHECKOUT: Redirecionamento iniciado');
+      // Usar link direto do Stripe para pagamento
+      const stripePaymentUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
+      
+      // Adicionar parâmetros para identificar o usuário e template
+      const urlParams = new URLSearchParams({
+        client_reference_id: paymentData.userId,
+        metadata: JSON.stringify({
+          templateId: paymentData.templateId,
+          userEmail: paymentData.userEmail,
+          templateName: paymentData.templateName
+        })
+      });
+      
+      const finalUrl = `${stripePaymentUrl}?${urlParams}`;
+      
+      // Salvar dados do pagamento pendente no localStorage
+      localStorage.setItem('stripe_pending_payment', JSON.stringify({
+        templateId: paymentData.templateId,
+        userEmail: paymentData.userEmail,
+        timestamp: Date.now()
+      }));
+      
+      // Redirecionar para o Stripe
+      window.location.href = finalUrl;
       
       return {
         success: true,
-        paymentIntent: { status: 'redirect_to_checkout' }
+        paymentIntent: { status: 'redirect_to_stripe' }
       };
 
     } catch (error) {
-      console.error('❌ STRIPE CHECKOUT: Erro ao processar pagamento:', error);
+      console.error('❌ STRIPE: Erro ao processar pagamento:', error);
       return {
         success: false,
-        error: error.message || 'Erro ao redirecionar para checkout'
+        error: error.message || 'Erro ao redirecionar para pagamento'
       };
     }
   }
 
   // Verificar se template foi comprado
   static hasPurchasedTemplate(templateId: string): boolean {
-    // 🚨 CORREÇÃO CRÍTICA: SEMPRE retornar FALSE para forçar modal de pagamento
-    console.log('🔧 STRIPE: Forçando modal para template:', templateId);
-    return false;
+    // Verificar se há registro de compra no localStorage
+    const purchased = localStorage.getItem(`stripe_purchased_${templateId}`);
+    return purchased === 'true';
+  }
+
+  // Verificar status do pagamento via API
+  static async checkPaymentStatus(templateId: string, userEmail: string): Promise<boolean> {
+    try {
+      const response = await fetch('/api/check-premium-access', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ templateId, userEmail })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success && result.hasPremiumAccess) {
+        // Marcar como comprado no localStorage
+        localStorage.setItem(`stripe_purchased_${templateId}`, 'true');
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Erro ao verificar status do pagamento:', error);
+      return false;
+    }
   }
 
   // Marcar template como comprado (para desenvolvimento)
