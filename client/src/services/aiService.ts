@@ -194,7 +194,7 @@ function getFallbackResponse(prompt: string): string {
     const positionMatch = prompt.match(/Cargo: (.+)/);
     const companyMatch = prompt.match(/Empresa: (.+)/);
     const keywordsMatch = prompt.match(/Competências-chave: (.+)/);
-    const userTextMatch = prompt.match(/Descrição atual: (.+?)(?=Competências-chave|$)/s);
+    const userTextMatch = prompt.match(/Descrição atual: ([\s\S]+?)(?=Competências-chave|$)/);
     
     const position = positionMatch ? positionMatch[1].trim() : 'Profissional';
     const company = companyMatch ? companyMatch[1].trim() : '';
@@ -410,7 +410,7 @@ export class AIService {
 
       return { success: true, model: OPENAI_CONFIG.MODEL };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: (error as Error).message };
     }
   }
   
