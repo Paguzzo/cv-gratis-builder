@@ -19,7 +19,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { to, subject, html } = req.body;
 
       const sendResult = await resend.emails.send({
-        from: 'Acme <onboarding@resend.dev>', // Replace with your verified Resend "from" address
+        from: 'CV Grátis <noreply@app.curriculogratisonline.com>',
         to: to,
         subject: subject,
         html: html,
@@ -36,8 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Premium template configuration endpoint
   app.get("/api/configure-premium", (req: Request, res: Response) => {
     // Redirect to the premium template configuration page
-    // Replace with the actual URL of the configuration page
-    res.redirect("https://app.curriculogratisonline.com/premium-template-config");
+    res.redirect("/premium-editor");
   });
 
   const httpServer = createServer(app);
