@@ -1,12 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 
 export function useAdminAccess() {
   const [clickCount, setClickCount] = useState(0);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const clickTimeout = useRef<NodeJS.Timeout | null>(null);
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   // Verificar se está no modo admin baseado na URL
@@ -60,7 +60,7 @@ export function useAdminAccess() {
       });
       
       setTimeout(() => {
-        navigate('/admin');
+        setLocation('/admin');
         setIsAdminMode(true);
       }, 1000);
       
@@ -72,19 +72,19 @@ export function useAdminAccess() {
     clickTimeout.current = setTimeout(() => {
       setClickCount(0);
     }, 3000);
-  }, [clickCount, navigate, toast]);
+  }, [clickCount, setLocation, toast]);
 
   // Sair do modo admin
   const exitAdminMode = useCallback(() => {
     setIsAdminMode(false);
     setClickCount(0);
-    navigate('/');
+    setLocation('/');
     toast({
       title: "👋 Saindo do modo admin",
       description: "Redirecionando para página inicial...",
       duration: 2000,
     });
-  }, [navigate, toast]);
+  }, [setLocation, toast]);
 
   // Limpar estados
   const resetAdminAccess = useCallback(() => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { SimpleProvider, useSimpleContext } from '@/contexts/SimpleContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,7 +23,7 @@ const SIMPLE_TEMPLATES = [
 ];
 
 function SimpleTemplateSelectorContent() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { curriculumData, hasValidData, setSelectedTemplate } = useSimpleContext();
 
   // Verificar se temos dados
@@ -37,7 +37,7 @@ function SimpleTemplateSelectorContent() {
           <p className="text-gray-600 mb-6">
             Você precisa preencher os dados básicos antes de escolher um template.
           </p>
-          <Button onClick={() => navigate('/criar-curriculo')}>
+          <Button onClick={() => setLocation('/criar-curriculo')}>
             Preencher Dados
           </Button>
         </div>
@@ -63,7 +63,7 @@ function SimpleTemplateSelectorContent() {
         <div className="mb-8">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/criar-curriculo')}
+            onClick={() => setLocation('/criar-curriculo')}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { CombinedProvider } from '@/contexts/CombinedProvider';
 import { useTemplate } from '@/contexts/TemplateContext';
 import { useCurriculumData } from '@/hooks/useCurriculumData';
@@ -25,7 +25,7 @@ import { userDataService } from '@/services/userDataService';
 function TemplateSelectorContent() {
   console.log('🔍 TemplateSelector: Componente iniciando...');
   
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { state, selectTemplate, unlockPremium } = useTemplate();
   const { data } = useCurriculumData();
   const [isExporting, setIsExporting] = useState(false);
@@ -117,7 +117,7 @@ function TemplateSelectorContent() {
           <p className="text-gray-600 mb-6">
             Para escolher um template, você precisa preencher pelo menos seus dados pessoais.
           </p>
-          <Button onClick={() => navigate('/criar-curriculo')}>
+          <Button onClick={() => setLocation('/criar-curriculo')}>
             Preencher Dados
           </Button>
         </div>
@@ -360,7 +360,7 @@ function TemplateSelectorContent() {
     // 🚀 NOVO FLUXO: Redirecionar direto para configuração premium
     if (selectedTemplateForPayment) {
       setTimeout(() => {
-        navigate(`/premium-editor?template=${selectedTemplateForPayment.id}`);
+        setLocation(`/premium-editor?template=${selectedTemplateForPayment.id}`);
       }, 1500);
     }
   };

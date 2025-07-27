@@ -1,6 +1,6 @@
 import { useBase } from '@/contexts/BaseContext';
 import { CURRICULUM_STEPS } from '@/types/curriculum';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { ProgressIndicator } from './ProgressIndicator';
 import { StepNavigation } from './StepNavigation';
 import { CurriculumPreview } from './CurriculumPreview';
@@ -16,7 +16,7 @@ import { ProjectsAchievements } from './steps/ProjectsAchievements';
 export function CurriculumBuilder() {
   const { state, setCurrentStep, setComplete } = useBase();
   const { currentStep } = state;
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   const currentStepIndex = CURRICULUM_STEPS.findIndex(step => step.id === currentStep);
   const isFirstStep = currentStepIndex === 0;
@@ -47,11 +47,11 @@ export function CurriculumBuilder() {
     if (premiumTemplateSelected) {
       // Cliente está editando currículo premium - vai direto para configuração
       console.log('🏆 Cliente premium: Redirecionando para configuração premium:', premiumTemplateSelected);
-      navigate(`/premium-editor?template=${premiumTemplateSelected}`);
+      setLocation(`/premium-editor?template=${premiumTemplateSelected}`);
     } else {
       // Cliente gratuito - vai para seleção de templates
       console.log('🎁 Cliente gratuito: Redirecionando para templates');
-      navigate('/templates');
+      setLocation('/templates');
     }
   };
 

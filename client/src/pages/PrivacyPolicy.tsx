@@ -1,16 +1,16 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 export default function PrivacyPolicy() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto py-8 px-4">
         <div className="mb-6">
-          <Button variant="outline" onClick={() => navigate('/')} className="mb-4">
+          <Button variant="outline" onClick={() => setLocation('/')} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar ao Início
           </Button>

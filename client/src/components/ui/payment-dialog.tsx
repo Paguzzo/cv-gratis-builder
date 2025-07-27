@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +18,7 @@ export function PaymentDialog({ open, onOpenChange, template, onPaymentSuccess }
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   // Se template for nulo, não renderizar o dialog
   if (!template) {
@@ -69,8 +69,8 @@ export function PaymentDialog({ open, onOpenChange, template, onPaymentSuccess }
           console.log('🔧 DEV: Redirecionando para:', redirectUrl);
           console.log('🔧 DEV: URL atual antes redirect:', window.location.href);
           
-          // Usar replace para evitar voltar à página de pagamento
-          navigate(redirectUrl, { replace: true });
+          // Navigate to the premium editor
+          setLocation(redirectUrl);
           
           // Log adicional após tentativa de navegação
           setTimeout(() => {

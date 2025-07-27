@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 
 export default function DebugTemplates() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     console.log('🔍 DebugTemplates: Página carregada com sucesso!');
@@ -21,7 +21,7 @@ export default function DebugTemplates() {
         <div className="mb-6">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/criar-curriculo')}
+            onClick={() => setLocation('/criar-curriculo')}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -103,7 +103,7 @@ export default function DebugTemplates() {
         {/* Actions */}
         <div className="mt-6 flex gap-4">
           <Button 
-            onClick={() => navigate('/templates')}
+            onClick={() => setLocation('/templates')}
             className="bg-blue-600 hover:bg-blue-700"
           >
             Ir para Templates Reais
@@ -123,7 +123,7 @@ export default function DebugTemplates() {
             onClick={() => {
               console.log('🔍 Limpando localStorage...');
               localStorage.clear();
-              navigate('/');
+              setLocation('/');
             }}
             variant="destructive"
           >

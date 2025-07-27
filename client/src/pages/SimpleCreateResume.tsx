@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { SimpleProvider, useSimpleContext } from '@/contexts/SimpleContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 
 function SimpleCreateResumeContent() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { curriculumData, updateCurriculumData, hasValidData } = useSimpleContext();
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -47,7 +47,7 @@ function SimpleCreateResumeContent() {
     } else {
       // Finalizar
       console.log('🎯 Finalizando e navegando para templates...');
-      navigate('/templates');
+      setLocation('/templates');
     }
   };
 
@@ -202,7 +202,7 @@ function SimpleCreateResumeContent() {
         <div className="mb-8">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/')}
+            onClick={() => setLocation('/')}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

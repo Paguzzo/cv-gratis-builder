@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { CombinedProvider } from '@/contexts/CombinedProvider';
 import { TemplateRenderer } from '@/components/templates/TemplateRenderer';
 import { Button } from '@/components/ui/button';
@@ -69,9 +69,9 @@ const COLOR_PALETTE = [
 ];
 
 export default function PremiumEditor() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const templateId = searchParams.get('template');
+  const [location, setLocation] = useLocation();
+  // Simple URL parameter parsing for Wouter
+  const templateId = new URLSearchParams(window.location.search).get('template');
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [activeTab, setActiveTab] = useState('texto');
   
@@ -106,14 +106,14 @@ export default function PremiumEditor() {
     
     if (!templateId) {
       toast.error('Template não especificado');
-      setTimeout(() => navigate('/templates'), 1500);
+      setTimeout(() => setLocation('/templates'), 1500);
       return;
     }
 
     const template = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
     if (!template) {
       toast.error('Template não encontrado');
-      setTimeout(() => navigate('/templates'), 1500);
+      setTimeout(() => setLocation('/templates'), 1500);
       return;
     }
 
@@ -124,13 +124,13 @@ export default function PremiumEditor() {
       
       if (!hasPurchased && !isDevModeEnabled) {
         toast.error('Acesso negado. Ative o modo desenvolvedor ou compre o template.');
-        setTimeout(() => navigate('/templates'), 3000);
+        setTimeout(() => setLocation('/templates'), 3000);
         return;
       }
     }
 
     setSelectedTemplate(template);
-  }, [templateId, navigate]);
+  }, [templateId, setLocation]);
 
   // Aplicar estilos dinamicamente - VERSÃO CORRIGIDA
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function PremiumEditor() {
   }, [fontStyle, fontSize, lineSpacing, selectedColor]);
 
   const handleGoBack = () => {
-    navigate('/templates');
+    setLocation('/templates');
   };
 
   const handlePrint = () => {

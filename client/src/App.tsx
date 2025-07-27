@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Router, Route, Switch } from 'wouter';
 import { Toaster } from '@/components/ui/toaster';
 import CookieConsent from '@/components/CookieConsent';
 import FloatingLiveCounter from '@/components/FloatingLiveCounter';
@@ -37,22 +37,21 @@ function App() {
   return (
     <LoadingProvider>
       <LoadingSystemCSS />
-      <Router>
         <div className="min-h-screen bg-gray-50">
           {/* 📦 SUSPENSE: Loading state para todas as rotas */}
           <Suspense fallback={<PageLoadingSpinner />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/criar-curriculo" element={<CreateResume />} />
-              <Route path="/templates" element={<TemplateSelector />} />
-              <Route path="/premium-editor" element={<PremiumEditor />} />
-              <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
-              <Route path="/termos-uso" element={<TermsOfService />} />
-              <Route path="/politica-cookies" element={<CookiePolicy />} />
-              <Route path="/admin" element={<AdminPanel />} />
-              <Route path="/test-apis" element={<ApiTestPanel />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Switch>
+              <Route path="/" component={Index} />
+              <Route path="/criar-curriculo" component={CreateResume} />
+              <Route path="/templates" component={TemplateSelector} />
+              <Route path="/premium-editor" component={PremiumEditor} />
+              <Route path="/politica-privacidade" component={PrivacyPolicy} />
+              <Route path="/termos-uso" component={TermsOfService} />
+              <Route path="/politica-cookies" component={CookiePolicy} />
+              <Route path="/admin" component={AdminPanel} />
+              <Route path="/test-apis" component={ApiTestPanel} />
+              <Route component={NotFound} />
+            </Switch>
           </Suspense>
           
           {/* 🎯 COMPONENTES GLOBAIS: Sempre carregados */}
@@ -60,7 +59,6 @@ function App() {
           <CookieConsent />
           <FloatingLiveCounter />
         </div>
-      </Router>
     </LoadingProvider>
   );
 }

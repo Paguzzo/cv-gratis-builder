@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TemplateRenderer } from './TemplateRenderer';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 interface TemplateCarouselProps {
   templates: Template[];
@@ -25,7 +25,7 @@ export function TemplateCarousel({
   isExporting = false,
   hasData = false
 }: TemplateCarouselProps) {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'center',
     containScroll: 'trimSnaps',
