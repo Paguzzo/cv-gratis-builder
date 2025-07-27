@@ -469,6 +469,50 @@ export default function PremiumEditor() {
     }
 
     try {
+      toast.info('Preparando envio do email...');
+      
+      // Gerar PDF do template atual
+      let pdfBlob: Blob | null = null;
+      try {
+        const previewElement = document.querySelector('.template-premium-preview') as HTMLElement;
+        if (previewElement) {
+          // Importar bibliotecas
+          const html2canvas = await import('html2canvas');
+          const jsPDF = await import('jspdf');
+
+          // Capturar com html2canvas
+          const canvas = await html2canvas.default(previewElement, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            width: 794,
+            height: 1123
+          });
+
+          // Criar PDF
+          const pdf = new jsPDF.jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+          });
+
+          // Calcular dimensões mantendo proporção
+          const imgWidth = 210; // A4 width em mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          // Adicionar imagem ao PDF
+          const imgData = canvas.toDataURL('image/png', 1.0);
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+          pdfBlob = pdf.output('blob');
+          console.log('✅ PDF gerado com sucesso para email');
+        }
+      } catch (pdfError) {
+        console.warn('⚠️ Não foi possível gerar PDF:', pdfError);
+      }
+      
       toast.success('Enviando via sistema integrado MCP + Resend...');
       
       // Usar novo sistema MCP integrado
@@ -489,15 +533,15 @@ export default function PremiumEditor() {
         // Limpar dados
         setEmailData({
           to: '',
-          subject: 'Meu Currículo Profissional',
-          message: 'Olá!\n\nSegue em anexo meu currículo atualizado para sua análise.\n\nAguardo seu retorno.\n\nAtenciosamente.'
+          subject: 'Meu Currículo Profissional - Candidatura',
+          message: 'Olá!\n\nSegue em anexo meu currículo atualizado para a vaga em questão.\n\nEstou disponível para uma conversa quando for conveniente.\n\nAbraços!'
         });
       } else {
         throw new Error(result.error || 'Falha no envio via MCP');
       }
     } catch (error) {
       console.error('Erro ao enviar email:', error);
-      toast.error('Erro ao enviar email via MCP. Tente novamente.');
+      toast.error('Erro ao enviar email. Tente novamente.');
       setEmailModalOpen(false);
     }
   };

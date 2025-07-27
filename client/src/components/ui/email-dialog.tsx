@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { EmailService, EmailData } from "@/services/emailService";
+import { EmailService } from "@/services/emailService";
+import MCPEmailService from "@/services/mcpEmailService";
 import { PDFExportService } from "@/services/pdfExportService";
 import MCPEmailService, { CurriculumEmailData } from "@/services/mcpEmailService";
 import { Mail, Send, Loader2 } from "lucide-react";
@@ -57,7 +58,7 @@ export function EmailDialog({ open, onOpenChange, templateId, senderName }: Emai
 
       // Enviar via MCP (inclui geração automática de PDF e fallback)
       const result = await MCPEmailService.sendCurriculumByEmail(curriculumData);
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Falha no envio via MCP');
       }
@@ -68,7 +69,7 @@ export function EmailDialog({ open, onOpenChange, templateId, senderName }: Emai
       });
 
       onOpenChange(false);
-      
+
       // Limpar formulário
       setFormData({
         recipientEmail: '',
@@ -178,4 +179,4 @@ export function EmailDialog({ open, onOpenChange, templateId, senderName }: Emai
       </DialogContent>
     </Dialog>
   );
-} 
+}

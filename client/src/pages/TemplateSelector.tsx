@@ -8,13 +8,15 @@ import { TemplateCarousel } from '@/components/templates/TemplateCarousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Check, Download, ArrowLeft, Loader2, Printer, Mail, Lock, BrainCircuit, X } from 'lucide-react';
+import { Crown, Check, Download, ArrowLeft, Loader2, Printer, Mail, Lock, BrainCircuit, X, FileText } from 'lucide-react';
 import { AVAILABLE_TEMPLATES, Template } from '@/types/templates';
 import { PDFExportService } from '@/services/pdfExportService';
 import { PrintService } from '@/services/printService';
 // import { StripeService } from '@/services/stripeService'; // 🚨 REMOVIDO
 import { EmailDialog } from '@/components/ui/email-dialog';
 import { PaymentDialog } from '@/components/ui/payment-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 
 // import { JobAIChat } from '@/components/ui/jobai-chat-fixed'; // 🚨 REMOVIDO DEFINITIVAMENTE
 import { toast } from 'sonner';
@@ -24,7 +26,7 @@ import { userDataService } from '@/services/userDataService';
 
 function TemplateSelectorContent() {
   console.log('🔍 TemplateSelector: Componente iniciando...');
-  
+
   const [, setLocation] = useLocation();
   const { state, selectTemplate, unlockPremium } = useTemplate();
   const { data } = useCurriculumData();
@@ -34,7 +36,7 @@ function TemplateSelectorContent() {
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedTemplateForPayment, setSelectedTemplateForPayment] = useState<Template | null>(null);
   // const [jobAIChatOpen, setJobAIChatOpen] = useState(false); // 🚨 REMOVIDO DEFINITIVAMENTE
-  
+
   // 🔧 SISTEMA SIMPLES DE COLETA DE DADOS
   const [userDataModalOpen, setUserDataModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
@@ -44,7 +46,7 @@ function TemplateSelectorContent() {
     email: '',
     whatsapp: ''
   });
-  
+
   // 🎯 ORGANIZAÇÃO: Gratuitos primeiro, depois Premium
   const allTemplates = [...AVAILABLE_TEMPLATES].sort((a, b) => {
     // Gratuitos primeiro (isPremium = false primeiro)
@@ -56,24 +58,24 @@ function TemplateSelectorContent() {
     console.log('🔍 TemplateSelector: useEffect executado');
     console.log('🔍 Estado do template:', state);
     console.log('🔍 Dados do currículo context:', data);
-    
+
     // 🧹 LIMPAR: Template premium selecionado (usuário está na seleção normal)
     const premiumTemplateSelected = localStorage.getItem('premium-template-selected');
     if (premiumTemplateSelected) {
       localStorage.removeItem('premium-template-selected');
       console.log('🧹 Template premium removido do localStorage:', premiumTemplateSelected);
     }
-    
+
     // 🔧 DEBUG: Verificar templates disponíveis
     console.log('📋 TEMPLATES DISPONÍVEIS:');
     allTemplates.forEach((template, index) => {
       console.log(`${index + 1}. ${template.name} - Premium: ${template.isPremium}`);
     });
-    
+
     // Verificar dados no localStorage diretamente
     const personalInfoLS = localStorage.getItem('curriculum-personal-info');
     console.log('💾 TemplateSelector - localStorage check:', personalInfoLS ? 'Dados encontrados' : 'Sem dados');
-    
+
     // Se não há template selecionado, selecionar o primeiro
     if (!state.selectedTemplate || !state.selectedTemplate.id) {
       console.log('🔍 TemplateSelector: Selecionando template padrão...');
@@ -91,7 +93,7 @@ function TemplateSelectorContent() {
     if (data?.personalInfo?.name) {
       return true;
     }
-    
+
     // Se não, verificar no localStorage
     try {
       const personalInfoLS = localStorage.getItem('curriculum-personal-info');
@@ -102,7 +104,7 @@ function TemplateSelectorContent() {
     } catch (error) {
       console.warn('⚠️ Erro ao verificar localStorage:', error);
     }
-    
+
     return false;
   };
 
@@ -160,7 +162,7 @@ function TemplateSelectorContent() {
       unlockPremium();
     }
     selectTemplate(templateId);
-    
+
     // Verificar após a seleção
     setTimeout(() => {
       console.log('🎯 SELEÇÃO DE TEMPLATE - DEPOIS:');
@@ -171,16 +173,16 @@ function TemplateSelectorContent() {
 
   const handleCarouselDownload = async (templateId: string) => {
     const template = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
-    
+
     if (!template) return;
-    
+
     console.log('🎠 CARROSSEL DOWNLOAD - Template:', template.name, 'Premium:', template.isPremium);
-    
+
     const executeDownload = async () => {
       // Temporariamente selecionar o template
       const originalSelected = state.selectedTemplate.id;
       selectTemplate(templateId);
-      
+
       setTimeout(async () => {
         await handleDownload(template);
         // Voltar para o template original
@@ -205,7 +207,7 @@ function TemplateSelectorContent() {
 
   const checkPremiumAccess = (template: Template): boolean => {
     if (!template.isPremium) return true;
-    
+
     // 🚨 SOLUÇÃO DEFINITIVA: Sistema de acesso 100% independente
     const purchased1 = localStorage.getItem(`template_purchased_${template.id}`) === 'true';
     const purchased2 = localStorage.getItem(`premium_access_${template.id}`) === 'true';
@@ -221,28 +223,28 @@ function TemplateSelectorContent() {
       // 🎯 SOLUÇÃO DEFINITIVA - PREMIUM
       console.log('🎯 TEMPLATE SELECTOR - PREMIUM DETECTADO');
       console.log('🎯 Template ID:', template.id);
-      
+
       const targetUrl = `/premium-editor?template=${template.id}`;
       console.log('🎯 REDIRECIONAMENTO DEFINITIVO PARA:', targetUrl);
-      
+
       // SOLUÇÃO DEFINITIVA: REDIRECIONAMENTO GARANTIDO
       try {
         // Método 1: Imediato
         window.location.href = targetUrl;
         console.log('🎯 TEMPLATE SELECTOR - MÉTODO 1 EXECUTADO: href');
-        
+
         // Método 2: Backup imediato
         setTimeout(() => {
           window.location.replace(targetUrl);
           console.log('🎯 TEMPLATE SELECTOR - MÉTODO 2 EXECUTADO: replace');
         }, 50);
-        
+
         // Método 3: Último recurso
         setTimeout(() => {
           window.open(targetUrl, '_self');
           console.log('🎯 TEMPLATE SELECTOR - MÉTODO 3 EXECUTADO: open');
         }, 150);
-        
+
       } catch (error) {
         console.error('🎯 TEMPLATE SELECTOR - ERRO NO REDIRECIONAMENTO:', error);
         // Forçar navegação mesmo com erro
@@ -253,7 +255,7 @@ function TemplateSelectorContent() {
 
   const handleDownload = async (template?: Template) => {
     const targetTemplate = template || state.selectedTemplate;
-    
+
     if (!targetTemplate) {
       toast.error('Nenhum template selecionado');
       return;
@@ -263,10 +265,10 @@ function TemplateSelectorContent() {
       setIsExporting(true);
       try {
         console.log('🔍 EXECUTANDO DOWNLOAD:', targetTemplate.name, 'Premium:', targetTemplate.isPremium);
-        
+
         const pdfService = new PDFExportService();
         const result = await pdfService.exportTemplate(targetTemplate);
-        
+
         if (result.success) {
           toast.success('PDF baixado com sucesso!');
         } else {
@@ -282,7 +284,7 @@ function TemplateSelectorContent() {
 
     // 🔧 CORREÇÃO: Verificar se é template gratuito
     console.log('🔍 DEBUG DOWNLOAD - Template:', targetTemplate.name, 'Premium:', targetTemplate.isPremium);
-    
+
     // Se for premium, executa direto
     if (targetTemplate.isPremium) {
       console.log('🔑 Template premium - executando direto ou solicitando pagamento');
@@ -329,7 +331,7 @@ function TemplateSelectorContent() {
     }
   };
 
-  const handleSendEmail = () => {
+  const handleSendEmail = async () => {
     if (!state.selectedTemplate) {
       toast.error('Nenhum template selecionado');
       return;
@@ -353,10 +355,36 @@ function TemplateSelectorContent() {
     }
   };
 
+  // Função para executar ação pendente após coleta de dados
+  const executeUserAction = async () => {
+    if (!pendingAction) return;
+
+    console.log('🎯 Executando ação pendente:', currentActionType);
+
+    // Salvar dados do usuário
+    await userDataService.collectUserData({
+      name: userFormData.name,
+      email: userFormData.email,
+      whatsapp: userFormData.whatsapp,
+      action: currentActionType,
+      templateId: state.selectedTemplate?.id || 'unknown'
+    });
+
+    // Fechar modal
+    setUserDataModalOpen(false);
+
+    // Executar ação
+    pendingAction();
+
+    // Limpar
+    setPendingAction(null);
+    setUserFormData({ name: '', email: '', whatsapp: '' });
+  };
+
   const handlePaymentSuccess = () => {
     console.log('🔧 PREMIUM: Pagamento realizado com sucesso!');
     toast.success('Template Premium desbloqueado! Redirecionando para configuração...');
-    
+
     // 🚀 NOVO FLUXO: Redirecionar direto para configuração premium
     if (selectedTemplateForPayment) {
       setTimeout(() => {
@@ -370,16 +398,16 @@ function TemplateSelectorContent() {
       // 🚨 CORREÇÃO CRÍTICA: Debug detalhado para rastrear salvamento
       console.log('🔍 ADMIN DEBUG - Tentando salvar dados:', userData);
       console.log('🎯 Action type:', currentActionType);
-      
+
       const result = await userDataService.saveUser(userData, currentActionType);
       console.log('✅ ADMIN DEBUG - Resultado salvamento:', result);
-      
+
       toast.success(`Obrigado, ${userData.name}! Seus dados foram salvos.`);
-      
+
       // 🚨 CORREÇÃO: Verificar se dados foram realmente salvos
       const database = userDataService.getDatabase();
       console.log('📊 ADMIN DEBUG - Database após salvamento:', database.length, 'itens');
-      
+
       if (pendingAction) {
         pendingAction();
         setPendingAction(null);
@@ -407,13 +435,13 @@ function TemplateSelectorContent() {
         <div className="flex items-center justify-between mb-6">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/criar-curriculo')}
+            onClick={() => setLocation('/criar-curriculo')}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Voltar ao Editor
           </Button>
-          
+
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-800">
               Escolha seu Template
@@ -422,7 +450,7 @@ function TemplateSelectorContent() {
               {data.personalInfo.name ? `Olá, ${data.personalInfo.name}!` : 'Complete seus dados primeiro'}
             </p>
           </div>
-          
+
           <div className="w-24" /> {/* Spacer for center alignment */}
         </div>
 
@@ -467,7 +495,7 @@ function TemplateSelectorContent() {
               <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
                 Ações do Currículo
               </h2>
-              
+
               <div className="flex flex-wrap justify-center gap-4">
                 {/* Download PDF */}
                 <button
@@ -568,7 +596,7 @@ function TemplateSelectorContent() {
             {/* Elementos decorativos */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-pink-400/20 to-purple-500/20 rounded-full blur-2xl"></div>
-            
+
             <div className="relative z-10">
               <div className="text-center mb-8">
                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-4 py-2 rounded-full text-sm font-bold mb-4">
@@ -672,7 +700,7 @@ function TemplateSelectorContent() {
                   Preencha suas informações para visualizar como ficará nos templates
                 </p>
                 <Button 
-                  onClick={() => navigate('/criar-curriculo')}
+                  onClick={() => setLocation('/criar-curriculo')}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
                   Voltar ao Editor
@@ -692,72 +720,81 @@ function TemplateSelectorContent() {
       />
 
       {selectedTemplateForPayment && (
-        <PaymentDialog
+        <PaymentDialog 
           open={paymentDialogOpen}
           onOpenChange={setPaymentDialogOpen}
           template={selectedTemplateForPayment}
           onPaymentSuccess={handlePaymentSuccess}
         />
-      )}
 
-      {/* Modal de Coleta de Dados do Usuário */}
-      {userDataModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-800">
-                {currentActionType === 'download' ? 'Dados para Download' : currentActionType === 'print' ? 'Dados para Impressão' : 'Dados para Email'}
-              </h3>
-              <button onClick={handleUserDataModalClose} className="text-gray-500 hover:text-gray-700">
-                <X className="w-6 h-6" />
-              </button>
+        {/* Modal de Coleta de Dados do Usuário */}
+        <Dialog open={userDataModalOpen} onOpenChange={setUserDataModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Dados para {currentActionType === 'email' ? 'Envio por Email' : 
+                          currentActionType === 'download' ? 'Download' : 'Impressão'}
+              </DialogTitle>
+              <DialogDescription>
+                Para continuar, precisamos de alguns dados básicos:
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Nome completo *</label>
+                <Input 
+                  placeholder="Seu nome completo"
+                  value={userFormData.name}
+                  onChange={(e) => setUserFormData(prev => ({...prev, name: e.target.value}))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">Email *</label>
+                <Input 
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={userFormData.email}
+                  onChange={(e) => setUserFormData(prev => ({...prev, email: e.target.value}))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">WhatsApp (opcional)</label>
+                <Input 
+                  placeholder="(11) 99999-9999"
+                  value={userFormData.whatsapp}
+                  onChange={(e) => setUserFormData(prev => ({...prev, whatsapp: e.target.value}))}
+                />
+              </div>
+
+              <div className="bg-blue-50 p-3 rounded-lg border text-sm">
+                <p className="font-medium text-blue-800 mb-1">✅ Seus dados estão seguros:</p>
+                <p className="text-blue-700">• Não compartilhamos com terceiros</p>
+                <p className="text-blue-700">• Usado apenas para melhorar nossos serviços</p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => setUserDataModalOpen(false)}
+                  variant="outline" 
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={executeUserAction}
+                  disabled={!userFormData.name || !userFormData.email}
+                  className="flex-1"
+                >
+                  Continuar
+                </Button>
+              </div>
             </div>
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Nome
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={userFormData.name}
-                onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Seu nome"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email (opcional)
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={userFormData.email}
-                onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="seu.email@exemplo.com"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700 mb-1">
-                WhatsApp (opcional)
-              </label>
-              <input
-                type="tel"
-                id="whatsapp"
-                value={userFormData.whatsapp}
-                onChange={(e) => setUserFormData({ ...userFormData, whatsapp: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="(11) 99999-9999"
-              />
-            </div>
-            <Button onClick={() => handleUserDataSubmit(userFormData)} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-              {currentActionType === 'download' ? 'Baixar PDF' : currentActionType === 'print' ? 'Imprimir' : 'Enviar Email'}
-            </Button>
-          </div>
-        </div>
-      )}
+          </DialogContent>
+        </Dialog>
 
       {/* JobIA Chat - Especialista em RH */}
       {/* <JobAIChat
@@ -766,7 +803,7 @@ function TemplateSelectorContent() {
       /> */}
 
       {/* Dev Mode Panel - Apenas em desenvolvimento */}
-      
+
     </div>
   );
 }
@@ -777,4 +814,4 @@ export default function TemplateSelector() {
       <TemplateSelectorContent />
     </CombinedProvider>
   );
-} 
+}
