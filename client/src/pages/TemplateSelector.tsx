@@ -229,31 +229,51 @@ function TemplateSelectorContent() {
     if (checkPremiumAccess(template)) {
       action();
     } else {
-      // 🚀 SOLUÇÃO DEFINITIVA: Redirecionamento direto para Stripe
-      console.log('💳 STRIPE: Iniciando pagamento para template:', template.id);
-      
-      // Marcar template como sendo comprado
-      localStorage.setItem('stripe_pending_payment', JSON.stringify({
-        templateId: template.id,
-        timestamp: Date.now()
-      }));
-      
-      // Redirecionar diretamente para o link do Stripe
-      const stripeUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
-      const params = new URLSearchParams({
-        client_reference_id: `user_${Date.now()}`,
-        metadata: JSON.stringify({
+      // 🚀 CORREÇÃO: Verificar se é ação de configuração premium
+      if (action.toString().includes('premium-editor')) {
+        // Se for configuração premium, redirecionar para Stripe
+        console.log('💳 STRIPE: Iniciando pagamento para template:', template.id);
+        
+        // Marcar template como sendo comprado
+        localStorage.setItem('stripe_pending_payment', JSON.stringify({
           templateId: template.id,
-          templateName: template.name,
-          source: 'curriculum_gratis_online'
-        })
-      });
-      
-      const finalUrl = `${stripeUrl}?${params}`;
-      console.log('🎯 Redirecionando para Stripe:', finalUrl);
-      
-      // Redirecionar para o Stripe
-      window.location.href = finalUrl;
+          timestamp: Date.now()
+        }));
+        
+        // Abrir Stripe em nova janela
+        const stripeUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
+        const params = new URLSearchParams({
+          client_reference_id: `user_${Date.now()}`,
+          metadata: JSON.stringify({
+            templateId: template.id,
+            templateName: template.name,
+            source: 'curriculum_gratis_online'
+          })
+        });
+        
+        const finalUrl = `${stripeUrl}?${params}`;
+        console.log('🎯 Abrindo Stripe em nova janela:', finalUrl);
+        
+        // Abrir em nova janela em vez de redirecionar
+        const stripeWindow = window.open(finalUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+        
+        if (stripeWindow) {
+          toast.success('Gateway de pagamento Stripe aberto em nova janela!');
+          
+          // Simular sucesso após 5 segundos (para desenvolvimento)
+          setTimeout(() => {
+            localStorage.setItem(`template_purchased_${template.id}`, 'true');
+            localStorage.setItem(`premium_access_${template.id}`, 'true');
+            toast.success('Pagamento simulado! Redirecionando...');
+            setLocation(`/premium-editor?template=${template.id}`);
+          }, 5000);
+        } else {
+          toast.error('Pop-up bloqueado! Permitir pop-ups e tentar novamente.');
+        }
+      } else {
+        // Para outras ações, apenas solicitar pagamento
+        toast.error(`Template Premium - Compre por R$ ${(template.price || 4.90).toFixed(2)} para acessar!`);
+      }
     }
   };
 

@@ -127,6 +127,16 @@ export default function PremiumEditor() {
       
       const hasAnyAccess = hasPurchased || isDevModeEnabled || adminAccess || templatePurchased || premiumAccess;
       
+      console.log('🔍 PREMIUM ACCESS CHECK:', {
+        templateId,
+        hasPurchased,
+        isDevModeEnabled,
+        adminAccess,
+        templatePurchased,
+        premiumAccess,
+        hasAnyAccess
+      });
+      
       if (!hasAnyAccess) {
         console.log('❌ PREMIUM: Acesso negado para template:', templateId);
         toast.error('Acesso negado. Compre o template premium para continuar.');
@@ -134,13 +144,14 @@ export default function PremiumEditor() {
         return;
       } else {
         console.log('✅ PREMIUM: Acesso liberado para template:', templateId);
+        toast.success(`Editor Premium desbloqueado para ${template.name}!`);
       }
     }
 
     setSelectedTemplate(template);
   }, [templateId, setLocation]);
 
-  // Aplicar estilos dinamicamente - VERSÃO CORRIGIDA
+  // Aplicar estilos dinamicamente - VERSÃO CORRIGIDA DEFINITIVA
   useEffect(() => {
     const styleId = 'premium-editor-styles';
     let existingStyle = document.getElementById(styleId);
@@ -161,15 +172,17 @@ export default function PremiumEditor() {
       const style = document.createElement('style');
       style.id = styleId;
       style.innerHTML = `
+        /* 🎨 CORREÇÃO DE CORES - Manter design original do template */
         .template-premium-preview {
           font-family: ${selectedFontStyle.css} !important;
           line-height: ${selectedLineSpacing.value} !important;
         }
         
+        /* Tipografia geral */
         .template-premium-preview,
         .template-premium-preview p,
-        .template-premium-preview div,
-        .template-premium-preview span,
+        .template-premium-preview div:not(.bg-slate-700):not(.bg-blue-600):not(.bg-teal-600),
+        .template-premium-preview span:not(.text-white),
         .template-premium-preview li,
         .template-premium-preview td,
         .template-premium-preview th {
@@ -178,55 +191,65 @@ export default function PremiumEditor() {
           font-family: ${selectedFontStyle.css} !important;
         }
         
+        /* Títulos principais */
         .template-premium-preview h1 {
           font-size: ${Math.round(28 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
-          color: ${selectedColorScheme.primary} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
         
         .template-premium-preview h2 {
           font-size: ${Math.round(22 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
-          color: ${selectedColorScheme.primary} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
         
         .template-premium-preview h3 {
           font-size: ${Math.round(18 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
-          color: ${selectedColorScheme.primary} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
         
         .template-premium-preview h4 {
           font-size: ${Math.round(16 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
-          color: ${selectedColorScheme.text} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
         
-        .template-premium-preview .bg-blue-600,
+        /* 🎨 APLICAR CORES APENAS ONDE NECESSÁRIO - Preservar contraste */
         .template-premium-preview .bg-slate-700,
-        .template-premium-preview .bg-teal-600,
-        .template-premium-preview .bg-gradient-to-b {
+        .template-premium-preview .bg-blue-600,
+        .template-premium-preview .bg-teal-600 {
           background-color: ${selectedColorScheme.primary} !important;
           background-image: none !important;
         }
         
+        /* Manter texto branco em fundos escuros */
+        .template-premium-preview .bg-slate-700 *,
+        .template-premium-preview .bg-blue-600 *,
+        .template-premium-preview .bg-teal-600 * {
+          color: white !important;
+        }
+        
+        /* Bordas e acentos */
         .template-premium-preview .border-blue-600,
-        .template-premium-preview .border-4 {
-          border-color: ${selectedColorScheme.primary} !important;
-        }
-        
-        .template-premium-preview .text-blue-600,
-        .template-premium-preview .text-teal-600,
-        .template-premium-preview .text-slate-300 {
-          color: ${selectedColorScheme.text} !important;
-        }
-        
+        .template-premium-preview .border-slate-700,
+        .template-premium-preview .border-teal-600,
+        .template-premium-preview .border-4,
         .template-premium-preview .border-b-2 {
           border-color: ${selectedColorScheme.primary} !important;
+        }
+        
+        /* Textos de destaque (não em fundos escuros) */
+        .template-premium-preview .text-blue-600:not(.bg-slate-700 *):not(.bg-blue-600 *):not(.bg-teal-600 *),
+        .template-premium-preview .text-teal-600:not(.bg-slate-700 *):not(.bg-blue-600 *):not(.bg-teal-600 *) {
+          color: ${selectedColorScheme.primary} !important;
+        }
+        
+        /* Preservar texto branco onde necessário */
+        .template-premium-preview .text-white,
+        .template-premium-preview .text-slate-300 {
+          color: white !important;
         }
       `;
       document.head.appendChild(style);

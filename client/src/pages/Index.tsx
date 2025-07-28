@@ -372,4 +372,3 @@ export default function Index() {
     </>
   );
 }
-import { navigate } from 'wouter/use-location';

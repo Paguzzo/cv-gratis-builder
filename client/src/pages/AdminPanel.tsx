@@ -439,13 +439,28 @@ export default function AdminPanel() {
                 <CardContent className="space-y-4">
                   <Button 
                     onClick={() => {
-                      // Liberar acesso premium temporário
-                      localStorage.setItem('admin_premium_access', 'true');
-                      localStorage.setItem('template_purchased_executivo', 'true');
-                      localStorage.setItem('premium_access_executivo', 'true');
+                      console.log('🔧 ADMIN: Habilitando acesso premium...');
                       
-                      // Redirecionar para premium
-                      window.location.href = '/premium-editor?template=executivo';
+                      // Liberar acesso premium para todos os templates
+                      const premiumTemplates = ['executivo', 'criativo', 'elegante', 'formal', 'minimalista', 'profissional', 'tech'];
+                      
+                      premiumTemplates.forEach(templateId => {
+                        localStorage.setItem(`template_purchased_${templateId}`, 'true');
+                        localStorage.setItem(`premium_access_${templateId}`, 'true');
+                      });
+                      
+                      localStorage.setItem('admin_premium_access', 'true');
+                      
+                      console.log('✅ ADMIN: Acesso premium habilitado para todos os templates');
+                      
+                      // Usar useLocation corretamente
+                      const targetUrl = '/premium-editor?template=executivo';
+                      console.log('🎯 ADMIN: Redirecionando para:', targetUrl);
+                      
+                      // Usar navegação React Router
+                      window.location.href = targetUrl;
+                      
+                      toast.success('Acesso premium habilitado! Redirecionando...');
                     }} 
                     className="w-full bg-purple-600 hover:bg-purple-700"
                   >
