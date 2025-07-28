@@ -453,19 +453,21 @@ export default function AdminPanel() {
                       
                       console.log('✅ ADMIN: Acesso premium habilitado para todos os templates');
                       
-                      // Usar useLocation corretamente
-                      const targetUrl = '/premium-editor?template=executivo';
-                      console.log('🎯 ADMIN: Redirecionando para:', targetUrl);
+                      // Redirecionar para configuração premium, não para template específico
+                      const targetUrl = '/premium-editor?template=executivo&admin=true';
+                      console.log('🎯 ADMIN: Redirecionando para configuração premium:', targetUrl);
                       
-                      // Usar navegação React Router
                       window.location.href = targetUrl;
                       
-                      toast.success('Acesso premium habilitado! Redirecionando...');
+                      toast({
+                        title: "Acesso premium habilitado!",
+                        description: "Redirecionando para configuração premium...",
+                      });
                     }} 
                     className="w-full bg-purple-600 hover:bg-purple-700"
                   >
                     <Crown className="w-4 h-4 mr-2" />
-                    Acessar Editor Premium (Admin)
+                    Acessar Configuração Premium (Admin)
                   </Button>
 
                   <Button 

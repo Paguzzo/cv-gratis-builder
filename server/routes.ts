@@ -99,6 +99,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rota para processar retorno do Stripe
+  app.get("/stripe-success", (req: Request, res: Response) => {
+    const { session_id, template_id } = req.query;
+    
+    console.log('✅ STRIPE SUCCESS: Usuário retornou com sucesso');
+    console.log('📋 Session ID:', session_id);
+    console.log('🎨 Template ID:', template_id);
+    
+    // Redirecionar para configuração premium com template
+    const redirectUrl = template_id 
+      ? `/premium-editor?template=${template_id}&payment=success`
+      : '/premium-editor?payment=success';
+      
+    res.redirect(redirectUrl);
+  });
+
+  // Rota para processar cancelamento do Stripe  
+  app.get("/stripe-cancel", (req: Request, res: Response) => {
+    console.log('❌ STRIPE CANCEL: Usuário cancelou pagamento');
+    
+    // Redirecionar de volta para seleção de templates
+    res.redirect('/templates?payment=cancelled');
+  });
+
   // Premium template configuration endpoint
   app.get("/api/configure-premium", (req: Request, res: Response) => {
     // Redirect to the premium template configuration page

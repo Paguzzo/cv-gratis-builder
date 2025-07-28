@@ -74,7 +74,7 @@ export default function PremiumEditor() {
   const templateId = new URLSearchParams(window.location.search).get('template');
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [activeTab, setActiveTab] = useState('texto');
-  
+
   // Estados de formatação
   const [fontStyle, setFontStyle] = useState('classico');
   const [fontSize, setFontSize] = useState('medio');
@@ -103,7 +103,7 @@ export default function PremiumEditor() {
   useEffect(() => {
     console.log('🔧 DEV: PremiumEditor iniciando...');
     console.log('🔧 DEV: Template ID:', templateId);
-    
+
     if (!templateId) {
       toast.error('Template não especificado');
       setTimeout(() => setLocation('/templates'), 1500);
@@ -124,9 +124,9 @@ export default function PremiumEditor() {
       const adminAccess = localStorage.getItem('admin_premium_access') === 'true';
       const templatePurchased = localStorage.getItem(`template_purchased_${templateId}`) === 'true';
       const premiumAccess = localStorage.getItem(`premium_access_${templateId}`) === 'true';
-      
+
       const hasAnyAccess = hasPurchased || isDevModeEnabled || adminAccess || templatePurchased || premiumAccess;
-      
+
       console.log('🔍 PREMIUM ACCESS CHECK:', {
         templateId,
         hasPurchased,
@@ -136,7 +136,7 @@ export default function PremiumEditor() {
         premiumAccess,
         hasAnyAccess
       });
-      
+
       if (!hasAnyAccess) {
         console.log('❌ PREMIUM: Acesso negado para template:', templateId);
         toast.error('Acesso negado. Compre o template premium para continuar.');
@@ -155,7 +155,7 @@ export default function PremiumEditor() {
   useEffect(() => {
     const styleId = 'premium-editor-styles';
     let existingStyle = document.getElementById(styleId);
-    
+
     if (existingStyle) {
       existingStyle.remove();
     }
@@ -168,7 +168,7 @@ export default function PremiumEditor() {
     if (selectedFontStyle && selectedFontSize && selectedLineSpacing && selectedColorScheme) {
       const baseSize = 14; // Tamanho base em px
       const multiplier = selectedFontSize.multiplier;
-      
+
       const style = document.createElement('style');
       style.id = styleId;
       style.innerHTML = `
@@ -177,7 +177,7 @@ export default function PremiumEditor() {
           font-family: ${selectedFontStyle.css} !important;
           line-height: ${selectedLineSpacing.value} !important;
         }
-        
+
         /* Tipografia geral */
         .template-premium-preview,
         .template-premium-preview p,
@@ -190,32 +190,32 @@ export default function PremiumEditor() {
           line-height: ${selectedLineSpacing.value} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
-        
+
         /* Títulos principais */
         .template-premium-preview h1 {
           font-size: ${Math.round(28 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
-        
+
         .template-premium-preview h2 {
           font-size: ${Math.round(22 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
-        
+
         .template-premium-preview h3 {
           font-size: ${Math.round(18 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
-        
+
         .template-premium-preview h4 {
           font-size: ${Math.round(16 * multiplier)}px !important;
           line-height: ${selectedLineSpacing.value} !important;
           font-family: ${selectedFontStyle.css} !important;
         }
-        
+
         /* 🎨 APLICAR CORES APENAS ONDE NECESSÁRIO - Preservar contraste */
         .template-premium-preview .bg-slate-700,
         .template-premium-preview .bg-blue-600,
@@ -223,14 +223,14 @@ export default function PremiumEditor() {
           background-color: ${selectedColorScheme.primary} !important;
           background-image: none !important;
         }
-        
+
         /* Manter texto branco em fundos escuros */
         .template-premium-preview .bg-slate-700 *,
         .template-premium-preview .bg-blue-600 *,
         .template-premium-preview .bg-teal-600 * {
           color: white !important;
         }
-        
+
         /* Bordas e acentos */
         .template-premium-preview .border-blue-600,
         .template-premium-preview .border-slate-700,
@@ -239,13 +239,13 @@ export default function PremiumEditor() {
         .template-premium-preview .border-b-2 {
           border-color: ${selectedColorScheme.primary} !important;
         }
-        
+
         /* Textos de destaque (não em fundos escuros) */
         .template-premium-preview .text-blue-600:not(.bg-slate-700 *):not(.bg-blue-600 *):not(.bg-teal-600 *),
         .template-premium-preview .text-teal-600:not(.bg-slate-700 *):not(.bg-blue-600 *):not(.bg-teal-600 *) {
           color: ${selectedColorScheme.primary} !important;
         }
-        
+
         /* Preservar texto branco onde necessário */
         .template-premium-preview .text-white,
         .template-premium-preview .text-slate-300 {
@@ -262,12 +262,12 @@ export default function PremiumEditor() {
 
   const handlePrint = () => {
     const previewElement = document.querySelector('.template-premium-preview');
-    
+
     if (previewElement) {
       // Capturar estilos aplicados dinamicamente
       const appliedStyles = document.getElementById('premium-editor-styles');
       const stylesheetContent = appliedStyles ? appliedStyles.innerHTML : '';
-      
+
       // Capturar todos os estilos da página
       const allStyles = Array.from(document.styleSheets)
         .map(styleSheet => {
@@ -280,9 +280,9 @@ export default function PremiumEditor() {
           }
         })
         .join('\n');
-      
+
       const printWindow = window.open('', '_blank');
-      
+
       if (printWindow) {
         printWindow.document.write(`
           <html>
@@ -298,7 +298,7 @@ export default function PremiumEditor() {
                   print-color-adjust: exact !important;
                   -webkit-print-color-adjust: exact !important;
                 }
-                
+
                 body { 
                   font-family: Arial, sans-serif;
                   line-height: 1.4;
@@ -307,19 +307,19 @@ export default function PremiumEditor() {
                   padding: 0;
                   margin: 0;
                 }
-                
+
                 /* Aplicar todos os estilos da aplicação */
                 ${allStyles}
-                
+
                 /* Aplicar estilos dinâmicos do editor */
                 ${stylesheetContent}
-                
+
                 /* Configurações específicas para impressão */
                 @page {
                   margin: 1cm;
                   size: A4;
                 }
-                
+
                 /* Remover transformações do preview */
                 .template-premium-preview {
                   transform: none !important;
@@ -329,36 +329,36 @@ export default function PremiumEditor() {
                   height: auto !important;
                   overflow: visible !important;
                 }
-                
+
                 /* Garantir que cores sejam impressas */
                 .bg-blue-600, .bg-slate-700, .bg-teal-600, 
                 .bg-gradient-to-b, .bg-gradient-to-r {
                   print-color-adjust: exact !important;
                   -webkit-print-color-adjust: exact !important;
                 }
-                
+
                 /* Forçar visibilidade */
                 * {
                   visibility: visible !important;
                   opacity: 1 !important;
                 }
-                
+
                 /* Ajustes tipográficos */
                 h1, h2, h3 {
                   page-break-after: avoid;
                   color: inherit !important;
                 }
-                
+
                 p, div, span {
                   orphans: 2;
                   widows: 2;
                 }
-                
+
                 /* Garantir que grid e flex funcionem */
                 .grid {
                   display: grid !important;
                 }
-                
+
                 .flex {
                   display: flex !important;
                 }
@@ -371,9 +371,9 @@ export default function PremiumEditor() {
             </body>
           </html>
         `);
-        
+
         printWindow.document.close();
-        
+
         // Aguardar carregar antes de imprimir
         setTimeout(() => {
           printWindow.print();
@@ -381,7 +381,7 @@ export default function PremiumEditor() {
             printWindow.close();
           }, 1000);
         }, 800);
-        
+
         toast.success('Abrindo janela de impressão formatada...');
       }
     }
@@ -390,9 +390,9 @@ export default function PremiumEditor() {
   const handleDownloadPDF = async () => {
     try {
       toast.success('Gerando PDF de alta qualidade...');
-      
+
       const previewElement = document.querySelector('.template-premium-preview') as HTMLElement;
-      
+
       if (!previewElement) {
         toast.error('Erro ao capturar preview do currículo');
         return;
@@ -404,7 +404,7 @@ export default function PremiumEditor() {
 
       // Criar um clone do elemento para evitar interferências
       const clonedElement = previewElement.cloneNode(true) as HTMLElement;
-      
+
       // Aplicar estilos inline para garantir que sejam capturados
       const appliedStyles = document.getElementById('premium-editor-styles');
       if (appliedStyles) {
@@ -412,7 +412,7 @@ export default function PremiumEditor() {
         styleElement.innerHTML = appliedStyles.innerHTML;
         clonedElement.appendChild(styleElement);
       }
-      
+
       // Configurar elemento temporário
       clonedElement.style.position = 'absolute';
       clonedElement.style.left = '-9999px';
@@ -421,7 +421,7 @@ export default function PremiumEditor() {
       clonedElement.style.transform = 'none';
       clonedElement.style.scale = '1';
       clonedElement.style.backgroundColor = '#ffffff';
-      
+
       document.body.appendChild(clonedElement);
 
       // Aguardar renderização
@@ -467,14 +467,14 @@ export default function PremiumEditor() {
         // Implementar múltiplas páginas se necessário
         let remainingHeight = imgHeight - 297;
         let pageCount = 1;
-        
+
         while (remainingHeight > 0) {
           pdf.addPage();
           const sourceY = 297 * pageCount;
           const sourceHeight = Math.min(297, remainingHeight);
-          
+
           pdf.addImage(imgData, 'PNG', 0, -sourceY, imgWidth, imgHeight);
-          
+
           remainingHeight -= 297;
           pageCount++;
         }
@@ -483,9 +483,9 @@ export default function PremiumEditor() {
       // Baixar arquivo
       const fileName = `curriculo-${selectedTemplate?.name || 'premium'}-${new Date().toISOString().slice(0,10)}.pdf`;
       pdf.save(fileName);
-      
+
       toast.success('PDF gerado e baixado com sucesso!');
-      
+
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
       toast.error('Erro ao gerar PDF. Tente novamente.');
@@ -501,7 +501,7 @@ export default function PremiumEditor() {
 
     try {
       toast.info('Preparando envio do email...');
-      
+
       // Gerar PDF do template atual
       let pdfBlob: Blob | null = null;
       try {
@@ -543,9 +543,9 @@ export default function PremiumEditor() {
       } catch (pdfError) {
         console.warn('⚠️ Não foi possível gerar PDF:', pdfError);
       }
-      
+
       toast.success('Enviando via sistema integrado MCP + Resend...');
-      
+
       // Usar novo sistema MCP integrado
       const curriculumData: CurriculumEmailData = {
         recipientEmail: to,
@@ -556,11 +556,11 @@ export default function PremiumEditor() {
       };
 
       const result = await MCPEmailService.sendCurriculumByEmail(curriculumData);
-      
+
       if (result.success) {
         setEmailModalOpen(false);
         toast.success(`✅ Email enviado com sucesso! ID: ${result.emailId}`);
-        
+
         // Limpar dados
         setEmailData({
           to: '',
@@ -593,10 +593,10 @@ export default function PremiumEditor() {
 
   const generateFullReport = async () => {
     setIsGeneratingReport(true);
-    
+
     // Simular análise com IA
     await new Promise(resolve => setTimeout(resolve, 3000));
-    
+
     const report = `
 🎯 RELATÓRIO COMPLETO DE AVALIAÇÃO DO CURRÍCULO
 
@@ -676,7 +676,7 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Voltar
                 </Button>
-                
+
                 <div>
                   <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                     <Crown className="w-5 h-5 text-yellow-500" />
@@ -693,7 +693,7 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                   <Printer className="w-4 h-4 mr-2" />
                   Imprimir
                 </Button>
-                
+
                 <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
                   <Download className="w-4 h-4 mr-2" />
                   PDF
@@ -738,14 +738,14 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                           onChange={(e) => setEmailData(prev => ({...prev, message: e.target.value}))}
                         />
                       </div>
-                      
+
                       <div className="bg-green-50 p-3 rounded-lg border text-sm">
                         <p className="font-medium text-green-800 mb-1">✅ Sistema Integrado MCP + Resend:</p>
                         <p className="text-green-700">• Envio automático via curriculogratisonline.com</p>
                         <p className="text-green-700">• PDF anexado automaticamente</p>
                         <p className="text-green-700">• Notificação para administrador</p>
                       </div>
-                      
+
                       <div className="flex gap-2">
                         <Button onClick={handleSendEmail} className="flex-1 bg-green-600 hover:bg-green-700">
                           <Send className="w-4 h-4 mr-2" />
@@ -802,10 +802,10 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
         {/* Main Content */}
         <div className="max-w-7xl mx-auto p-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            
+
             {/* Controles */}
             <div className="lg:col-span-1 space-y-4">
-              
+
               {/* TEXTO */}
               <Card>
                 <CardHeader className="pb-3">
@@ -820,7 +820,7 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                     </div>
                   </Button>
                 </CardHeader>
-                
+
                 {activeTab === 'texto' && (
                   <CardContent className="space-y-6">
                     {/* Estilo */}
@@ -843,8 +843,7 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                     {/* Tamanho */}
                     <div>
                       <label className="text-sm font-medium text-gray-600 mb-2 block">Tamanho</label>
-                      <div className="flex gap-1">
-                        {FONT_SIZES.map((size) => (
+                      <div className="flex gap-1">                        {FONT_SIZES.map((size) => (
                           <Button
                             key={size.id}
                             variant={fontSize === size.id ? "default" : "outline"}
@@ -877,11 +876,11 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                         >
                           <Minus className="w-4 h-4" />
                         </Button>
-                        
+
                         <span className="font-medium text-lg">
                           {LINE_SPACINGS.find(l => l.id === lineSpacing)?.name}
                         </span>
-                        
+
                         <Button
                           variant="ghost"
                           size="sm"
@@ -915,7 +914,7 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                     </div>
                   </Button>
                 </CardHeader>
-                
+
                 {activeTab === 'cor' && (
                   <CardContent>
                     <div className="grid grid-cols-3 gap-3">
@@ -950,7 +949,7 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                     </div>
                   </Button>
                 </CardHeader>
-                
+
                 {activeTab === 'avaliacao' && (
                   <CardContent className="space-y-4">
                     {/* Nota Geral */}
@@ -1033,7 +1032,7 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
                         Aplicando formatação em tempo real
                       </div>
                     </div>
-                    
+
                     <div className="transform scale-75 origin-top border rounded bg-white">
                       <TemplateRenderer 
                         template={selectedTemplate} 
@@ -1100,4 +1099,4 @@ Seu currículo está muito bem estruturado e tem grandes chances de passar pelos
       </div>
     </CombinedProvider>
   );
-} 
+}

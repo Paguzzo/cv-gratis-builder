@@ -29,58 +29,33 @@ export function PaymentDialog({ open, onOpenChange, template, onPaymentSuccess }
     setIsProcessing(true);
 
     try {
-      // 🚨 CORREÇÃO CRÍTICA: Simulação simples sem depender do Stripe
-      console.log('💳 PAGAMENTO: Processando template:', template.id);
+      console.log('💳 PAGAMENTO: Redirecionando para Stripe real:', template.id);
       
-      // Simular processamento
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // URL do Stripe com URLs de retorno
+      const stripeUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
+      const baseUrl = window.location.origin;
       
-      // Marcar como comprado
-      localStorage.setItem(`stripe_purchased_${template.id}`, 'true');
+      const params = new URLSearchParams({
+        client_reference_id: `template_${template.id}_${Date.now()}`,
+        success_url: `${baseUrl}/stripe-success?template_id=${template.id}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${baseUrl}/stripe-cancel`,
+        'custom[template_id]': template.id,
+        'custom[template_name]': template.name
+      });
       
-      const result = {
-        success: true,
-        paymentIntent: { status: 'succeeded' }
-      };
-
-      if (result.success) {
-        setPaymentComplete(true);
-        
-        toast({
-          title: "Pagamento realizado!",
-          description: `Template "${template.name}" desbloqueado com sucesso.`,
-        });
-
-        console.log('🔧 DEV: =====================================');
-        console.log('🔧 DEV: PAGAMENTO BEM-SUCEDIDO!');
-        console.log('🔧 DEV: Template ID:', template.id);
-        console.log('🔧 DEV: Template Name:', template.name);
-        console.log('🔧 DEV: Aguardando 3s antes de redirecionar...');
-        console.log('🔧 DEV: =====================================');
-        
-        // Aguardar um pouco antes de redirecionar para o Premium Editor
-        setTimeout(() => {
-          console.log('🔧 DEV: Executando callbacks...');
-          onPaymentSuccess();
-          onOpenChange(false);
-          setPaymentComplete(false);
-          
-          const redirectUrl = `/premium-editor?template=${template.id}`;
-          console.log('🔧 DEV: Redirecionando para:', redirectUrl);
-          console.log('🔧 DEV: URL atual antes redirect:', window.location.href);
-          
-          // Navigate to the premium editor
-          setLocation(redirectUrl);
-          
-          // Log adicional após tentativa de navegação
-          setTimeout(() => {
-            console.log('🔧 DEV: URL após tentativa de redirect:', window.location.href);
-          }, 100);
-        }, 3000);
-
-      } else {
-        throw new Error('Erro no pagamento');
-      }
+      const finalUrl = `${stripeUrl}?${params}`;
+      
+      console.log('🎯 Redirecionando para Stripe:', finalUrl);
+      
+      // Salvar dados para quando retornar
+      localStorage.setItem('stripe_pending_template', template.id);
+      localStorage.setItem('stripe_payment_initiated', 'true');
+      
+      // Fechar modal antes de redirecionar
+      onOpenChange(false);
+      
+      // Redirecionar para Stripe
+      window.location.href = finalUrl;
 
     } catch (error) {
       console.error('❌ Erro no pagamento:', error);
@@ -89,7 +64,6 @@ export function PaymentDialog({ open, onOpenChange, template, onPaymentSuccess }
         description: error instanceof Error ? error.message : "Tente novamente.",
         variant: "destructive"
       });
-    } finally {
       setIsProcessing(false);
     }
   };
