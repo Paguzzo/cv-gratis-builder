@@ -450,24 +450,28 @@ export default function AdminPanel() {
                       });
                       
                       localStorage.setItem('admin_premium_access', 'true');
+                      localStorage.setItem('stripe_dev_mode', 'true');
                       
                       console.log('✅ ADMIN: Acesso premium habilitado para todos os templates');
                       
-                      // Redirecionar para configuração premium, não para template específico
-                      const targetUrl = '/premium-editor?template=executivo&admin=true';
-                      console.log('🎯 ADMIN: Redirecionando para configuração premium:', targetUrl);
-                      
-                      window.location.href = targetUrl;
+                      // Corrigir: Redirecionar para área premium geral, não template específico
+                      const targetUrl = '/premium-editor?template=executivo&admin=true&source=admin_panel';
+                      console.log('🎯 ADMIN: Redirecionando para área premium:', targetUrl);
                       
                       toast({
                         title: "Acesso premium habilitado!",
-                        description: "Redirecionando para configuração premium...",
+                        description: "Redirecionando para área de configuração premium...",
                       });
+                      
+                      // Aguardar toast antes de redirecionar
+                      setTimeout(() => {
+                        window.location.href = targetUrl;
+                      }, 1000);
                     }} 
                     className="w-full bg-purple-600 hover:bg-purple-700"
                   >
                     <Crown className="w-4 h-4 mr-2" />
-                    Acessar Configuração Premium (Admin)
+                    Acessar Área Premium (Admin)
                   </Button>
 
                   <Button 

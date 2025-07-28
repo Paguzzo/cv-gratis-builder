@@ -194,17 +194,44 @@ function TemplateSelectorContent() {
 
     // 🔧 CORREÇÃO: Verificar se é template premium
     if (template.isPremium) {
-      console.log('🔑 Carrossel: Template premium - redirecionando para configuração');
+      console.log('🔑 Carrossel: Template premium - verificando acesso ou redirecionando para Stripe');
       
-      // Redirecionar para página de configuração premium
-      const targetUrl = `/premium-editor?template=${templateId}`;
-      console.log('🎯 CARROSSEL: Redirecionando para:', targetUrl);
+      // Verificar se já tem acesso premium
+      const hasAccess = checkPremiumAccess(template);
       
-      // Marcar como liberado no modo dev
-      localStorage.setItem(`template_purchased_${templateId}`, 'true');
-      localStorage.setItem(`premium_access_${templateId}`, 'true');
-      
-      setLocation(targetUrl);
+      if (hasAccess) {
+        console.log('✅ CARROSSEL: Acesso premium já liberado, indo para configuração');
+        const targetUrl = `/premium-editor?template=${templateId}`;
+        setLocation(targetUrl);
+      } else {
+        console.log('💳 CARROSSEL: Redirecionando para Stripe real');
+        
+        // URL do Stripe real
+        const stripeUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
+        const baseUrl = window.location.origin;
+        
+        const successUrl = `${baseUrl}/premium-editor?template=${templateId}&payment=success`;
+        const cancelUrl = `${baseUrl}/templates?payment=cancelled`;
+        
+        const params = new URLSearchParams({
+          'success_url': successUrl,
+          'cancel_url': cancelUrl,
+          'client_reference_id': `template_${templateId}_${Date.now()}`,
+          'metadata[template_id]': templateId,
+          'metadata[template_name]': template.name,
+          'metadata[source]': 'carousel_download'
+        });
+        
+        const finalUrl = `${stripeUrl}?${params.toString()}`;
+        
+        // Salvar dados para retorno
+        localStorage.setItem('stripe_pending_template', templateId);
+        localStorage.setItem('stripe_payment_initiated', 'true');
+        
+        console.log('🎯 CARROSSEL: Redirecionando para Stripe:', finalUrl);
+        window.location.href = finalUrl;
+        return;
+      }
     } else {
       // Se for gratuito, SEMPRE solicita dados do usuário
       console.log('🎁 Carrossel: Template gratuito - abrindo pop-up');
@@ -229,24 +256,34 @@ function TemplateSelectorContent() {
     if (checkPremiumAccess(template)) {
       action();
     } else {
-      // Sempre redirecionar para Stripe real
+      // Redirecionar para Stripe real com URLs de retorno configuradas
       console.log('💳 STRIPE: Redirecionando para pagamento real:', template.id);
       
-      // URL do Stripe com parâmetros
       const stripeUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
+      const baseUrl = window.location.origin;
+      
+      const successUrl = `${baseUrl}/premium-editor?template=${template.id}&payment=success`;
+      const cancelUrl = `${baseUrl}/templates?payment=cancelled`;
+      
       const params = new URLSearchParams({
-        client_reference_id: `template_${template.id}_${Date.now()}`,
-        'custom[template_id]': template.id,
-        'custom[template_name]': template.name,
-        'custom[source]': 'curriculum_gratis_online'
+        'success_url': successUrl,
+        'cancel_url': cancelUrl,
+        'client_reference_id': `template_${template.id}_${Date.now()}`,
+        'metadata[template_id]': template.id,
+        'metadata[template_name]': template.name,
+        'metadata[source]': 'premium_action'
       });
       
-      const finalUrl = `${stripeUrl}?${params}`;
-      console.log('🎯 Redirecionando para Stripe:', finalUrl);
+      const finalUrl = `${stripeUrl}?${params.toString()}`;
+      
+      console.log('🎯 STRIPE: Redirecionando para:', finalUrl);
+      console.log('✅ STRIPE: Success URL:', successUrl);
+      console.log('❌ STRIPE: Cancel URL:', cancelUrl);
       
       // Salvar dados do template para quando retornar
       localStorage.setItem('stripe_pending_template', template.id);
-      localStorage.setItem('stripe_redirect_url', `/premium-editor?template=${template.id}`);
+      localStorage.setItem('stripe_redirect_url', successUrl);
+      localStorage.setItem('stripe_payment_initiated', 'true');
       
       // Redirecionar para o Stripe
       window.location.href = finalUrl;

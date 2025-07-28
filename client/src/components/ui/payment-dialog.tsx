@@ -31,31 +31,43 @@ export function PaymentDialog({ open, onOpenChange, template, onPaymentSuccess }
     try {
       console.log('💳 PAGAMENTO: Redirecionando para Stripe real:', template.id);
       
-      // URL do Stripe com URLs de retorno
+      // URL do Stripe real fornecida pelo usuário
       const stripeUrl = 'https://buy.stripe.com/aFa7sMf0t2rl34gaEK2sM00';
       const baseUrl = window.location.origin;
       
+      // Configurar URLs de retorno corretas
+      const successUrl = `${baseUrl}/premium-editor?template=${template.id}&payment=success`;
+      const cancelUrl = `${baseUrl}/templates?payment=cancelled`;
+      
+      // Parâmetros para o Stripe
       const params = new URLSearchParams({
-        client_reference_id: `template_${template.id}_${Date.now()}`,
-        success_url: `${baseUrl}/stripe-success?template_id=${template.id}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${baseUrl}/stripe-cancel`,
-        'custom[template_id]': template.id,
-        'custom[template_name]': template.name
+        'success_url': successUrl,
+        'cancel_url': cancelUrl,
+        'client_reference_id': `template_${template.id}_${Date.now()}`,
+        'metadata[template_id]': template.id,
+        'metadata[template_name]': template.name,
+        'metadata[source]': 'curriculum_gratis_online'
       });
       
-      const finalUrl = `${stripeUrl}?${params}`;
+      const finalUrl = `${stripeUrl}?${params.toString()}`;
       
-      console.log('🎯 Redirecionando para Stripe:', finalUrl);
+      console.log('🎯 STRIPE: Redirecionando para:', finalUrl);
+      console.log('✅ STRIPE: Success URL:', successUrl);
+      console.log('❌ STRIPE: Cancel URL:', cancelUrl);
       
       // Salvar dados para quando retornar
       localStorage.setItem('stripe_pending_template', template.id);
       localStorage.setItem('stripe_payment_initiated', 'true');
+      localStorage.setItem('stripe_redirect_template', template.id);
       
       // Fechar modal antes de redirecionar
       onOpenChange(false);
       
-      // Redirecionar para Stripe
-      window.location.href = finalUrl;
+      // Aguardar um momento para garantir que o modal foi fechado
+      setTimeout(() => {
+        console.log('🚀 STRIPE: Iniciando redirecionamento...');
+        window.location.href = finalUrl;
+      }, 500);
 
     } catch (error) {
       console.error('❌ Erro no pagamento:', error);

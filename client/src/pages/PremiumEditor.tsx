@@ -96,8 +96,8 @@ export default function PremiumEditor() {
   });
 
   const [whatsappData, setWhatsappData] = useState({
-    number: '',
-    message: 'Olá! 👋\n\nGostaria de compartilhar meu currículo profissional com você.\n\nEspero que possamos conversar sobre oportunidades de colaboração.\n\nObrigado!'
+    number: '031971052200',
+    message: 'Olá! 👋\n\nGostaria de compartilhar meu currículo profissional com você.\n\nSegue anexado meu currículo atualizado.\n\nEspero que possamos conversar sobre oportunidades de colaboração.\n\nObrigado!'
   });
 
   useEffect(() => {
@@ -577,18 +577,76 @@ export default function PremiumEditor() {
     }
   };
 
-  const handleSendWhatsApp = () => {
+  const handleSendWhatsApp = async () => {
     const { number, message } = whatsappData;
     if (!number) {
       toast.error('Por favor, informe o número do WhatsApp');
       return;
     }
 
-    const cleanNumber = number.replace(/\D/g, '');
-    const whatsappLink = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappLink, '_blank');
-    setWhatsappModalOpen(false);
-    toast.success('WhatsApp aberto com mensagem personalizada!');
+    try {
+      // Gerar PDF do currículo para anexar
+      toast.info('Preparando currículo para envio...');
+      
+      const previewElement = document.querySelector('.template-premium-preview') as HTMLElement;
+      if (previewElement) {
+        // Importar bibliotecas
+        const html2canvas = await import('html2canvas');
+        const jsPDF = await import('jspdf');
+
+        // Capturar com html2canvas
+        const canvas = await html2canvas.default(previewElement, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          width: 794,
+          height: 1123
+        });
+
+        // Criar PDF
+        const pdf = new jsPDF.jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const imgData = canvas.toDataURL('image/png', 1.0);
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        
+        // Baixar PDF automaticamente
+        const fileName = `curriculo-${selectedTemplate?.name || 'premium'}-${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(fileName);
+        
+        toast.success('PDF baixado! Agora anexe no WhatsApp.');
+      }
+
+      // Abrir WhatsApp com mensagem personalizada
+      const cleanNumber = number.replace(/\D/g, '');
+      const enhancedMessage = `${message}\n\n📎 *IMPORTANTE:* O PDF do meu currículo foi baixado automaticamente. Por favor, anexe o arquivo "${`curriculo-${selectedTemplate?.name || 'premium'}-${new Date().toISOString().slice(0,10)}.pdf`}" nesta conversa.`;
+      
+      const whatsappLink = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(enhancedMessage)}`;
+      
+      setTimeout(() => {
+        window.open(whatsappLink, '_blank');
+        setWhatsappModalOpen(false);
+        toast.success('WhatsApp aberto! Anexe o PDF baixado na conversa.');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Erro ao preparar envio:', error);
+      
+      // Fallback: abrir WhatsApp sem PDF
+      const cleanNumber = number.replace(/\D/g, '');
+      const whatsappLink = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappLink, '_blank');
+      setWhatsappModalOpen(false);
+      toast.warning('WhatsApp aberto! Lembre-se de anexar seu currículo manualmente.');
+    }
   };
 
   const generateFullReport = async () => {
