@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Teste Popup de Bônus</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .btn.danger { background: #dc2626; }
+        .btn.danger:hover { background: #b91c1c; }
+        .btn.success { background: #16a34a; }
+        .btn.success:hover { background: #15803d; }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .info { background: #dbeafe; color: #1e40af; }
+        .success { background: #dcfce7; color: #166534; }
+        .error { background: #fef2f2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste do Popup de Bônus</h1>
+        <p>Use estes botões para testar o comportamento do popup:</p>
+        
+        <div>
+            <button class="btn" onclick="checkStatus()">📊 Verificar Status</button>
+            <button class="btn danger" onclick="resetAll()">🔄 Resetar Tudo</button>
+            <button class="btn success" onclick="simulateSignup()">✅ Simular Cadastro</button>
+        </div>
+        
+        <div>
+            <button class="btn" onclick="resetOnlyToday()">📅 Resetar Apenas Hoje</button>
+            <button class="btn" onclick="goToHomepage()">🏠 Ir para Homepage</button>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const result = document.getElementById('result');
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            result.textContent += `[${timestamp}] ${message}\n`;
+            
+            if (type === 'success') {
+                result.className = 'success';
+            } else if (type === 'error') {
+                result.className = 'error';
+            } else {
+                result.className = 'info';
+            }
+        }
+
+        function checkStatus() {
+            log('🔍 VERIFICANDO STATUS DO POPUP...');
+            
+            const userSignedUp = localStorage.getItem('user-signed-up-bonus');
+            const lastShown = localStorage.getItem('bonus-popup-last-shown');
+            const signupDate = localStorage.getItem('bonus-signup-date');
+            const leads = JSON.parse(localStorage.getItem('bonus-leads') || '[]');
+            const today = new Date().toDateString();
+            
+            log(`📊 STATUS ATUAL:`);
+            log(`   • Usuário cadastrado: ${userSignedUp === 'true' ? 'SIM' : 'NÃO'}`);
+            log(`   • Último popup mostrado: ${lastShown || 'NUNCA'}`);
+            log(`   • Data de cadastro: ${signupDate ? new Date(signupDate).toLocaleString('pt-BR') : 'N/A'}`);
+            log(`   • Total de leads: ${leads.length}`);
+            log(`   • Hoje: ${today}`);
+            log(`   • Pode mostrar popup: ${canShowPopupNow() ? 'SIM' : 'NÃO'}`);
+            
+            if (leads.length > 0) {
+                log(`\n📋 LEADS CADASTRADOS:`);
+                leads.forEach((lead, i) => {
+                    log(`   ${i+1}. ${lead.name} (${lead.email}) - ${new Date(lead.timestamp).toLocaleString('pt-BR')}`);
+                });
+            }
+        }
+
+        function canShowPopupNow() {
+            // Mesma lógica do Index.tsx
+            if (localStorage.getItem('user-signed-up-bonus') === 'true') {
+                return false;
+            }
+            
+            const lastShown = localStorage.getItem('bonus-popup-last-shown');
+            const today = new Date().toDateString();
+            
+            return lastShown !== today;
+        }
+
+        function resetAll() {
+            localStorage.removeItem('user-signed-up-bonus');
+            localStorage.removeItem('bonus-popup-last-shown');
+            localStorage.removeItem('bonus-signup-date');
+            localStorage.removeItem('bonus-leads');
+            
+            log('🔄 TUDO RESETADO! Popup deve aparecer novamente.', 'success');
+            log('🏠 Vá para a homepage para testar.');
+        }
+
+        function simulateSignup() {
+            const fakeData = {
+                id: `test_${Date.now()}`,
+                name: 'Usuário Teste',
+                email: 'teste@exemplo.com',
+                whatsapp: '(11) 99999-9999',
+                source: 'test',
+                timestamp: new Date().toISOString(),
+                bonusType: 'Guia Secreto de Entrevistas'
+            };
+            
+            const leads = JSON.parse(localStorage.getItem('bonus-leads') || '[]');
+            leads.push(fakeData);
+            localStorage.setItem('bonus-leads', JSON.stringify(leads));
+            localStorage.setItem('user-signed-up-bonus', 'true');
+            localStorage.setItem('bonus-signup-date', new Date().toISOString());
+            
+            log('✅ CADASTRO SIMULADO! Popup não deve mais aparecer.', 'success');
+        }
+
+        function resetOnlyToday() {
+            localStorage.removeItem('bonus-popup-last-shown');
+            log('📅 RESETADO APENAS HOJE! Popup deve aparecer se não cadastrou.', 'success');
+        }
+
+        function goToHomepage() {
+            window.open('/', '_blank');
+        }
+
+        // Log inicial
+        log('🎯 Teste do Popup de Bônus carregado!');
+        log('📋 Use os botões acima para testar diferentes cenários.');
+        checkStatus();
+    </script>
+</body>
+</html>
+
+
+
+
+

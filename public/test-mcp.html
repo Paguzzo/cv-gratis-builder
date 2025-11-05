@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste MCP</title>
+</head>
+<body>
+    <h1>Teste MCP Email</h1>
+    <button onclick="testMCP()">Testar MCP</button>
+    <div id="result"></div>
+
+    <script>
+        function testMCP() {
+            const result = document.getElementById('result');
+            
+            console.log('🔍 TESTE MCP INICIADO');
+            console.log('🔍 typeof window:', typeof window);
+            console.log('🔍 window.mcp_Email_sending_send_email:', typeof window.mcp_Email_sending_send_email);
+            console.log('🔍 Propriedades MCP no window:', Object.keys(window).filter(k => k.includes('mcp')));
+            
+            if (typeof window.mcp_Email_sending_send_email === 'function') {
+                result.innerHTML = '<p style="color: green;">✅ MCP DISPONÍVEL!</p>';
+                console.log('✅ MCP ESTÁ FUNCIONANDO');
+            } else {
+                result.innerHTML = '<p style="color: red;">❌ MCP NÃO DISPONÍVEL</p>';
+                console.log('❌ MCP NÃO ESTÁ FUNCIONANDO');
+            }
+        }
+        
+        // Teste automático ao carregar
+        window.onload = testMCP;
+    </script>
+</body>
+</html> 

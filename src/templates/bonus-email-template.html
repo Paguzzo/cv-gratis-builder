@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seu Guia Secreto de Entrevistas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><linearGradient id="a" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="%23fff" stop-opacity="0.1"/><stop offset="1" stop-color="%23fff" stop-opacity="0"/></linearGradient></defs><rect width="100" height="20" fill="url(%23a)"/></svg>');
+            opacity: 0.1;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+        .header .subtitle {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        .gift-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 30px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .features-list {
+            background: #f8fafc;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .features-list h3 {
+            margin: 0 0 15px 0;
+            color: #1f2937;
+            font-size: 18px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .feature-icon {
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        .bonus-section {
+            background: linear-gradient(135deg, #ede9fe, #f3e8ff);
+            border: 2px solid #c084fc;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .bonus-section h3 {
+            color: #7c3aed;
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        .bonus-section p {
+            margin: 10px 0;
+            color: #6b46c1;
+        }
+        .footer {
+            background: #f8fafc;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .footer .brand {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .social-links {
+            margin: 20px 0;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #6b7280;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            .header, .content, .footer {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="gift-icon">🎁</div>
+            <h1>Seu Guia Secreto Chegou!</h1>
+            <p class="subtitle">Domine as entrevistas e conquiste sua vaga dos sonhos</p>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">Olá, {NOME}!</div>
+            
+            <div class="message">
+                <p><strong>Parabéns!</strong> Seu <strong>Guia Secreto de Entrevistas</strong> está aqui e pronto para transformar sua carreira! 🚀</p>
+                
+                <p>Este guia exclusivo foi desenvolvido por especialistas em RH e contém estratégias que realmente funcionam no mercado brasileiro.</p>
+            </div>
+
+            <div class="features-list">
+                <h3>🎯 O que você vai descobrir:</h3>
+                <div class="feature-item">
+                    <span class="feature-icon">✅</span>
+                    <span><strong>27 perguntas mais feitas</strong> em entrevistas de emprego</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✅</span>
+                    <span><strong>Respostas que impressionam</strong> recrutadores e RH</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✅</span>
+                    <span><strong>Técnicas de linguagem corporal</strong> para causar boa impressão</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✅</span>
+                    <span><strong>Como negociar salário</strong> com confiança e estratégia</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✅</span>
+                    <span><strong>Scripts prontos</strong> para diferentes situações</span>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{LINK_DOWNLOAD}" class="cta-button">
+                    📎 BAIXAR MEU GUIA AGORA
+                </a>
+            </div>
+
+            <div class="bonus-section">
+                <h3>🚀 BÔNUS ESPECIAL PARA VOCÊ!</h3>
+                <p><strong>Quer acelerar ainda mais sua carreira?</strong></p>
+                <p>Temos um curso completo <em>"Dominando Entrevistas de Emprego"</em> com mais de 4 horas de conteúdo exclusivo.</p>
+                <p><strong>Desconto especial de 50% apenas para quem baixou o guia!</strong></p>
+                <p>
+                    <a href="#" style="color: #7c3aed; text-decoration: none; font-weight: 600;">
+                        👑 Ver Curso com Desconto →
+                    </a>
+                </p>
+            </div>
+
+            <div class="message">
+                <p><strong>💡 Dica Extra:</strong> Use as técnicas deste guia junto com seu currículo criado no CurriculoGratisOnline.com para resultados ainda melhores!</p>
+                
+                <p>Sua jornada para o emprego dos sonhos começa agora. Estamos torcendo por você! 💪</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="brand">✨ Equipe CurriculoGratisOnline.com</p>
+            <p>Transformando carreiras, um currículo por vez!</p>
+            
+            <div class="social-links">
+                <a href="#">📧 Suporte</a>
+                <a href="#">📱 WhatsApp</a>
+                <a href="#">🌐 Site</a>
+            </div>
+            
+            <p>🇧🇷 Feito no Brasil com ❤️ para profissionais que querem se destacar</p>
+            <p style="font-size: 12px; margin-top: 20px;">
+                Você está recebendo este email porque solicitou nosso Guia Secreto de Entrevistas.<br>
+                Não fazemos spam. Seus dados estão seguros conosco.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

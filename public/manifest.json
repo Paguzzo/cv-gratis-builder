@@ -1,0 +1,9 @@
+{
+  "name": "CVGratis - Criador de Currículos",
+  "short_name": "CVGratis",
+  "description": "Criador de currículos profissionais gratuito",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#10b981",
+  "background_color": "#ffffff"
+} 

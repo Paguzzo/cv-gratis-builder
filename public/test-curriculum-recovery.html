@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Recuperação de Currículo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .button.danger {
+            background-color: #dc3545;
+        }
+        .button.danger:hover {
+            background-color: #c82333;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .data-preview {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .instructions {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Teste de Recuperação de Currículo</h1>
+        
+        <div class="instructions">
+            <h3>📋 Instruções:</h3>
+            <ol>
+                <li>Use este teste para simular um currículo preenchido</li>
+                <li>Clique em "Adicionar Dados de Teste" para popular o localStorage</li>
+                <li>Acesse <a href="http://localhost:8081/template-selector" target="_blank">Template Selector</a> para verificar se funciona</li>
+                <li>Use "Limpar Dados" para remover os dados de teste</li>
+            </ol>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="button" onclick="populateTestData()">📝 Adicionar Dados de Teste</button>
+            <button class="button" onclick="checkCurrentData()">🔍 Verificar Dados Atuais</button>
+            <button class="button danger" onclick="clearTestData()">🧹 Limpar Dados</button>
+        </div>
+
+        <div id="status"></div>
+        <div id="dataPreview"></div>
+    </div>
+
+    <script>
+        // Dados de teste do currículo
+        const testCurriculumData = {
+            personalInfo: {
+                name: "João Silva",
+                email: "joao.silva@email.com",
+                phone: "(11) 99999-9999",
+                whatsapp: "(11) 99999-9999",
+                address: "São Paulo, SP",
+                position: "Desenvolvedor Full Stack",
+                photo: "",
+                isRoundPhoto: true,
+                hasDriverLicense: true,
+                driverLicenseCategories: ["B"]
+            },
+            objective: {
+                keywords: "desenvolvimento, programação, tecnologia",
+                description: "Desenvolvedor Full Stack com experiência em React, Node.js e bancos de dados. Busco oportunidades para aplicar meus conhecimentos em projetos desafiadores e contribuir para o crescimento da empresa."
+            },
+            experience: [
+                {
+                    id: "exp1",
+                    position: "Desenvolvedor Frontend",
+                    company: "Tech Solutions Ltda",
+                    startDate: "2022-01",
+                    endDate: "2024-12",
+                    current: true,
+                    keywords: "React, JavaScript, TypeScript",
+                    description: "Desenvolvimento de interfaces web responsivas utilizando React e TypeScript. Colaboração em equipe ágil para entrega de projetos de alta qualidade."
+                }
+            ],
+            education: [
+                {
+                    id: "edu1",
+                    course: "Análise e Desenvolvimento de Sistemas",
+                    institution: "Faculdade de Tecnologia",
+                    startDate: "2020-02",
+                    endDate: "2023-12",
+                    level: "superior"
+                }
+            ],
+            skills: [
+                {
+                    id: "skill1",
+                    name: "React",
+                    category: "technical"
+                },
+                {
+                    id: "skill2",
+                    name: "JavaScript",
+                    category: "technical"
+                },
+                {
+                    id: "skill3",
+                    name: "Comunicação",
+                    category: "soft"
+                }
+            ],
+            languages: [
+                {
+                    id: "lang1",
+                    name: "Português",
+                    level: "nativo"
+                },
+                {
+                    id: "lang2",
+                    name: "Inglês",
+                    level: "intermediario"
+                }
+            ]
+        };
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function showDataPreview(data) {
+            const previewDiv = document.getElementById('dataPreview');
+            previewDiv.innerHTML = `
+                <h3>📊 Dados no localStorage:</h3>
+                <div class="data-preview">${JSON.stringify(data, null, 2)}</div>
+            `;
+        }
+
+        function populateTestData() {
+            try {
+                // Salvar dados do currículo
+                localStorage.setItem('cvgratis-curriculum', JSON.stringify(testCurriculumData));
+                
+                // Marcar como completo
+                localStorage.setItem('cvgratis-curriculum-complete', 'true');
+                
+                // Definir template selecionado (gratuito)
+                localStorage.setItem('cvgratis-selected-template', 'modern');
+                
+                showStatus('✅ Dados de teste adicionados com sucesso! Agora você pode acessar o Template Selector.', 'success');
+                showDataPreview(testCurriculumData);
+                
+                console.log('✅ Dados de teste populados:', testCurriculumData);
+            } catch (error) {
+                showStatus('❌ Erro ao adicionar dados de teste: ' + error.message, 'error');
+                console.error('❌ Erro:', error);
+            }
+        }
+
+        function checkCurrentData() {
+            try {
+                const curriculumData = localStorage.getItem('cvgratis-curriculum');
+                const isComplete = localStorage.getItem('cvgratis-curriculum-complete');
+                const selectedTemplate = localStorage.getItem('cvgratis-selected-template');
+                
+                if (curriculumData) {
+                    const parsedData = JSON.parse(curriculumData);
+                    showStatus(`✅ Dados encontrados! Completo: ${isComplete}, Template: ${selectedTemplate}`, 'success');
+                    showDataPreview(parsedData);
+                } else {
+                    showStatus('❌ Nenhum dado encontrado no localStorage.', 'error');
+                    document.getElementById('dataPreview').innerHTML = '';
+                }
+            } catch (error) {
+                showStatus('❌ Erro ao verificar dados: ' + error.message, 'error');
+                console.error('❌ Erro:', error);
+            }
+        }
+
+        function clearTestData() {
+            try {
+                localStorage.removeItem('cvgratis-curriculum');
+                localStorage.removeItem('cvgratis-curriculum-complete');
+                localStorage.removeItem('cvgratis-selected-template');
+                localStorage.removeItem('cvgratis-premium-unlocked');
+                localStorage.removeItem('cvgratis-user-data-collected');
+                localStorage.removeItem('cvgratis-user-data');
+                
+                showStatus('🧹 Todos os dados de teste foram removidos.', 'info');
+                document.getElementById('dataPreview').innerHTML = '';
+                
+                console.log('🧹 Dados limpos');
+            } catch (error) {
+                showStatus('❌ Erro ao limpar dados: ' + error.message, 'error');
+                console.error('❌ Erro:', error);
+            }
+        }
+
+        // Verificar dados ao carregar a página
+        window.onload = function() {
+            checkCurrentData();
+        };
+    </script>
+</body>
+</html>

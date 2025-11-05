@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug LocalStorage - Currículo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .data { background: #f5f5f5; padding: 10px; border-radius: 3px; white-space: pre-wrap; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Debug LocalStorage - Dados do Currículo</h1>
+    
+    <div class="section">
+        <h2>1. Dados Completos do Currículo</h2>
+        <button onclick="showCurriculumData()">Mostrar Dados do Currículo</button>
+        <div id="curriculum-data" class="data"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. Informações Pessoais</h2>
+        <button onclick="showPersonalInfo()">Mostrar Informações Pessoais</button>
+        <div id="personal-info" class="data"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. Teste da Função hasValidData</h2>
+        <button onclick="testHasValidData()">Testar hasValidData()</button>
+        <div id="validation-result" class="data"></div>
+    </div>
+
+    <div class="section">
+        <h2>4. Todos os Dados do LocalStorage</h2>
+        <button onclick="showAllLocalStorage()">Mostrar Todo LocalStorage</button>
+        <div id="all-storage" class="data"></div>
+    </div>
+
+    <script>
+        function showCurriculumData() {
+            const curriculumData = localStorage.getItem('cvgratis-curriculum');
+            const element = document.getElementById('curriculum-data');
+            
+            if (curriculumData) {
+                try {
+                    const parsed = JSON.parse(curriculumData);
+                    element.textContent = JSON.stringify(parsed, null, 2);
+                } catch (e) {
+                    element.textContent = 'Erro ao parsear dados: ' + e.message + '\n\nDados brutos:\n' + curriculumData;
+                }
+            } else {
+                element.textContent = 'Nenhum dado encontrado no localStorage com a chave "cvgratis-curriculum"';
+            }
+        }
+
+        function showPersonalInfo() {
+            const curriculumData = localStorage.getItem('cvgratis-curriculum');
+            const element = document.getElementById('personal-info');
+            
+            if (curriculumData) {
+                try {
+                    const parsed = JSON.parse(curriculumData);
+                    const personalInfo = parsed.personalInfo || {};
+                    element.textContent = JSON.stringify(personalInfo, null, 2);
+                } catch (e) {
+                    element.textContent = 'Erro ao parsear dados: ' + e.message;
+                }
+            } else {
+                element.textContent = 'Nenhum dado encontrado';
+            }
+        }
+
+        function testHasValidData() {
+            const element = document.getElementById('validation-result');
+            
+            // Reproduzir a lógica da função hasValidData
+            const curriculumData = localStorage.getItem('cvgratis-curriculum');
+            
+            let result = 'Teste da função hasValidData():\n\n';
+            
+            if (!curriculumData) {
+                result += '❌ Nenhum dado encontrado no localStorage\n';
+                element.textContent = result;
+                return;
+            }
+
+            try {
+                const data = JSON.parse(curriculumData);
+                result += '✅ Dados encontrados no localStorage\n\n';
+                
+                // Verificar personalInfo
+                const hasPersonalInfo = data.personalInfo && data.personalInfo.name && data.personalInfo.name.trim() !== '';
+                result += `Informações Pessoais: ${hasPersonalInfo ? '✅' : '❌'}\n`;
+                result += `  - Nome: "${data.personalInfo?.name || 'vazio'}"\n\n`;
+                
+                // Verificar outros dados
+                const hasEducation = data.education && data.education.length > 0;
+                const hasExperience = data.experience && data.experience.length > 0;
+                const hasSkills = data.skills && data.skills.length > 0;
+                const hasObjective = data.objective && data.objective.trim() !== '';
+                
+                result += `Educação: ${hasEducation ? '✅' : '❌'} (${data.education?.length || 0} itens)\n`;
+                result += `Experiência: ${hasExperience ? '✅' : '❌'} (${data.experience?.length || 0} itens)\n`;
+                result += `Habilidades: ${hasSkills ? '✅' : '❌'} (${data.skills?.length || 0} itens)\n`;
+                result += `Objetivo: ${hasObjective ? '✅' : '❌'}\n\n`;
+                
+                const hasAnyData = hasEducation || hasExperience || hasSkills || hasObjective;
+                result += `Tem algum dado: ${hasAnyData ? '✅' : '❌'}\n`;
+                
+                const isValid = hasPersonalInfo && hasAnyData;
+                result += `\n🎯 RESULTADO FINAL: ${isValid ? '✅ VÁLIDO' : '❌ INVÁLIDO'}\n`;
+                
+                if (!isValid) {
+                    result += '\n❗ Motivos da invalidação:\n';
+                    if (!hasPersonalInfo) result += '  - Falta nome nas informações pessoais\n';
+                    if (!hasAnyData) result += '  - Nenhum dado adicional preenchido\n';
+                }
+                
+            } catch (e) {
+                result += '❌ Erro ao parsear dados: ' + e.message;
+            }
+            
+            element.textContent = result;
+        }
+
+        function showAllLocalStorage() {
+            const element = document.getElementById('all-storage');
+            let result = 'Todas as chaves do localStorage:\n\n';
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                result += `${key}:\n${value}\n\n---\n\n`;
+            }
+            
+            if (localStorage.length === 0) {
+                result = 'LocalStorage está vazio';
+            }
+            
+            element.textContent = result;
+        }
+
+        // Executar automaticamente ao carregar a página
+        window.onload = function() {
+            showCurriculumData();
+            showPersonalInfo();
+            testHasValidData();
+        };
+    </script>
+</body>
+</html>

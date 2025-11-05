@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Teste Resend Direct API</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { background: #dcfce7; color: #166534; }
+        .error { background: #fef2f2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste Resend Direct API</h1>
+        <p>Este teste vai enviar um email diretamente via API Resend para verificar se a integração está funcionando.</p>
+        
+        <div>
+            <label for="testEmail">Email para teste:</label><br>
+            <input type="email" id="testEmail" value="compg.oficial@gmail.com" style="width: 100%; padding: 8px; margin: 5px 0 15px;">
+        </div>
+        
+        <button id="testBtn" class="btn" onclick="testarResend()">
+            🚀 Testar Envio via Resend
+        </button>
+        
+        <button id="testPdfBtn" class="btn" onclick="testarComPDF()">
+            📎 Testar com PDF (simulado)
+        </button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_KEY = process.env.VITE_RESEND_API_KEY || 'your_resend_api_key_here';
+        const FROM_EMAIL = 'contato@app.curriculogratisonline.com';
+        const API_URL = 'https://api.resend.com/emails';
+
+        function log(message, type = 'info') {
+            const result = document.getElementById('result');
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            result.textContent += `[${timestamp}] ${message}\n`;
+            
+            if (type === 'success') {
+                result.className = 'success';
+            } else if (type === 'error') {
+                result.className = 'error';
+            } else {
+                result.className = '';
+            }
+            
+            result.scrollTop = result.scrollHeight;
+        }
+
+        async function testarResend() {
+            const btn = document.getElementById('testBtn');
+            const email = document.getElementById('testEmail').value;
+            
+            if (!email) {
+                alert('Por favor, digite um email para teste!');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Testando...';
+            
+            try {
+                log('🚀 TESTANDO RESEND DIRECT SERVICE (NOVA VERSÃO)...');
+                log(`📧 Email destino: ${email}`);
+                
+                // Criar instância do ResendDirectService
+                const emailData = {
+                    to: email,
+                    subject: '✅ TESTE - ResendDirectService Funcionando!',
+                    message: `Este é um teste do novo ResendDirectService!
+
+Funcionalidades testadas:
+✅ Detecção automática do MCP
+✅ Fallback inteligente
+✅ Logs detalhados
+✅ Tratamento de erro robusto
+
+Se chegou aqui, o sistema está operacional!`,
+                    senderName: 'Sistema CV Grátis',
+                    recipientName: 'Desenvolvedor'
+                };
+                
+                // Simular o ResendDirectService (adaptado para teste)
+                log('📧 Verificando MCP Email Sending...');
+                
+                let mcpAvailable = false;
+                try {
+                    // Verificar se MCP está disponível
+                    if (typeof window.mcp_Email_sending_send_email === 'function') {
+                        log('✅ MCP Email Sending detectado!', 'success');
+                        mcpAvailable = true;
+                        
+                        const mcpConfig = {
+                            to: emailData.to,
+                            from: FROM_EMAIL,
+                            subject: emailData.subject,
+                            text: emailData.message,
+                            html: `<h2>${emailData.subject}</h2><p>${emailData.message.replace(/\n/g, '<br>')}</p>`
+                        };
+                        
+                        log('📧 Tentando envio via MCP...');
+                        const mcpResult = await window.mcp_Email_sending_send_email(mcpConfig);
+                        log(`✅ EMAIL ENVIADO VIA MCP! ID: ${mcpResult.id}`, 'success');
+                        log('🎉 Verifique sua caixa de entrada!');
+                        
+                    } else {
+                        throw new Error('MCP não disponível');
+                    }
+                } catch (mcpError) {
+                    log(`⚠️ MCP falhou: ${mcpError.message}`);
+                    log('🔄 Usando simulação avançada...');
+                    
+                    // Simulação avançada
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    const emailId = `sim_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`;
+                    
+                    log('📧 SIMULAÇÃO CONCLUÍDA:', 'success');
+                    log(`   ✅ Para: ${emailData.to}`);
+                    log(`   ✅ Assunto: ${emailData.subject}`);
+                    log(`   ✅ ID: ${emailId}`);
+                    log('📝 (Simulação - email não enviado realmente)');
+                }
+                
+            } catch (error) {
+                log(`❌ ERRO NO TESTE: ${error.message}`, 'error');
+                console.error('Erro completo:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Testar Envio via Resend';
+            }
+        }
+
+        async function testarComPDF() {
+            const btn = document.getElementById('testPdfBtn');
+            const email = document.getElementById('testEmail').value;
+            
+            if (!email) {
+                alert('Por favor, digite um email para teste!');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Testando PDF...';
+            
+            try {
+                log('📎 TESTANDO ENVIO COM PDF SIMULADO...');
+                
+                // PDF base64 simulado (pequeno)
+                const pdfBase64 = 'JVBERi0xLjQKJeHp6enoOrgwIDAgUmVmDQovVGl0bGUgKFRlc3RlIFBERikKL0F1dGhvcgplbmRvYmoKCjE4IDAgb2JqCjw8Ci9TaXplIDEyMjAKL1Jvb3QgMSAwIFIKPj4Kc3RhcnR4cmVmCjkyNzMKJSVFT0Y=';
+                
+                const emailPayload = {
+                    from: FROM_EMAIL,
+                    to: [email],
+                    subject: '📎 TESTE - Resend com Anexo PDF',
+                    text: 'Este é um teste com anexo PDF!',
+                    html: '<h2>📎 Teste com PDF anexado!</h2><p>Se você conseguir abrir o anexo, está funcionando!</p>',
+                    attachments: [{
+                        filename: 'teste_curriculo.pdf',
+                        content: pdfBase64
+                    }]
+                };
+                
+                log('📧 Enviando email com anexo PDF...');
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(emailPayload)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                log(`✅ EMAIL COM PDF ENVIADO!`, 'success');
+                log(`🆔 Email ID: ${result.id}`);
+                log('📎 Verifique se o PDF chegou anexado!');
+                
+            } catch (error) {
+                log(`❌ ERRO NO ENVIO COM PDF: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📎 Testar com PDF (simulado)';
+            }
+        }
+
+        // Log inicial
+        log('🎯 Teste Resend Direct API carregado!');
+        log('📋 Configurações:');
+        log(`   API Key: ${API_KEY.substring(0, 10)}...`);
+        log(`   From Email: ${FROM_EMAIL}`);
+        log('🚀 Clique no botão para testar!');
+    </script>
+</body>
+</html>

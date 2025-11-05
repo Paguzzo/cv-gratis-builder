@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Teste - Integração Supabase + Resend</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .success {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        .error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        .warning {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 5px;
+        }
+        .status.success { background: #dcfce7; color: #166534; }
+        .status.error { background: #fee2e2; color: #991b1b; }
+        .status.warning { background: #fef3c7; color: #92400e; }
+        .status.info { background: #dbeafe; color: #1e40af; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Teste - Integração Supabase + Resend</h1>
+            <p>Teste completo da nova integração de email</p>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Status da Configuração</h3>
+            <div id="config-status">
+                <span class="status info">Verificando...</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📧 Teste de Envio de Email</h3>
+            <div>
+                <label for="test-email">Email de teste:</label><br>
+                <input type="email" id="test-email" value="pabloguzzo.oficial@gmail.com" style="width: 300px; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div>
+                <button onclick="testSupabaseEmail()">🚀 Testar Supabase + Resend</button>
+                <button onclick="testMCPEmail()">🔄 Testar MCP (Fallback)</button>
+                <button onclick="testResendDirect()">📧 Testar Resend Direto</button>
+            </div>
+            <div id="email-status">
+                <span class="status info">Pronto para teste</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎁 Teste de Email de Bônus</h3>
+            <div>
+                <label for="bonus-name">Nome do usuário:</label><br>
+                <input type="text" id="bonus-name" value="Usuário Teste" style="width: 300px; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div>
+                <button onclick="testBonusEmail()">🎁 Testar Email de Bônus</button>
+            </div>
+            <div id="bonus-status">
+                <span class="status info">Pronto para teste</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Logs de Teste</h3>
+            <button onclick="clearLogs()">🗑️ Limpar Logs</button>
+            <div id="test-logs" class="log">
+                Logs aparecerão aqui...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para adicionar logs
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('test-logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            logs.innerHTML += logEntry + '\n';
+            logs.scrollTop = logs.scrollHeight;
+            console.log(logEntry);
+        }
+
+        // Função para limpar logs
+        function clearLogs() {
+            document.getElementById('test-logs').innerHTML = 'Logs limpos...\n';
+        }
+
+        // Função para atualizar status
+        function updateStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<span class="status ${type}">${message}</span>`;
+        }
+
+        // Verificar configuração inicial
+        function checkConfiguration() {
+            addLog('🔍 Verificando configuração do sistema...');
+            
+            // Verificar se Supabase está disponível
+            if (typeof window.supabase !== 'undefined' && window.supabase) {
+                addLog('✅ Supabase detectado e configurado', 'success');
+                updateStatus('config-status', '✅ Supabase Configurado', 'success');
+            } else {
+                addLog('❌ Supabase não detectado', 'error');
+                updateStatus('config-status', '❌ Supabase Não Configurado', 'error');
+            }
+
+            // Verificar MCP
+            if (typeof window.mcp_Email_sending_send_email !== 'undefined') {
+                addLog('✅ MCP Email disponível', 'success');
+            } else {
+                addLog('⚠️ MCP Email não disponível', 'warning');
+            }
+
+            // Verificar variáveis de ambiente
+            addLog('📋 Verificação de configuração concluída');
+        }
+
+        // Teste do Supabase + Resend
+        async function testSupabaseEmail() {
+            const email = document.getElementById('test-email').value;
+            if (!email) {
+                addLog('❌ Email de teste não informado', 'error');
+                return;
+            }
+
+            addLog(`🚀 Iniciando teste Supabase + Resend para: ${email}`);
+            updateStatus('email-status', '🔄 Enviando via Supabase...', 'info');
+
+            try {
+                if (!window.supabase) {
+                    throw new Error('Supabase não está configurado');
+                }
+
+                const emailData = {
+                    to: email,
+                    from: 'contato@app.curriculogratisonline.com',
+                    subject: '🧪 Teste - Supabase + Resend Integration',
+                    text: 'Este é um teste da integração Supabase + Resend. Se você recebeu este email, a integração está funcionando!',
+                    html: `
+                        <h1>🧪 Teste Supabase + Resend</h1>
+                        <p>Parabéns! A integração está funcionando corretamente.</p>
+                        <p><strong>Método:</strong> Supabase Edge Function + Resend API</p>
+                        <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                    `
+                };
+
+                addLog('📧 Chamando Edge Function do Supabase...');
+                const { data, error } = await window.supabase.functions.invoke('send-email', {
+                    body: emailData
+                });
+
+                if (error) {
+                    throw new Error(`Erro Supabase: ${error.message}`);
+                }
+
+                addLog('✅ Email enviado com sucesso via Supabase!', 'success');
+                addLog(`📋 Resposta: ${JSON.stringify(data)}`);
+                updateStatus('email-status', '✅ Enviado via Supabase', 'success');
+
+            } catch (error) {
+                addLog(`❌ Erro no teste Supabase: ${error.message}`, 'error');
+                updateStatus('email-status', '❌ Falha no Supabase', 'error');
+            }
+        }
+
+        // Teste do MCP (fallback)
+        async function testMCPEmail() {
+            const email = document.getElementById('test-email').value;
+            if (!email) {
+                addLog('❌ Email de teste não informado', 'error');
+                return;
+            }
+
+            addLog(`🔄 Iniciando teste MCP para: ${email}`);
+            updateStatus('email-status', '🔄 Enviando via MCP...', 'info');
+
+            try {
+                if (!window.mcp_Email_sending_send_email) {
+                    throw new Error('MCP não está disponível');
+                }
+
+                const emailData = {
+                    to: email,
+                    from: 'contato@app.curriculogratisonline.com',
+                    subject: '🧪 Teste - MCP Email',
+                    text: 'Este é um teste do MCP Email. Se você recebeu este email, o MCP está funcionando!',
+                    html: `
+                        <h1>🧪 Teste MCP Email</h1>
+                        <p>O MCP está funcionando corretamente.</p>
+                        <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                    `
+                };
+
+                addLog('📧 Enviando via MCP...');
+                const result = await window.mcp_Email_sending_send_email(emailData);
+
+                if (result.success) {
+                    addLog('✅ Email enviado com sucesso via MCP!', 'success');
+                    updateStatus('email-status', '✅ Enviado via MCP', 'success');
+                } else {
+                    throw new Error('MCP retornou falha');
+                }
+
+            } catch (error) {
+                addLog(`❌ Erro no teste MCP: ${error.message}`, 'error');
+                updateStatus('email-status', '❌ Falha no MCP', 'error');
+            }
+        }
+
+        // Teste do Resend direto
+        async function testResendDirect() {
+            const email = document.getElementById('test-email').value;
+            if (!email) {
+                addLog('❌ Email de teste não informado', 'error');
+                return;
+            }
+
+            addLog(`📧 Iniciando teste Resend direto para: ${email}`);
+            updateStatus('email-status', '🔄 Enviando via Resend...', 'info');
+
+            try {
+                // Simular chamada do ResendEmailService
+                addLog('⚠️ Teste Resend direto requer implementação no frontend', 'warning');
+                updateStatus('email-status', '⚠️ Resend - Implementar', 'warning');
+
+            } catch (error) {
+                addLog(`❌ Erro no teste Resend: ${error.message}`, 'error');
+                updateStatus('email-status', '❌ Falha no Resend', 'error');
+            }
+        }
+
+        // Teste de email de bônus
+        async function testBonusEmail() {
+            const email = document.getElementById('test-email').value;
+            const name = document.getElementById('bonus-name').value;
+            
+            if (!email || !name) {
+                addLog('❌ Email e nome são obrigatórios para teste de bônus', 'error');
+                return;
+            }
+
+            addLog(`🎁 Iniciando teste de email de bônus para: ${name} (${email})`);
+            updateStatus('bonus-status', '🔄 Enviando bônus...', 'info');
+
+            try {
+                if (!window.supabase) {
+                    throw new Error('Supabase não está configurado');
+                }
+
+                const bonusTemplate = `
+                    <h2>🎉 Seu Guia Chegou!</h2>
+                    <p>Olá <strong>{NOME}</strong>!</p>
+                    <p>Conforme prometido, aqui está seu <strong>Guia Secreto de Entrevistas</strong>!</p>
+                    <a href="{LINK_DOWNLOAD}" style="background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 16px 0;">📥 BAIXAR GUIA AGORA</a>
+                    <p>Sucesso em sua jornada profissional!</p>
+                    <p><strong>Equipe CurriculoGratisOnline.com</strong></p>
+                `;
+
+                const emailData = {
+                    to: email,
+                    from: 'contato@app.curriculogratisonline.com',
+                    subject: '🎁 Seu Guia Secreto de Entrevistas chegou!',
+                    text: bonusTemplate.replace('{NOME}', name).replace('{LINK_DOWNLOAD}', 'https://drive.google.com/exemplo').replace(/<[^>]*>/g, ''),
+                    html: bonusTemplate.replace('{NOME}', name).replace('{LINK_DOWNLOAD}', 'https://drive.google.com/exemplo')
+                };
+
+                addLog('🎁 Enviando email de bônus via Supabase...');
+                const { data, error } = await window.supabase.functions.invoke('send-email', {
+                    body: emailData
+                });
+
+                if (error) {
+                    throw new Error(`Erro Supabase: ${error.message}`);
+                }
+
+                addLog('✅ Email de bônus enviado com sucesso!', 'success');
+                updateStatus('bonus-status', '✅ Bônus Enviado', 'success');
+
+            } catch (error) {
+                addLog(`❌ Erro no teste de bônus: ${error.message}`, 'error');
+                updateStatus('bonus-status', '❌ Falha no Bônus', 'error');
+            }
+        }
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('🚀 Página de teste carregada');
+            checkConfiguration();
+        });
+    </script>
+</body>
+</html>

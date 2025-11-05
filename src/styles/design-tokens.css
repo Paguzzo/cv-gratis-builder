@@ -1,0 +1,249 @@
+/* Design Token System for Resume Builder - 2025 */
+/* Based on modern CSS custom properties with @property support */
+
+/* Define typed custom properties for better performance and animations */
+@property --primary-hue {
+  syntax: '<number>';
+  initial-value: 222;
+  inherits: true;
+}
+
+@property --resume-scale {
+  syntax: '<number>';
+  initial-value: 1;
+  inherits: false;
+}
+
+@property --section-opacity {
+  syntax: '<number>';
+  initial-value: 1;
+  inherits: false;
+}
+
+:root {
+  /* Core Design Tokens */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+
+  /* Enhanced Primary Scale */
+  --primary-50: 222 100% 97%;
+  --primary-100: 222 100% 95%;
+  --primary-200: 222 90% 90%;
+  --primary-300: 222 80% 80%;
+  --primary-400: 222 70% 60%;
+  --primary-500: 222 60% 47%;
+  --primary-600: 222 70% 35%;
+  --primary-700: 222 80% 25%;
+  --primary-800: 222 85% 18%;
+  --primary-900: 222 90% 12%;
+  --primary-950: 222 95% 8%;
+
+  /* Resume Template Semantic Tokens */
+  --resume-header: var(--primary-600);
+  --resume-header-text: var(--primary-50);
+  --resume-section: var(--primary-900);
+  --resume-section-text: var(--foreground);
+  --resume-accent: var(--primary-500);
+  --resume-accent-light: var(--primary-100);
+  --resume-border: var(--border);
+  --resume-skill-tag: var(--primary-100);
+  --resume-skill-tag-text: var(--primary-700);
+
+  /* Spacing Design Tokens */
+  --resume-margin: 2rem;
+  --resume-padding: 1.5rem;
+  --section-gap: 1.5rem;
+  --item-gap: 1rem;
+  --resume-border-radius: 0.375rem;
+
+  /* Template-specific Color Schemes */
+
+  /* Modern Template */
+  --modern-primary: 222 47% 11%;
+  --modern-secondary: 215 16% 47%;
+  --modern-accent: 221 83% 53%;
+
+  /* Creative Template */
+  --creative-primary: 262 83% 58%;
+  --creative-secondary: 262 52% 47%;
+  --creative-accent: 45 93% 47%;
+
+  /* Professional Template */
+  --professional-primary: 213 94% 68%;
+  --professional-secondary: 213 27% 84%;
+  --professional-accent: 217 91% 60%;
+
+  /* Executive Template */
+  --executive-primary: 0 0% 20%;
+  --executive-secondary: 0 0% 45%;
+  --executive-accent: 213 94% 68%;
+
+  /* Classic Template */
+  --classic-primary: 0 0% 15%;
+  --classic-secondary: 0 0% 40%;
+  --classic-accent: 0 0% 60%;
+}
+
+/* Dark Mode Tokens */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+
+  /* Dark Mode Resume Tokens */
+  --resume-header: var(--primary-400);
+  --resume-header-text: var(--primary-950);
+  --resume-section: var(--primary-100);
+  --resume-section-text: var(--foreground);
+  --resume-accent: var(--primary-400);
+  --resume-accent-light: var(--primary-900);
+  --resume-skill-tag: var(--primary-800);
+  --resume-skill-tag-text: var(--primary-200);
+}
+
+/* Template Theme Classes */
+.theme-modern {
+  --primary: var(--modern-primary);
+  --resume-accent: var(--modern-accent);
+}
+
+.theme-creative {
+  --primary: var(--creative-primary);
+  --resume-accent: var(--creative-accent);
+}
+
+.theme-professional {
+  --primary: var(--professional-primary);
+  --resume-accent: var(--professional-accent);
+}
+
+.theme-executive {
+  --primary: var(--executive-primary);
+  --resume-accent: var(--executive-accent);
+}
+
+.theme-classic {
+  --primary: var(--classic-primary);
+  --resume-accent: var(--classic-accent);
+}
+
+/* Responsive Design Tokens */
+@container resume (max-width: 600px) {
+  :root {
+    --resume-margin: 1rem;
+    --resume-padding: 1rem;
+    --section-gap: 1rem;
+    --item-gap: 0.75rem;
+  }
+}
+
+@container resume (min-width: 800px) {
+  :root {
+    --resume-margin: 3rem;
+    --resume-padding: 2rem;
+    --section-gap: 2rem;
+    --item-gap: 1.25rem;
+  }
+}
+
+/* Print-specific tokens */
+@media print {
+  :root {
+    --resume-margin: 1cm;
+    --resume-padding: 0.8cm;
+    --section-gap: 0.6cm;
+    --item-gap: 0.4cm;
+    --resume-border-radius: 0;
+  }
+}
+
+/* Accessibility tokens */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animation-duration: 0.01ms !important;
+    --animation-iteration-count: 1 !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --border: 0 0% 0%;
+    --resume-border: 0 0% 0%;
+  }
+}
+
+/* Utility classes using design tokens */
+.resume-container {
+  container-type: size;
+  container-name: resume;
+}
+
+.section-fade-in {
+  opacity: var(--section-opacity);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.template-scale {
+  transform: scale(var(--resume-scale));
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Color scheme utilities */
+.text-resume-primary {
+  color: hsl(var(--resume-section));
+}
+
+.bg-resume-accent {
+  background-color: hsl(var(--resume-accent));
+}
+
+.border-resume {
+  border-color: hsl(var(--resume-border));
+}
+
+/* Modern gradient utilities */
+.bg-gradient-resume {
+  background: linear-gradient(135deg,
+    hsl(var(--resume-accent)) 0%,
+    hsl(var(--resume-accent) / 0.8) 100%);
+}
+
+.bg-gradient-skill {
+  background: linear-gradient(90deg,
+    hsl(var(--resume-skill-tag)) 0%,
+    hsl(var(--resume-skill-tag) / 0.9) 100%);
+}

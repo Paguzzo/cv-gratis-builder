@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Debug Bonus Pop-up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug do Sistema de Bônus</h1>
+    
+    <div class="test-section">
+        <h2>1. Teste de LocalStorage</h2>
+        <button onclick="testLocalStorage()">Testar LocalStorage</button>
+        <button onclick="clearBonusData()">Limpar Dados do Bônus</button>
+        <div id="localStorage-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Teste de Captura de Lead</h2>
+        <input type="text" id="test-name" placeholder="Nome de teste" value="João Silva">
+        <input type="email" id="test-email" placeholder="Email de teste" value="joao@teste.com">
+        <input type="tel" id="test-whatsapp" placeholder="WhatsApp de teste" value="11999999999">
+        <button onclick="testLeadCapture()">Simular Captura de Lead</button>
+        <div id="lead-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Teste de Configurações do Presell</h2>
+        <button onclick="testPresellConfig()">Verificar Configurações</button>
+        <button onclick="setTestPresellConfig()">Definir Configurações de Teste</button>
+        <div id="presell-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Teste de MCP Email</h2>
+        <button onclick="testMCPAvailability()">Verificar MCP</button>
+        <button onclick="testEmailSending()">Testar Envio de Email</button>
+        <div id="mcp-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Visualizar Todos os Dados</h2>
+        <button onclick="showAllData()">Mostrar Todos os Dados</button>
+        <div id="all-data-result"></div>
+    </div>
+
+    <script>
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = message;
+            element.appendChild(div);
+        }
+
+        function clearResults(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        function testLocalStorage() {
+            clearResults('localStorage-result');
+            
+            try {
+                // Testar se localStorage está disponível
+                localStorage.setItem('test', 'ok');
+                localStorage.removeItem('test');
+                log('localStorage-result', '✅ LocalStorage está funcionando', 'success');
+                
+                // Verificar chaves existentes
+                const bonusKeys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.includes('bonus')) {
+                        bonusKeys.push(key);
+                    }
+                }
+                
+                if (bonusKeys.length > 0) {
+                    log('localStorage-result', `🔑 Chaves encontradas: ${bonusKeys.join(', ')}`, 'info');
+                    
+                    bonusKeys.forEach(key => {
+                        const value = localStorage.getItem(key);
+                        log('localStorage-result', `📊 ${key}: ${value}`, 'info');
+                    });
+                } else {
+                    log('localStorage-result', '⚠️ Nenhuma chave de bônus encontrada', 'error');
+                }
+                
+            } catch (error) {
+                log('localStorage-result', `❌ Erro no localStorage: ${error.message}`, 'error');
+            }
+        }
+
+        function clearBonusData() {
+            const keysToRemove = ['bonus-leads', 'bonus-config', 'user-signed-up-bonus', 'bonus-popup-last-shown', 'bonus-signup-date'];
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+            
+            log('localStorage-result', '🗑️ Dados do bônus limpos', 'success');
+        }
+
+        function testLeadCapture() {
+            clearResults('lead-result');
+            
+            const name = document.getElementById('test-name').value;
+            const email = document.getElementById('test-email').value;
+            const whatsapp = document.getElementById('test-whatsapp').value;
+            
+            if (!name || !email || !whatsapp) {
+                log('lead-result', '❌ Preencha todos os campos', 'error');
+                return;
+            }
+            
+            try {
+                // Simular a mesma lógica do bonus-popup
+                const leadData = {
+                    id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    name: name,
+                    email: email,
+                    whatsapp: whatsapp,
+                    source: 'bonus_guia_entrevistas',
+                    timestamp: new Date().toISOString(),
+                    bonusType: 'Guia Secreto de Entrevistas',
+                    emailSent: false,
+                    sentAt: undefined
+                };
+                
+                log('lead-result', `📝 Lead criado: ${JSON.stringify(leadData, null, 2)}`, 'info');
+                
+                // Salvar no localStorage
+                const existingLeads = JSON.parse(localStorage.getItem('bonus-leads') || '[]');
+                existingLeads.push(leadData);
+                localStorage.setItem('bonus-leads', JSON.stringify(existingLeads));
+                
+                log('lead-result', '💾 Lead salvo no localStorage', 'success');
+                
+                // Verificar se foi salvo
+                const verification = JSON.parse(localStorage.getItem('bonus-leads') || '[]');
+                log('lead-result', `✅ Verificação: ${verification.length} leads salvos`, 'success');
+                
+                // Marcar usuário como cadastrado
+                localStorage.setItem('user-signed-up-bonus', 'true');
+                localStorage.setItem('bonus-signup-date', new Date().toISOString());
+                
+                log('lead-result', '🎯 Usuário marcado como cadastrado', 'success');
+                
+            } catch (error) {
+                log('lead-result', `❌ Erro ao capturar lead: ${error.message}`, 'error');
+            }
+        }
+
+        function testPresellConfig() {
+            clearResults('presell-result');
+            
+            try {
+                const savedConfig = localStorage.getItem('bonus-config');
+                
+                if (savedConfig && savedConfig !== 'null') {
+                    const config = JSON.parse(savedConfig);
+                    log('presell-result', `📋 Configurações encontradas: ${JSON.stringify(config, null, 2)}`, 'success');
+                } else {
+                    log('presell-result', '⚠️ Nenhuma configuração de presell encontrada', 'error');
+                }
+                
+            } catch (error) {
+                log('presell-result', `❌ Erro ao verificar configurações: ${error.message}`, 'error');
+            }
+        }
+
+        function setTestPresellConfig() {
+            const testConfig = {
+                presellTitle: 'MÉTODO ENTREVISTA GARANTIDA - TESTE',
+                presellObjeções: [
+                    'Sistema completo usado por +500 aprovados',
+                    'Técnicas avançadas que 99% não conhece',
+                    'Como virar a mesa mesmo sem experiência',
+                    'Negociação de salário que dobra sua oferta',
+                    'Suporte direto comigo por 30 dias'
+                ],
+                presellPrecoAntigo: 'R$ 497',
+                presellPrecoNovo: 'R$ 97',
+                presellLink: 'https://exemplo.com/curso-teste',
+                presellFoto: 'https://via.placeholder.com/150',
+                emailSubject: '🎁 Seu Guia Secreto de Entrevistas chegou! - TESTE',
+                fileUrl: 'https://drive.google.com/file/d/teste',
+                emailTemplate: '<h2>🎉 Seu Guia Chegou! - TESTE</h2><p>Olá <strong>{NOME}</strong>!</p>'
+            };
+            
+            localStorage.setItem('bonus-config', JSON.stringify(testConfig));
+            log('presell-result', '✅ Configurações de teste definidas', 'success');
+            log('presell-result', `📋 Config: ${JSON.stringify(testConfig, null, 2)}`, 'info');
+        }
+
+        function testMCPAvailability() {
+            clearResults('mcp-result');
+            
+            if (typeof window.mcp_Email_sending_send_email === 'function') {
+                log('mcp-result', '✅ MCP Email está disponível', 'success');
+            } else {
+                log('mcp-result', '❌ MCP Email NÃO está disponível', 'error');
+                log('mcp-result', `🔍 Tipo: ${typeof window.mcp_Email_sending_send_email}`, 'info');
+            }
+            
+            // Verificar outras funções MCP
+            const mcpFunctions = Object.keys(window).filter(key => key.startsWith('mcp_'));
+            if (mcpFunctions.length > 0) {
+                log('mcp-result', `🔧 Funções MCP encontradas: ${mcpFunctions.join(', ')}`, 'info');
+            } else {
+                log('mcp-result', '⚠️ Nenhuma função MCP encontrada', 'error');
+            }
+        }
+
+        async function testEmailSending() {
+            clearResults('mcp-result');
+            
+            if (typeof window.mcp_Email_sending_send_email !== 'function') {
+                log('mcp-result', '❌ MCP não está disponível para teste', 'error');
+                return;
+            }
+            
+            try {
+                log('mcp-result', '📧 Tentando enviar email de teste...', 'info');
+                
+                const result = await window.mcp_Email_sending_send_email({
+                    to: 'teste@exemplo.com',
+                    from: 'contato@app.curriculogratisonline.com',
+                    subject: '🧪 Teste de Email - Debug Bonus',
+                    text: 'Este é um email de teste do sistema de debug.',
+                    html: '<h2>🧪 Teste de Email</h2><p>Este é um email de teste do sistema de debug.</p>'
+                });
+                
+                log('mcp-result', `✅ Email enviado com sucesso: ${JSON.stringify(result)}`, 'success');
+                
+            } catch (error) {
+                log('mcp-result', `❌ Erro ao enviar email: ${error.message}`, 'error');
+            }
+        }
+
+        function showAllData() {
+            clearResults('all-data-result');
+            
+            log('all-data-result', '📊 TODOS OS DADOS DO LOCALSTORAGE:', 'info');
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                if (key.includes('bonus') || key.includes('user-signed') || key.includes('popup')) {
+                    log('all-data-result', `🔑 ${key}: ${value}`, 'info');
+                }
+            }
+            
+            // Verificar se há leads
+            const leads = localStorage.getItem('bonus-leads');
+            if (leads) {
+                try {
+                    const parsedLeads = JSON.parse(leads);
+                    log('all-data-result', `📋 Total de leads: ${parsedLeads.length}`, 'success');
+                    parsedLeads.forEach((lead, index) => {
+                        log('all-data-result', `👤 Lead ${index + 1}: ${lead.name} (${lead.email})`, 'info');
+                    });
+                } catch (e) {
+                    log('all-data-result', '❌ Erro ao parsear leads', 'error');
+                }
+            } else {
+                log('all-data-result', '⚠️ Nenhum lead encontrado', 'error');
+            }
+        }
+
+        // Executar teste inicial
+        window.onload = function() {
+            testLocalStorage();
+            testMCPAvailability();
+        };
+    </script>
+</body>
+</html>

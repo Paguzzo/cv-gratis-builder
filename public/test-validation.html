@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Validação - hasValidData</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Validação - hasValidData()</h1>
+        <p>Este teste replica exatamente a lógica da função hasValidData() do TemplateSelector.tsx</p>
+        
+        <button onclick="runTest()">🔄 Executar Teste</button>
+        <button onclick="clearData()">🗑️ Limpar Dados</button>
+        <button onclick="addTestData()">📝 Adicionar Dados de Teste</button>
+        <button onclick="addMinimalData()">📝 Dados Mínimos (só nome)</button>
+        <button onclick="addObjectiveOnly()">📝 Só Objetivo</button>
+        
+        <div id="testResults"></div>
+        
+        <div class="test-section">
+            <h3>📊 Dados Atuais no localStorage:</h3>
+            <pre id="currentData"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Replica exata da função hasValidData() do TemplateSelector.tsx
+        function hasValidData() {
+            console.log('🔍 VALIDAÇÃO DE DADOS - Verificando dados válidos...');
+            
+            // Primeiro verificar no context (simulado como vazio)
+            const curriculumStateData = null; // Simulando context vazio
+            console.log('📋 Context data:', curriculumStateData);
+            if (curriculumStateData?.personalInfo?.name && curriculumStateData.personalInfo.name.trim() !== '') {
+                console.log('✅ Dados encontrados no context');
+                return { result: true, source: 'context' };
+            }
+            
+            // Se não, verificar no localStorage
+            try {
+                const personalInfoLS = localStorage.getItem('cvgratis-curriculum');
+                console.log('💾 localStorage data:', personalInfoLS);
+                
+                if (personalInfoLS) {
+                    const parsedData = JSON.parse(personalInfoLS);
+                    console.log('📊 Parsed data:', parsedData);
+                    
+                    // Verificar se há dados pessoais com nome preenchido
+                    const hasPersonalInfo = parsedData && 
+                        parsedData.personalInfo && 
+                        parsedData.personalInfo.name && 
+                        parsedData.personalInfo.name.trim() !== '';
+                    console.log('👤 Personal info check:', hasPersonalInfo);
+                    
+                    if (hasPersonalInfo) {
+                        console.log('✅ Dados encontrados no localStorage');
+                        return { result: true, source: 'localStorage-personalInfo', data: parsedData.personalInfo };
+                    }
+                    
+                    // Verificar se há pelo menos algum dado preenchido (fallback mais flexível)
+                    const hasAnyData = parsedData && (
+                        (parsedData.personalInfo && Object.keys(parsedData.personalInfo).some(key => {
+                            const value = parsedData.personalInfo[key];
+                            return value && typeof value === 'string' && value.trim() !== '';
+                        })) ||
+                        (parsedData.objective && parsedData.objective.description && parsedData.objective.description.trim() !== '') ||
+                        (parsedData.experience && Array.isArray(parsedData.experience) && parsedData.experience.length > 0) ||
+                        (parsedData.education && Array.isArray(parsedData.education) && parsedData.education.length > 0) ||
+                        (parsedData.skills && Array.isArray(parsedData.skills) && parsedData.skills.length > 0)
+                    );
+                    
+                    console.log('📝 Any data check:', hasAnyData);
+                    
+                    if (hasAnyData) {
+                        console.log('✅ Dados parciais encontrados - permitindo acesso');
+                        return { result: true, source: 'localStorage-anyData', data: parsedData };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Erro ao verificar localStorage:', error);
+                return { result: false, source: 'error', error: error.message };
+            }
+            
+            console.log('❌ Nenhum dado válido encontrado');
+            return { result: false, source: 'no-data' };
+        }
+        
+        function runTest() {
+            const resultsDiv = document.getElementById('testResults');
+            const currentDataDiv = document.getElementById('currentData');
+            
+            // Mostrar dados atuais
+            const currentData = localStorage.getItem('cvgratis-curriculum');
+            currentDataDiv.textContent = currentData || 'Nenhum dado encontrado';
+            
+            // Executar teste
+            console.clear();
+            console.log('🧪 INICIANDO TESTE DE VALIDAÇÃO');
+            
+            const testResult = hasValidData();
+            
+            let html = '<div class="step"><h3>🧪 Resultado do Teste</h3>';
+            
+            if (testResult.result) {
+                html += '<div class="result pass">✅ VALIDAÇÃO PASSOU</div>';
+                html += `<p><strong>Fonte:</strong> ${testResult.source}</p>`;
+                if (testResult.data) {
+                    html += '<p><strong>Dados encontrados:</strong></p>';
+                    html += '<pre>' + JSON.stringify(testResult.data, null, 2) + '</pre>';
+                }
+            } else {
+                html += '<div class="result fail">❌ VALIDAÇÃO FALHOU</div>';
+                html += `<p><strong>Motivo:</strong> ${testResult.source}</p>`;
+                if (testResult.error) {
+                    html += `<p><strong>Erro:</strong> ${testResult.error}</p>`;
+                }
+            }
+            
+            html += '</div>';
+            
+            // Análise detalhada
+            if (currentData) {
+                try {
+                    const parsed = JSON.parse(currentData);
+                    html += '<div class="step"><h3>🔍 Análise Detalhada</h3>';
+                    
+                    // Verificar cada campo
+                    html += '<h4>👤 Dados Pessoais:</h4>';
+                    if (parsed.personalInfo) {
+                        Object.keys(parsed.personalInfo).forEach(key => {
+                            const value = parsed.personalInfo[key];
+                            const isValid = value && typeof value === 'string' && value.trim() !== '';
+                            html += `<p>• ${key}: "${value}" ${isValid ? '✅' : '❌'}</p>`;
+                        });
+                    } else {
+                        html += '<p>❌ Nenhum dado pessoal encontrado</p>';
+                    }
+                    
+                    html += '<h4>🎯 Objetivo:</h4>';
+                    if (parsed.objective && parsed.objective.description) {
+                        const isValid = parsed.objective.description.trim() !== '';
+                        html += `<p>• description: "${parsed.objective.description}" ${isValid ? '✅' : '❌'}</p>`;
+                    } else {
+                        html += '<p>❌ Nenhum objetivo encontrado</p>';
+                    }
+                    
+                    html += '<h4>📚 Outras Seções:</h4>';
+                    ['experience', 'education', 'skills'].forEach(section => {
+                        if (parsed[section] && Array.isArray(parsed[section])) {
+                            const count = parsed[section].length;
+                            html += `<p>• ${section}: ${count} items ${count > 0 ? '✅' : '❌'}</p>`;
+                        } else {
+                            html += `<p>• ${section}: não é array ❌</p>`;
+                        }
+                    });
+                    
+                    html += '</div>';
+                } catch (e) {
+                    html += '<div class="result fail">❌ Erro ao analisar dados: ' + e.message + '</div>';
+                }
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        function clearData() {
+            localStorage.removeItem('cvgratis-curriculum');
+            alert('Dados limpos!');
+            runTest();
+        }
+        
+        function addTestData() {
+            const testData = {
+                personalInfo: {
+                    name: 'Ana Victoria Reis',
+                    email: 'avreis@gmail.com',
+                    phone: '31995652414',
+                    address: 'Belo Horizonte, MG',
+                    linkedin: '',
+                    website: ''
+                },
+                objective: {
+                    description: 'Especialista em administrativo com comprovada expertise em controle, finanças.',
+                    keywords: ''
+                },
+                experience: [],
+                education: [],
+                skills: [],
+                languages: [],
+                courses: [],
+                projects: [],
+                achievements: []
+            };
+            
+            localStorage.setItem('cvgratis-curriculum', JSON.stringify(testData));
+            alert('Dados completos adicionados!');
+            runTest();
+        }
+        
+        function addMinimalData() {
+            const minimalData = {
+                personalInfo: {
+                    name: 'João Silva',
+                    email: '',
+                    phone: '',
+                    address: '',
+                    linkedin: '',
+                    website: ''
+                }
+            };
+            
+            localStorage.setItem('cvgratis-curriculum', JSON.stringify(minimalData));
+            alert('Dados mínimos (só nome) adicionados!');
+            runTest();
+        }
+        
+        function addObjectiveOnly() {
+            const objectiveData = {
+                personalInfo: {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    address: '',
+                    linkedin: '',
+                    website: ''
+                },
+                objective: {
+                    description: 'Busco uma oportunidade na área de tecnologia.',
+                    keywords: ''
+                }
+            };
+            
+            localStorage.setItem('cvgratis-curriculum', JSON.stringify(objectiveData));
+            alert('Dados com objetivo preenchido adicionados!');
+            runTest();
+        }
+        
+        // Executar teste automaticamente ao carregar
+        window.onload = function() {
+            runTest();
+        };
+    </script>
+</body>
+</html>
