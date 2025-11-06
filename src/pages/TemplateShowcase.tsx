@@ -99,6 +99,33 @@ const SHOWCASE_TEMPLATES = [
     description: 'O equilíbrio perfeito entre profissionalismo e modernidade',
     features: ['IA adaptativa', 'Versatilidade', 'Alta performance', 'Carta de Apresentação com IA'],
     color: 'emerald'
+  },
+  {
+    id: 'premium-infographic',
+    name: 'Infográfico Premium',
+    category: 'premium',
+    image: '/placeholder.svg',
+    description: 'Template moderno com ícones, gráficos e timeline visual para profissionais visuais',
+    features: ['Design infográfico', 'Ícones visuais', 'Timeline profissional', 'Carta de Apresentação com IA'],
+    color: 'purple'
+  },
+  {
+    id: 'premium-portfolio',
+    name: 'Portfolio Premium',
+    category: 'premium',
+    image: '/placeholder.svg',
+    description: 'Ideal para designers e criativos que querem destacar seus projetos e trabalhos',
+    features: ['Galeria de projetos', 'Layout criativo', 'Visual impactante', 'Carta de Apresentação com IA'],
+    color: 'orange'
+  },
+  {
+    id: 'premium-academic',
+    name: 'Acadêmico Premium',
+    category: 'premium',
+    image: '/placeholder.svg',
+    description: 'Template formal para pesquisadores, professores e profissionais acadêmicos',
+    features: ['Seção de publicações', 'Layout acadêmico', 'Design formal', 'Carta de Apresentação com IA'],
+    color: 'indigo'
   }
 ];
 
@@ -193,7 +220,7 @@ export default function TemplateShowcase() {
                 <div className="text-sm text-gray-500">Gratuitos</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600">7</div>
+                <div className="text-3xl font-bold text-purple-600">10</div>
                 <div className="text-sm text-gray-500">Premium</div>
               </div>
               <div className="text-center">

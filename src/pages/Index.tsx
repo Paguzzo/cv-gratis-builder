@@ -258,7 +258,7 @@ const Index = () => {
                   </li>
                   <li className="flex items-center gap-3">
                     <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>🎨 <strong>7 templates exclusivos</strong> premium</span>
+                    <span>🎨 <strong>10 templates exclusivos</strong> premium</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <Crown className="w-5 h-5 text-yellow-600" />
