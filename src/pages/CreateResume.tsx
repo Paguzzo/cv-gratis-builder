@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { CombinedProvider } from '@/contexts/CombinedProvider';
 import { CurriculumBuilder } from '@/components/resume-builder/CurriculumBuilder';
 import { FormErrorBoundary } from '@/components/error';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 
 export default function CreateResume() {
   // Função para limpar template premium quando sair da página (ex: F5, fechar aba)
@@ -32,6 +34,20 @@ export default function CreateResume() {
 
   return (
     <FormErrorBoundary>
+      <SEOHead
+        title="Criar Currículo Profissional Grátis | CVGratis"
+        description="Crie seu currículo profissional em 3 minutos com ajuda da IA. Templates modernos, exportação em PDF e 100% gratuito. Comece agora!"
+        keywords="criar currículo, currículo grátis, fazer currículo online, gerador de currículo, currículo profissional"
+        canonicalUrl="https://www.curriculogratisonline.com/criar-curriculo"
+        ogImage="https://www.curriculogratisonline.com/og-image.jpg"
+      />
+      <StructuredData
+        type="breadcrumb"
+        breadcrumbs={[
+          { name: 'Início', url: 'https://www.curriculogratisonline.com/' },
+          { name: 'Criar Currículo', url: 'https://www.curriculogratisonline.com/criar-curriculo' }
+        ]}
+      />
       <CombinedProvider>
         <div className="h-screen bg-gray-50 overflow-hidden">
           <CurriculumBuilder />

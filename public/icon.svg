@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Background com gradiente -->
+  <rect width="512" height="512" rx="64" fill="url(#gradient)"/>
+
+  <!-- Gradiente verde moderno -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Ícone de documento com CV -->
+  <g transform="translate(128, 96)">
+    <!-- Página -->
+    <rect x="0" y="0" width="256" height="320" rx="16" fill="white" opacity="0.95"/>
+
+    <!-- Linhas do currículo -->
+    <rect x="32" y="32" width="192" height="24" rx="4" fill="#10b981" opacity="0.8"/>
+    <rect x="32" y="72" width="160" height="16" rx="4" fill="#6b7280" opacity="0.6"/>
+    <rect x="32" y="104" width="140" height="16" rx="4" fill="#6b7280" opacity="0.6"/>
+
+    <rect x="32" y="152" width="120" height="16" rx="4" fill="#10b981" opacity="0.7"/>
+    <rect x="32" y="184" width="180" height="12" rx="3" fill="#9ca3af" opacity="0.5"/>
+    <rect x="32" y="208" width="160" height="12" rx="3" fill="#9ca3af" opacity="0.5"/>
+
+    <rect x="32" y="248" width="120" height="16" rx="4" fill="#10b981" opacity="0.7"/>
+    <rect x="32" y="280" width="140" height="12" rx="3" fill="#9ca3af" opacity="0.5"/>
+  </g>
+
+  <!-- Badge "CV" no canto -->
+  <circle cx="416" cy="96" r="64" fill="#059669"/>
+  <text x="416" y="116" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white">CV</text>
+</svg>

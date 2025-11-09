@@ -9,57 +9,70 @@
   <!-- Página Principal -->
   <url>
     <loc>https://www.curriculogratisonline.com/</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <mobile:mobile/>
   </url>
 
   <!-- Criar Currículo -->
   <url>
     <loc>https://www.curriculogratisonline.com/criar-curriculo</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
+    <mobile:mobile/>
   </url>
 
-  <!-- Templates -->
+  <!-- Showcase Templates -->
   <url>
-    <loc>https://www.curriculogratisonline.com/templates</loc>
-    <lastmod>2024-12-19</lastmod>
+    <loc>https://www.curriculogratisonline.com/showcase</loc>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
+    <mobile:mobile/>
+  </url>
+
+  <!-- Template Selector -->
+  <url>
+    <loc>https://www.curriculogratisonline.com/template-selector</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <mobile:mobile/>
   </url>
 
   <!-- Editor Premium -->
   <url>
     <loc>https://www.curriculogratisonline.com/premium-editor</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
+    <mobile:mobile/>
   </url>
 
   <!-- Política de Privacidade -->
   <url>
     <loc>https://www.curriculogratisonline.com/politica-privacidade</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 
   <!-- Termos de Uso -->
   <url>
     <loc>https://www.curriculogratisonline.com/termos-uso</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 
   <!-- Política de Cookies -->
   <url>
     <loc>https://www.curriculogratisonline.com/politica-cookies</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 
 </urlset> 

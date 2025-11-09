@@ -2,12 +2,26 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title="Política de Privacidade | CVGratis"
+        description="Conheça nossa política de privacidade e como protegemos seus dados no CVGratis. Transparência e segurança são nossas prioridades."
+        canonicalUrl="https://www.curriculogratisonline.com/politica-privacidade"
+      />
+      <StructuredData
+        type="breadcrumb"
+        breadcrumbs={[
+          { name: 'Início', url: 'https://www.curriculogratisonline.com/' },
+          { name: 'Política de Privacidade', url: 'https://www.curriculogratisonline.com/politica-privacidade' }
+        ]}
+      />
       <div className="max-w-4xl mx-auto py-8 px-4">
         <div className="mb-6">
           <Button variant="outline" onClick={() => navigate('/')} className="mb-4">

@@ -43,7 +43,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template clean e profissional, perfeito para qualquer área',
     category: 'free',
     style: 'modern',
-    preview: '/templates/free-modern.png',
+    preview: '/Templates/template1-gratuito.png',
     isPremium: false,
     features: [
       'Layout responsivo',
@@ -59,12 +59,33 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     }
   },
   {
+    id: 'free-classic',
+    name: 'Clássico Gratuito',
+    description: 'Template tradicional e elegante, ideal para áreas conservadoras',
+    category: 'free',
+    style: 'classic',
+    preview: '/Templates/template2-gratuito.png',
+    isPremium: false,
+    features: [
+      'Design clássico atemporal',
+      'Universalmente aceito',
+      'Foco no conteúdo',
+      'Watermark CVGrátis'
+    ],
+    colors: {
+      primary: '#374151',
+      secondary: '#6b7280',
+      accent: '#4b5563',
+      text: '#111827'
+    }
+  },
+  {
     id: 'premium-executive',
     name: 'Executivo Premium',
     description: 'Template corporativo com sidebar escura e layout executivo profissional',
     category: 'premium',
     style: 'executive',
-    preview: '/templates/premium-executive.png',
+    preview: '/Templates/template1-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -87,7 +108,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template tech com sidebar verde e barras de progresso para habilidades',
     category: 'premium',
     style: 'tech',
-    preview: '/templates/premium-tech.png',
+    preview: '/Templates/template2-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -110,7 +131,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template diferenciado para áreas criativas',
     category: 'premium',
     style: 'creative',
-    preview: '/templates/premium-creative.png',
+    preview: '/Templates/template3-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -127,36 +148,13 @@ export const AVAILABLE_TEMPLATES: Template[] = [
       text: '#1c1917'
     }
   },
-
-  // NOVOS TEMPLATES
-  {
-    id: 'free-classic',
-    name: 'Clássico Gratuito',
-    description: 'Template tradicional e elegante, ideal para áreas conservadoras',
-    category: 'free',
-    style: 'classic',
-    preview: '/templates/free-classic.png',
-    isPremium: false,
-    features: [
-      'Design clássico atemporal',
-      'Universalmente aceito',
-      'Foco no conteúdo',
-      'Watermark CVGrátis'
-    ],
-    colors: {
-      primary: '#374151',
-      secondary: '#6b7280',
-      accent: '#4b5563',
-      text: '#111827'
-    }
-  },
   {
     id: 'premium-minimal',
     name: 'Minimalista Premium',
     description: 'Template moderno com barra lateral colorida e layout duas colunas',
     category: 'premium',
     style: 'minimal',
-    preview: '/templates/premium-minimal.png',
+    preview: '/Templates/template4-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -179,7 +177,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template elegante com sidebar bege suave e design feminino delicado',
     category: 'premium',
     style: 'modern',
-    preview: '/templates/premium-pastel.png',
+    preview: '/Templates/template5-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -202,7 +200,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template ultra-simples uma coluna com foto quadrada e títulos com riscos',
     category: 'premium',
     style: 'modern',
-    preview: '/templates/premium-formal.png',
+    preview: '/Templates/template6-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -225,7 +223,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template moderno com faixa azul e layout duas colunas profissional',
     category: 'premium',
     style: 'modern',
-    preview: '/templates/premium-professional.png',
+    preview: '/Templates/template7-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -248,7 +246,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template moderno com ícones, gráficos e timeline visual',
     category: 'premium',
     style: 'modern',
-    preview: '/templates/premium-infographic.png',
+    preview: '/Templates/template8-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -271,7 +269,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template criativo para mostrar portfólio de projetos',
     category: 'premium',
     style: 'creative',
-    preview: '/templates/premium-portfolio.png',
+    preview: '/Templates/template9-premium.png',
     isPremium: true,
     price: 4.90,
     features: [
@@ -294,7 +292,7 @@ export const AVAILABLE_TEMPLATES: Template[] = [
     description: 'Template acadêmico formal para pesquisadores e professores',
     category: 'premium',
     style: 'modern',
-    preview: '/templates/premium-academic.png',
+    preview: '/Templates/template10-premium.png',
     isPremium: true,
     price: 4.90,
     features: [

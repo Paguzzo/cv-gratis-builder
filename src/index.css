@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   OTIMIZAÇÕES DE PERFORMANCE E ACESSIBILIDADE
+   ============================================ */
+
+/* Otimização de fontes - Font Display Swap */
+@font-face {
+  font-family: system-ui;
+  font-display: swap;
+}
+
+/* Prefers Reduced Motion - Acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

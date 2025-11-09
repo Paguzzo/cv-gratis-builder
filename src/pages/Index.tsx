@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Star, FileText, Zap, Users, Award, ChevronDown, Play, Quote, User, CheckCircle, Clock, Sparkles, Crown, Target, TrendingUp, Shield, Gift, Rocket } from "lucide-react";
 import Logo from "@/components/Logo";
 import BonusPopup from "@/components/ui/bonus-popup";
+import SEOHead from "@/components/SEOHead";
+import StructuredData from "@/components/StructuredData";
 
 const Index = () => {
   const [bonusPopupOpen, setBonusPopupOpen] = useState(false);
@@ -82,28 +84,38 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* SEO e Structured Data */}
+      <SEOHead
+        title="CVGratis - Criador de Currículos Profissionais | Templates Premium com IA"
+        description="Crie seu currículo profissional gratuitamente! Templates modernos, IA integrada, exportação PDF. Mais de 127.000 pessoas já conseguiram emprego. Destaque-se no mercado de trabalho!"
+        keywords="currículo grátis, criar currículo online, curriculum vitae, templates profissionais, currículo moderno, CV premium, gerador de currículo, currículo ATS, emprego, carreira"
+        canonicalUrl="https://www.curriculogratisonline.com/"
+        ogImage="https://www.curriculogratisonline.com/og-image.jpg"
+      />
+      <StructuredData type="all" />
+
       {/* Header com Logo */}
-      <header className="py-6 px-4 border-b bg-white/95 backdrop-blur-sm sticky top-0 z-40">
+      <header className="py-6 px-4 border-b bg-white/95 backdrop-blur-sm sticky top-0 z-40" role="banner" aria-label="Cabeçalho principal">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Logo size="md" />
           </div>
-          <div className="flex gap-4">
+          <nav className="flex gap-4" aria-label="Navegação principal">
             <Button variant="outline" asChild>
-              <a href="/showcase">Ver Templates</a>
+              <a href="/showcase" aria-label="Ver galeria de templates disponíveis">Ver Templates</a>
             </Button>
             <Button asChild className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
-              <a href="/criar-curriculo">
-                <Gift className="w-4 h-4 mr-2" />
+              <a href="/criar-curriculo" aria-label="Começar a criar currículo gratuitamente agora">
+                <Gift className="w-4 h-4 mr-2" aria-hidden="true" />
                 GRÁTIS AGORA
               </a>
             </Button>
-          </div>
+          </nav>
         </div>
       </header>
 
       {/* Hero Section - Super Persuasivo */}
-      <section className="relative py-16 px-4 text-center bg-gradient-to-br from-blue-50 via-green-50 to-blue-50 overflow-hidden">
+      <section className="relative py-16 px-4 text-center bg-gradient-to-br from-blue-50 via-green-50 to-blue-50 overflow-hidden" role="region" aria-label="Seção principal - Hero">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-green-600/5"></div>
         
@@ -183,10 +195,10 @@ const Index = () => {
       </section>
 
       {/* Seção GRATUITO vs PREMIUM - Comparativo */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-white" role="region" aria-labelledby="pricing-heading">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-black mb-4">GRÁTIS Para Sempre vs PREMIUM</h2>
+            <h2 id="pricing-heading" className="text-5xl font-black mb-4">GRÁTIS Para Sempre vs PREMIUM</h2>
             <p className="text-xl text-gray-600">
               Comece grátis e desbloqueie recursos profissionais quando quiser
             </p>
@@ -358,10 +370,10 @@ const Index = () => {
       </section>
 
       {/* Como Funciona - Otimizado */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-gray-50" role="region" aria-labelledby="how-it-works-heading">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4">3 Passos Para Seu Emprego dos Sonhos</h2>
+            <h2 id="how-it-works-heading" className="text-4xl font-black mb-4">3 Passos Para Seu Emprego dos Sonhos</h2>
             <p className="text-xl text-gray-600">
               Simples, rápido e <strong>comprovadamente eficaz</strong>
             </p>
@@ -405,10 +417,10 @@ const Index = () => {
       </section>
 
       {/* Depoimentos com Credibilidade */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-white" role="region" aria-labelledby="testimonials-heading">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4">💬 Quem Usou, Aprovou e CONSEGUIU EMPREGO!</h2>
+            <h2 id="testimonials-heading" className="text-4xl font-black mb-4">💬 Quem Usou, Aprovou e CONSEGUIU EMPREGO!</h2>
             <p className="text-xl text-gray-600">
               Histórias reais de sucesso • <strong>Resultados comprovados</strong>
             </p>
@@ -576,7 +588,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
+      <footer className="bg-gray-900 text-white py-12 px-4" role="contentinfo" aria-label="Rodapé do site">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="col-span-2">
