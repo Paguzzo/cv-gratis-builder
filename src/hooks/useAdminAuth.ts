@@ -59,33 +59,8 @@ export function useAdminAuth() {
         return;
       }
 
-      // Tentar decodificar token local primeiro
-      try {
-        const decoded = JSON.parse(atob(savedToken));
-        if (decoded.username === 'admin' && decoded.role === 'admin') {
-          // Token local válido
-          const adminUser: AdminUser = {
-            id: 'admin-local',
-            username: 'admin',
-            role: 'admin',
-            permissions: ['all']
-          };
-
-          setAuthState({
-            isAuthenticated: true,
-            user: adminUser,
-            token: savedToken,
-            isLoading: false,
-          });
-
-          console.log('✅ Sessão administrativa restaurada (local)');
-          return;
-        }
-      } catch (decodeError) {
-        // Não é um token local, tentar backend
-      }
-
-      // Verificar token com o backend (fallback)
+      // 🔒 SEGURANÇA: Verificar token SEMPRE com o backend
+      // Tokens devem ser validados pelo servidor para garantir segurança
       try {
         const verification = await SecureApiService.verifyAdminAuth(savedToken);
 
@@ -117,54 +92,10 @@ export function useAdminAuth() {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }));
 
-      // 🔧 SISTEMA UNIFICADO: Credenciais locais simples
-      const ADMIN_CREDENTIALS = {
-        username: 'admin',
-        password: 'cvgratis@2025'
-      };
+      // 🔒 SISTEMA SEGURO: Autenticação APENAS via backend
+      // As credenciais são verificadas no servidor e protegidas por variáveis de ambiente
+      // NUNCA coloque credenciais hardcoded no frontend!
 
-      // Verificar credenciais localmente primeiro (sistema principal)
-      if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-        // Login local bem-sucedido
-        const expiry = new Date();
-        expiry.setHours(expiry.getHours() + 24);
-
-        // Criar token mock local
-        const mockToken = btoa(JSON.stringify({
-          username: 'admin',
-          role: 'admin',
-          timestamp: Date.now()
-        }));
-
-        const adminUser: AdminUser = {
-          id: 'admin-local',
-          username: 'admin',
-          role: 'admin',
-          permissions: ['all']
-        };
-
-        localStorage.setItem(TOKEN_STORAGE_KEY, mockToken);
-        localStorage.setItem(TOKEN_EXPIRY_KEY, expiry.toISOString());
-        localStorage.setItem('admin-mode-enabled', 'true');
-
-        setAuthState({
-          isAuthenticated: true,
-          user: adminUser,
-          token: mockToken,
-          isLoading: false,
-        });
-
-        toast({
-          title: "✅ Acesso Administrativo",
-          description: `Bem-vindo, ${username}!`,
-          duration: 3000,
-        });
-
-        console.log('✅ Login administrativo bem-sucedido (modo local)');
-        return true;
-      }
-
-      // Se não for as credenciais locais, tentar backend como fallback
       try {
         const response = await SecureApiService.adminLogin(username, password);
 
@@ -187,16 +118,27 @@ export function useAdminAuth() {
             });
 
             toast({
-              title: "🔓 Login Admin (Backend)",
+              title: "✅ Acesso Administrativo",
               description: `Bem-vindo, ${verification.user.username}!`,
               duration: 3000,
             });
 
+            console.log('✅ Login administrativo bem-sucedido');
             return true;
           }
         }
       } catch (backendError) {
-        console.log('⚠️ Backend não disponível, apenas credenciais locais aceitas');
+        console.error('❌ Erro ao comunicar com backend:', backendError);
+
+        setAuthState(prev => ({ ...prev, isLoading: false }));
+        toast({
+          title: "❌ Erro de Conexão",
+          description: "Não foi possível conectar ao servidor de autenticação",
+          variant: "destructive",
+          duration: 3000,
+        });
+
+        return false;
       }
 
       // Login falhou

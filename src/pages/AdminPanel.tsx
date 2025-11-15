@@ -33,6 +33,7 @@ import { AVAILABLE_TEMPLATES } from '@/types/templates';
 import { useNavigate } from 'react-router-dom';
 import BonusAdmin from '@/components/ui/bonus-admin';
 import EbookManager from '@/components/admin/EbookManager';
+import { FeedbackManager } from '@/components/feedback/FeedbackManager';
 
 interface UserEntry {
   id: string;
@@ -207,13 +208,14 @@ export default function AdminPanel() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="users">Lista de Usuários</TabsTrigger>
             <TabsTrigger value="bonus">Bônus</TabsTrigger>
             <TabsTrigger value="ebook">Ebook</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="premium">Templates Premium</TabsTrigger>
+            <TabsTrigger value="feedback">Feedback</TabsTrigger>
           </TabsList>
 
           {/* Visão Geral */}
@@ -560,6 +562,11 @@ export default function AdminPanel() {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          {/* Feedback e Sugestões */}
+          <TabsContent value="feedback" className="space-y-6">
+            <FeedbackManager />
           </TabsContent>
         </Tabs>
       </div>

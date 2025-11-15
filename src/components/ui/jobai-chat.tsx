@@ -101,6 +101,45 @@ export function JobAIChat({ open, onOpenChange }: JobAIChatProps) {
     }
   };
 
+  // Função para limpar respostas indesejadas da IA
+  const cleanAIResponse = (text: string): string => {
+    let cleaned = text;
+
+    // Remover blocos de apresentação como "Percebi que você mencionou..."
+    cleaned = cleaned.replace(/^.*?Percebi que você mencionou.*?(\*\*|$)/s, '');
+
+    // Remover blocos de "Sou especialista em..." ou "Posso te ajudar com..."
+    cleaned = cleaned.replace(/✨\s*\*\*Sou especialista.*?\*\*/gs, '');
+    cleaned = cleaned.replace(/🎯\s*\*\*Mas primeiro.*?\*\*/gs, '');
+
+    // Remover listas de "posso te ajudar"
+    cleaned = cleaned.replace(/•\s*(Currículos|Preparação|Estratégias|LinkedIn|Negociação|Transição).*?\n/g, '');
+
+    // Remover perguntas no final (parágrafos que terminam com ?)
+    const lines = cleaned.split('\n');
+    const filteredLines = lines.filter((line, index) => {
+      const isLastLines = index >= lines.length - 3;
+      const hasQuestion = line.includes('?');
+      const isQuestionBlock = line.match(/^(•|\*\*)\s*(Qual|Está|Me conta|Gostaria)/);
+
+      // Remove últimas 3 linhas se tiverem perguntas
+      if (isLastLines && (hasQuestion || isQuestionBlock)) {
+        return false;
+      }
+      return true;
+    });
+
+    cleaned = filteredLines.join('\n');
+
+    // Remover emojis excessivos (mais de 2 seguidos)
+    cleaned = cleaned.replace(/([\u{1F300}-\u{1F9FF}]){3,}/gu, '');
+
+    // Limpar múltiplas linhas vazias
+    cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+
+    return cleaned.trim();
+  };
+
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
@@ -116,59 +155,59 @@ export function JobAIChat({ open, onOpenChange }: JobAIChatProps) {
     setIsLoading(true);
 
     try {
-      // Integracao real com OpenAI
-      const aiService = new AIService();
-      const systemPrompt = `Voce e a JobIA, uma COACH DE CARREIRA experiente, pratica e direta. Sua missao e TRANSFORMAR a vida profissional das pessoas com acoes concretas!
+      // Usar AIService com método específico para chat
+      const aiServiceInstance = AIService.getInstance();
+      const systemPrompt = `Você é consultora sênior de RH respondendo a ${userData.name}.
 
-SEU PAPEL:
-Voce e aquela coach que TODO MUNDO queria ter - direta, sem enrolacao, focada em RESULTADO. Voce nao e so uma consultora, voce e a PARCEIRA de sucesso do seu cliente!
+⚠️ REGRAS CRÍTICAS:
+1. RESPONDA DIRETO A PERGUNTA - sem apresentações, sem contexto extra
+2. ZERO PERGUNTAS - nunca termine com "?", "Qual", "Quer", "Precisa", etc
+3. SEM texto de "posso te ajudar com", "me conta", "gostaria de saber"
+4. Apenas: RESPOSTA DIRETA + AÇÕES PRÁTICAS + FIM
 
-COMO VOCE ATUA:
-- Linguagem ULTRA SIMPLES - fale como se estivesse tomando cafe com a pessoa
-- ZERO jargao corporativo ou termos de RH complicados
-- Toda resposta TEM QUE ter acao pratica imediata
-- NUNCA peca mais detalhes - seja proativa e de o melhor com o que tem
-- Use emojis estrategicamente para organizar e motivar
-- Seja direta, objetiva e EMPOLGANTE!
+FORMATO OBRIGATÓRIO:
 
-AREAS DE EXPERTISE (voce domina TUDO sobre):
-- Curriculos: o que colocar, tirar, destacar - com exemplos praticos
-- Entrevistas: preparacao completa (online/presencial, perguntas dificeis, comportamento)
-- Recolocacao: estrategias para quem esta desempregado ou quer trocar
-- Onde deixar curriculo: sites, estrategias, empresas que contratam
-- Carreira: crescimento, transicao, desenvolvimento
-- Networking: LinkedIn, eventos, contatos estrategicos
-- Negociacao: salario, beneficios, promocao
-- Mercado: tendencias, setores em alta, oportunidades
+**[RESPOSTA DIRETA EM 2-3 LINHAS]**
 
-FORMATO DAS RESPOSTAS:
-1. Identifique rapidamente a DOR do cliente
-2. De solucao PRATICA E IMEDIATA (passo a passo)
-3. Use bullet points, checklists, exemplos reais
-4. Inclua dicas EXTRAS que fazem diferenca
-5. Termine com MOTIVACAO + proxima acao concreta
+---
+
+**AÇÃO PRÁTICA:**
+• [ponto 1]
+• [ponto 2]
+• [ponto 3]
 
 PROIBIDO:
-- "Voce pode me dar mais detalhes?" - NUNCA! Seja proativa!
-- "Depende..." - De a melhor resposta possivel!
-- Respostas genericas ou vagas
-- Excesso de formalidade
-- Teoria sem pratica
+❌ Perguntas no final
+❌ "Posso te ajudar com..."
+❌ "Me conta sobre..."
+❌ "Qual sua área?"
+❌ Texto de apresentação
+❌ Emojis excessivos
 
-CLIENTE ATUAL: ${userData.name}
-Essa pessoa CONFIA em voce! Ela esta usando nosso editor premium e precisa do seu melhor coaching.
+PERMITIDO:
+✅ Resposta direta
+✅ Bullet points práticos
+✅ Informações objetivas
+✅ Acabar sem perguntas`;
 
-LEMBRE-SE: Cada resposta sua pode MUDAR a carreira dessa pessoa. Seja a coach que voce gostaria de ter tido! Foco em ACAO e RESULTADO!`;
+      // Preparar histórico da conversa (últimas 10 mensagens, excluindo mensagem inicial)
+      const conversationHistory = messages
+        .slice(1) // Pula mensagem de boas-vindas inicial
+        .slice(-10) // Pega últimas 10 mensagens
+        .map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
 
-      const response = await aiService.generateText(inputMessage, systemPrompt);
+      // Usar o novo método de chat com histórico
+      let responseText = await aiServiceInstance.generateChatResponse(
+        inputMessage,
+        systemPrompt,
+        conversationHistory
+      );
 
-      // Extrair texto da resposta (pode ser string ou objeto)
-      let responseText = '';
-      if (typeof response === 'string') {
-        responseText = response;
-      } else if (response && typeof response === 'object' && 'generatedText' in response) {
-        responseText = response.generatedText || '';
-      }
+      // Limpar resposta removendo textos indesejados
+      responseText = cleanAIResponse(responseText || '');
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -180,8 +219,8 @@ LEMBRE-SE: Cada resposta sua pode MUDAR a carreira dessa pessoa. Seja a coach qu
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
       console.error('Erro na IA:', error);
-      
-      // Fallback para resposta local se OpenAI falhar
+
+      // Fallback para resposta local se falhar
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -200,166 +239,56 @@ LEMBRE-SE: Cada resposta sua pode MUDAR a carreira dessa pessoa. Seja a coach qu
 
     // ENTREVISTA ONLINE/VIRTUAL/CAMERA
     if (input.includes('online') || input.includes('virtual') || input.includes('camera') || input.includes('video') || input.includes('zoom') || input.includes('meet') || input.includes('teams')) {
-      return `Otimo! Entrevista online e diferente mesmo, vou te dar o passo a passo!
+      return `**Entrevista online: foque em setup técnico e postura profissional.**
 
-**ROUPA - Como se vestir:**
-- Vista a PARTE DE CIMA formal (camisa, blusa social, blazer)
-- Evite: branco puro (reflete muito), listras finas (tremem na tela), decotes
-- Cores boas: azul, cinza, tons pasteis
-- Homens: camisa social ou polo
-- Mulheres: blusa social ou camisa
-- DICA: Vista a roupa completa (ate calca social) - te deixa mais confiante!
+---
 
-**CAMERA - Posicionamento:**
-- Celular na ALTURA DOS OLHOS (use livros ou suporte)
-- Distancia: 50cm do rosto (voce + um pouco dos ombros na tela)
-- Fundo LIMPO (parede lisa, estante organizada - nada de bagunca!)
-- Iluminacao: de FRENTE pra voce (janela ou luminaria)
-- Teste ANTES com um amigo pelo WhatsApp!
-
-**COMPORTAMENTO NA TELA:**
-- Olhe pra CAMERA (nao pra sua imagem na tela)
-- Sorria naturalmente
-- Gesticule normalmente (mas nao muito)
-- Postura: costas retas, nao se balance
-- Evite: mexer no cabelo, cocar o rosto
-
-**TECNICO:**
-- Internet boa (se possivel, use cabo ou fique perto do roteador)
-- Celular carregado e no silencioso
-- Fones de ouvido (melhor audio)
-- Avise quem mora com voce pra nao fazer barulho
-- Teste 15min antes
-
-**SE DER PROBLEMA:**
-- Mantenha a calma
-- "Desculpe, vou reiniciar" (nao se desculpe demais)
-- Tenha numero da empresa pra ligar se cair
-
-**BONUS:** Coloque um post-it ao lado da camera com "SORRIR + OLHAR AQUI"
-
-Voce vai arrasar! Qualquer duvida especifica, so falar!`;
+**AÇÃO PRÁTICA:**
+• Câmera na altura dos olhos, iluminação frontal
+• Fundo neutro e organizado
+• Teste conexão 15 min antes
+• Vestuário formal da cintura pra cima
+• Olhe para câmera, não para sua imagem`;
     }
 
     // ROUPA/VESTUARIO
     if (input.includes('vestir') || input.includes('roupa') || input.includes('traje')) {
-      return `Vou te ajudar com a roupa! A regra e: SEMPRE um nivel acima do dress code da empresa
+      return `**Vista-se um nível acima do dress code da empresa.**
 
-**ENTREVISTA PRESENCIAL:**
+---
 
-**EMPRESA CORPORATIVA** (banco, consultoria, advocacia):
-- Homem: terno completo, gravata, sapato social
-- Mulher: terno feminino ou vestido social + blazer
-- Cores: azul marinho, preto, cinza
-
-**EMPRESA CASUAL** (startups, tech, agencias):
-- Homem: calca social + camisa social (sem gravata) + sapato ou tenis limpo
-- Mulher: calca/saia + blusa social ou camisa
-- Cores: pode ousar um pouco mais
-
-**EMPRESA BEM CASUAL** (games, design):
-- Smart casual: jeans LIMPO + camisa ou blusa boa + tenis limpo
-- Evite: roupa de academia, chinelo, bermuda
-
-**DICAS DE OURO:**
-- Roupa limpa, passada, cheirosa
-- Cabelo limpo e penteado
-- Unhas limpas e cortadas
-- Perfume suave (nao exagere!)
-- Evite: muitas joias, acessorios chamativos
-
-**NUNCA USE:**
-- Decote exagerado
-- Roupa muito justa ou curta
-- Chinelo, havaianas
-- Bone
-- Roupas amassadas ou sujas
-
-**NA DUVIDA?** Vista formal! E melhor estar "overdressed" que "underdressed".
-
-Qual tipo de empresa e sua entrevista?`;
+**AÇÃO PRÁTICA:**
+• Corporativo (banco): terno completo, cores sóbrias
+• Business casual (tech): calça social + camisa
+• Casual (design): jeans limpo + camisa boa
+• Sempre: roupa limpa, passada, higiene impecável`;
     }
 
     // PRIMEIRA FASE/TRIAGEM/INICIO
     if (input.includes('primeira') || input.includes('1') || input.includes('triagem') || input.includes('inicial') || input.includes('comeco')) {
-      return `Primeira fase e crucial! Vou te preparar direitinho! 
+      return `**Primeira fase: 20-40min com RH para filtrar candidatos.**
 
-**O QUE ESPERAR:**
-- Duracao: 20-40 minutos
-- Geralmente com RH (nao com gestor ainda)
-- Objetivo deles: filtrar quem passa pra proxima fase
+---
 
-**PERGUNTAS MAIS COMUNS:**
-
-1 **"Fale sobre voce"**
-> Responda EM 2 MINUTOS:
-"Sou [formacao], trabalho ha X anos com [area]. Atualmente faco [cargo atual] onde [principal conquista]. Busco [objetivo] e me interessei pela vaga porque [motivo especifico da empresa]."
-
-2 **"Por que quer sair do emprego atual?"**
-> Nunca fale mal! Diga:
-"Busco novos desafios e crescimento. Admiro [algo da empresa] e vejo alinhamento com minha carreira."
-
-3 **"Qual seu maior defeito?"**
-> Defeito real + acao de melhoria:
-"Sou perfeccionista demais, mas aprendi a priorizar e delegar. Hoje uso [ferramenta/metodo] pra gerenciar melhor."
-
-4 **"Pretensao salarial?"**
-> "Qual a faixa prevista pra posicao?"
-> Se insistirem: "Entre R$ X e R$ Y" (pesquise antes!)
-
-5 **"Tem alguma pergunta?"**
-> SEMPRE faca 2-3 perguntas:
-"Como e o dia a dia da equipe?"
-"Quais sao os principais desafios da posicao?"
-"Quais sao os proximos passos do processo?"
-
-**DICAS PRA ARRASAR:**
- Pesquise a empresa ANTES (site, LinkedIn, noticias)
- Tenha exemplos prontos de suas conquistas
- Seja pontual (chegue 10min antes)
- Desligue o celular
- Sorria e faca contato visual
- Anote o nome do entrevistador
-
- **NAO FACA:**
-- Falar mal de chefe/empresa anterior
-- Mentir
-- Parecer desinteressado
-- Interromper o entrevistador
-
-Voce esta preparado! Confia! 
-
-Tem alguma duvida especifica sobre essas perguntas?`;
+**AÇÃO PRÁTICA - Respostas-chave:**
+• "Fale sobre você": formação + experiência + conquista + por que a vaga (2min)
+• "Por que sair?": foco em crescimento, nunca fale mal
+• "Defeito": real + o que fez para melhorar
+• Salário: pergunte a faixa deles primeiro
+• Sempre prepare 2-3 perguntas sobre a vaga`;
     }
 
     if (input.includes('curriculo') || input.includes('cv') || input.includes('resume')) {
-      return ` **OTIMIZACAO DE CURRICULO** - Visao de Recrutador:
+      return `**Currículo: ordem cronológica reversa, resultados quantificados, palavras-chave da vaga.**
 
- **ESTRUTURA IDEAL:**
-1. Dados pessoais (nome, email, tel, LinkedIn)
-2. Objetivo/Resumo (2-3 linhas diretas)
-3. Experiencias (ordem cronologica reversa)
-4. Formacao academica
-5. Habilidades tecnicas + idiomas
-6. Certificacoes/Cursos (se relevantes)
+---
 
- **O QUE FUNCIONA:**
-- Verbos de acao: "Desenvolvi", "Implementei", "Liderei"
-- Resultados quantificados: "35% em vendas", "Reduzi custos em R$50k"
-- Palavras-chave da vaga (ATS le isso!)
-- Formato PDF, fonte profissional (Arial, Calibri)
-- 1 pagina (junior/pleno) ou 2 paginas (senior/executivo)
-
- **RED FLAGS que eliminam 80% dos CVs:**
-- Erros de portugues
-- Foto informal/selfie
-- Email nao-profissional (gatinha123@...)
-- Experiencias sem datas ou descricao
-- Objetivo generico ("Busco crescimento")
-
- **DICA PREMIUM:** Adapte seu CV para CADA vaga. Use as mesmas palavras-chave do anuncio!
-
-Quer ajuda especifica com alguma secao?`;
+**AÇÃO PRÁTICA:**
+• Use verbos de ação ("Desenvolvi", "Implementei")
+• Quantifique resultados ("↑35% vendas", "↓R$50k custos")
+• Adapte palavras-chave para cada vaga (ATS)
+• 1 página (júnior/pleno), 2 páginas (sênior)
+• Evite: erros português, email informal, objetivo genérico`;
     }
 
     if (input.includes('entrevista') || input.includes('selecao') || input.includes('processo')) {
@@ -392,9 +321,7 @@ Quer ajuda especifica com alguma secao?`;
 - Se pressionado: de FAIXA, nao valor fixo
 - Considere: salario + bonus + beneficios + crescimento
 
- **CUIDADO:** Falar mal de empresa anterior = eliminacao automatica!
-
-Qual etapa do processo voce esta?`;
+ **CUIDADO:** Falar mal de empresa anterior = eliminacao automatica!`;
     }
 
     if (input.includes('carreira') || input.includes('profissional') || input.includes('crescimento')) {
@@ -435,9 +362,7 @@ Qual etapa do processo voce esta?`;
 - Aumento salarial anual?
 - Novas responsabilidades?
 - Chamadas de recrutadores?
-- Ofertass competitivas?
-
-Em qual area quer focar?`;
+- Ofertass competitivas?`;
     }
 
     if (input.includes('linkedin') || input.includes('rede') || input.includes('network')) {
@@ -470,9 +395,7 @@ Em qual area quer focar?`;
 - "Disponivel para oportunidades" LIGADO
 - Palavras-chave do cargo-alvo no perfil
 - Participe de grupos da area
-- Siga empresas-alvo e interaja com posts
-
-Precisa de ajuda especifica?`;
+- Siga empresas-alvo e interaja com posts`;
     }
 
     // RECOLOCACAO/DESEMPREGO/PROCURANDO EMPREGO
@@ -534,9 +457,7 @@ Vou te dar o passo a passo EXATO pra voce voltar pro mercado rapido:
 - Aulas particulares (Profes, Superprof)
 - Venda online (Mercado Livre, OLX)
 
-Voce VAI conseguir! Foco na rotina diaria e nao desiste!
-
-Qual sua area de atuacao? Posso dar dicas mais especificas!`;    }    // ONDE DEIXAR CURRICULO
+Voce VAI conseguir! Foco na rotina diaria e nao desiste!`;    }    // ONDE DEIXAR CURRICULO
     if (input.includes('onde') && (input.includes('curriculo') || input.includes('curriculo') || input.includes('deixar') || input.includes('enviar') || input.includes('cadastrar'))) {
       return `**ONDE DEIXAR SEU CURRICULO - LISTA COMPLETA!**
 
@@ -609,9 +530,7 @@ Dia 5: Entre em 10 grupos da area
 
 **DICA DE OURO:**
 Nao so candidate - MENSAGEM PRO RECRUTADOR!
-"Oi [nome], vi a vaga de [cargo] e me identifiquei muito. Minha experiencia em [area] pode agregar porque [motivo]. Meu curriculo esta anexo. Podemos conversar?"
-
-Qual sua area de atuacao? Te indico sites especificos!`;    }    // MUDANCA DE AREA/TRANSICAO DE CARREIRA
+"Oi [nome], vi a vaga de [cargo] e me identifiquei muito. Minha experiencia em [area] pode agregar porque [motivo]. Meu curriculo esta anexo. Podemos conversar?"`;    }    // MUDANCA DE AREA/TRANSICAO DE CARREIRA
     if (input.includes('mudar') || input.includes('transicao') || input.includes('trocar de area') || input.includes('mudar de area') || input.includes('nova carreira')) {
       return `**TRANSICAO DE CARREIRA - PLANO DE ACAO!**
 
@@ -700,9 +619,7 @@ Quando tiver portfolio > transicao segura!
 "Trabalhei X anos em [area antiga] onde desenvolvi [habilidades]. Percebi que minha paixao esta em [nova area] e nos ultimos meses me especializei atraves de [cursos/projetos]. Minha experiencia em [area antiga] me diferencia porque [vantagem unica]!"
 
 **EXEMPLO REAL:**
-"Fui professor por 5 anos, onde desenvolvi comunicacao e didatica. Descobri paixao por RH e fiz certificacao em Gestao de Pessoas. Minha experiencia educacional me diferencia no T&D - sei como as pessoas aprendem!"
-
-Qual area voce quer ir? Te dou o caminho exato!`;    }    // COMPORTAMENTO EM ENTREVISTA
+"Fui professor por 5 anos, onde desenvolvi comunicacao e didatica. Descobri paixao por RH e fiz certificacao em Gestao de Pessoas. Minha experiencia educacional me diferencia no T&D - sei como as pessoas aprendem!"`;    }    // COMPORTAMENTO EM ENTREVISTA
     if (input.includes('comportamento') || input.includes('como agir') || input.includes('postura') || input.includes('atitude')) {
       return `**COMPORTAMENTO EM ENTREVISTA - GUIA COMPLETO!**
 
@@ -864,9 +781,7 @@ Voce vai mandar bem! Qualquer duvida especifica, to aqui!`;    }    if (input.in
 - Mentir sobre proposta concorrente
 - Exigir sem mostrar valor
 - Ameacar sair sem intencao
-- Aceitar imediatamente primeira oferta
-
-Esta em qual situacao?`;
+- Aceitar imediatamente primeira oferta`;
     }
 
     // Resposta padrao PROATIVA - nao pede reformulacao, oferece ajuda direta
@@ -900,12 +815,12 @@ Seu curriculo PRECISA ter: resultados quantificados (numeros!), verbos de acao, 
 
 **Me conte especificamente:**
 "Preciso melhorar meu curriculo"
-"Tenho entrevista amanha" 
+"Tenho entrevista amanha"
 "Onde deixo curriculo pra [area]?"
 "Estou desempregado, e agora?"
 "Como negocio salario?"
 
-To aqui pra te dar o caminho exato! Qual seu desafio AGORA?`;
+To aqui pra te dar o caminho exato!`;
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

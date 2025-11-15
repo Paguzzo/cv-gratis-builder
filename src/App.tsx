@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import CookieConsent from '@/components/CookieConsent';
 import FloatingLiveCounter from '@/components/FloatingLiveCounter';
+import { FeedbackButton } from '@/components/feedback/FeedbackButton';
 import { ErrorBoundary } from '@/components/error';
 import { LoadingProvider, LoadingSystemCSS } from '@/components/ui/loading-system';
 import { AdminProvider } from '@/contexts/AdminContext';
@@ -67,6 +68,7 @@ function App() {
               <Toaster />
               <CookieConsent />
               <FloatingLiveCounter />
+              <FeedbackButton />
             </div>
           </Router>
         </AdminProvider>

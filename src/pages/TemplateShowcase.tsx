@@ -64,7 +64,7 @@ export default function TemplateShowcase() {
     const template = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
     if (!template) return;
 
-    navigate('/template-selector');
+    navigate('/criar-curriculo');
 
     if (template.isPremium) {
       toast.info(`Template Premium: ${template.name}`, {
@@ -105,7 +105,7 @@ export default function TemplateShowcase() {
               </div>
             </div>
             <Button
-              onClick={() => navigate('/template-selector')}
+              onClick={() => navigate('/criar-curriculo')}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all"
             >
               <Zap className="w-4 h-4 mr-2" />
@@ -482,7 +482,7 @@ export default function TemplateShowcase() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     size="lg"
-                    onClick={() => navigate('/template-selector')}
+                    onClick={() => navigate('/criar-curriculo')}
                     className="bg-white text-blue-600 hover:bg-gray-100 font-bold px-10 py-6 text-lg shadow-xl hover:shadow-2xl transition-all"
                   >
                     <Zap className="w-5 h-5 mr-2" />

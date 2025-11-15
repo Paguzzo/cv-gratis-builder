@@ -1,5 +1,7 @@
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+
+// 🚀 PERFORMANCE: Dynamic import de html2canvas (561KB)
+type Html2CanvasType = typeof import('html2canvas').default;
 
 /**
  * Formatos de exportação suportados
@@ -58,6 +60,13 @@ export class AdvancedExportService {
   }
 
   /**
+   * 🚀 PERFORMANCE: Carrega html2canvas dinamicamente
+   */
+  private async loadHtml2Canvas(): Promise<Html2CanvasType> {
+    return (await import('html2canvas')).default;
+  }
+
+  /**
    * Exporta elemento para o formato especificado
    */
   public async exportElement(
@@ -106,6 +115,9 @@ export class AdvancedExportService {
 
     // Configurar escala baseada na resolução
     const scale = this.getScaleFromDPI(qualityConfig.resolution);
+
+    // 🚀 Carregar html2canvas dinamicamente
+    const html2canvas = await this.loadHtml2Canvas();
 
     const canvas = await html2canvas(element, {
       scale,
@@ -174,6 +186,9 @@ export class AdvancedExportService {
 
     const scale = this.getScaleFromDPI(qualityConfig.resolution);
 
+    // 🚀 Carregar html2canvas dinamicamente
+    const html2canvas = await this.loadHtml2Canvas();
+
     const canvas = await html2canvas(element, {
       scale,
       useCORS: true,
@@ -218,6 +233,9 @@ export class AdvancedExportService {
 
     const scale = this.getScaleFromDPI(qualityConfig.resolution);
     const quality = qualityConfig.quality / 100; // Converter 0-100 para 0-1
+
+    // 🚀 Carregar html2canvas dinamicamente
+    const html2canvas = await this.loadHtml2Canvas();
 
     const canvas = await html2canvas(element, {
       scale,

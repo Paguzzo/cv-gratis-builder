@@ -76,148 +76,347 @@ export class GrokExperienceService {
       `de ${request.startDate} até o presente` :
       `de ${request.startDate} a ${request.endDate}`;
 
-    // Gerar um ID único para esta experiência para evitar repetições
-    const experienceId = `${request.position}_${request.company}_${request.startDate}`.replace(/\s+/g, '_');
+    // Sistema melhorado de variação: combina múltiplos fatores para criar identidade única
+    const positionHash = request.position.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const companyHash = request.company.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const descriptionHash = request.userDescription.slice(0, 20).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
-    return `Você é um especialista em transformar atividades profissionais em descrições impactantes SEM INVENTAR INFORMAÇÕES.
+    const combinedHash = (positionHash * 7 + companyHash * 13 + descriptionHash * 3) % 6;
 
-**EXPERIÊNCIA ID: ${experienceId}**
+    const bulletStyles = [
+      'RESULTADO E IMPACTO',
+      'ATIVIDADE E CONTEXTO',
+      'METODOLOGIA E EXECUÇÃO',
+      'RESPONSABILIDADE E ESCOPO',
+      'COLABORAÇÃO E COORDENAÇÃO',
+      'OTIMIZAÇÃO E MELHORIA'
+    ];
+    const selectedStyle = bulletStyles[combinedHash];
 
-📋 **INFORMAÇÕES REAIS FORNECIDAS:**
+    return `Você é um ESPECIALISTA SÊNIOR em Recursos Humanos com 20 anos de experiência transformando atividades profissionais em bullets de currículo que CONQUISTAM ENTREVISTAS.
+
+🎯 **CONTEXTO DA EXPERIÊNCIA:**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 Cargo/Função: ${request.position}
+🏢 Empresa: ${request.company}
+📅 Período: ${duration}
+💼 O que fazia no dia-a-dia: "${request.userDescription}"
+🔑 Competências e Tecnologias: ${request.keywords}
+
+🎨 **ESTILO DOMINANTE PARA ESTA EXPERIÊNCIA: ${selectedStyle}**
+(Cada experiência do candidato deve ter formato diferente para demonstrar versatilidade)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧠 **PASSO 1: ANÁLISE DO CARGO "${request.position}"**
+
+Antes de escrever os bullets, PENSE sobre este cargo:
+• Quais são as responsabilidades TÍPICAS de um(a) ${request.position}?
+• Que desafios e problemas esta função geralmente resolve?
+• Que entregáveis e resultados são esperados nesta posição?
+• Como esta função agrega valor ao negócio?
+
+Use este conhecimento para ENRIQUECER os bullets com contexto profissional realista.
+NÃO invente métricas, MAS use seu conhecimento sobre a função para dar profundidade às atividades descritas.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 **PASSO 2: SUA MISSÃO**
+
+Criar 4-6 bullets EXCEPCIONAIS que:
+✓ Posicionem o candidato como AUTORIDADE no cargo ${request.position}
+✓ Demonstrem VALOR TANGÍVEL e IMPACTO no negócio
+✓ Integrem TODAS as competências: ${request.keywords}
+✓ Reflitam as atividades reais: "${request.userDescription}"
+✓ Sigam PREDOMINANTEMENTE o estilo ${selectedStyle}, mas com VARIAÇÃO INTERNA
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 **DIRECIONAMENTO POR ESTILO:**
+
+${this.getStyleInstructions(selectedStyle, request)}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ **PRINCÍPIOS DE EXCELÊNCIA:**
+
+1. **CONTEXTUALIZAÇÃO PROFUNDA:**
+   - Use seu conhecimento sobre "${request.position}" para inferir atividades típicas da função
+   - Combine: [Conhecimento do cargo] + [Descrição do usuário] + [Competências técnicas]
+   - Traga profundidade profissional sem inventar dados específicos
+
+2. **INTEGRAÇÃO ESTRATÉGICA:**
+   - Integre TODAS as competências (${request.keywords}) de forma NATURAL nas atividades
+   - Evite listar palavras-chave mecanicamente - integre-as ao contexto
+   - Crie narrativa coesa que demonstre domínio técnico E impacto profissional
+
+3. **FOCO EM VALOR E CONTRIBUIÇÃO:**
+   - Estruture: AÇÃO → MÉTODO/FERRAMENTA → RESULTADO/FINALIDADE/IMPACTO
+   - Sempre que possível, mostre o "POR QUÊ" da atividade (qual problema resolve? que valor gera?)
+   - Use verbos de ação fortes que transmitam protagonismo
+
+4. **VARIAÇÃO INTERNA OBRIGATÓRIA:**
+   - NUNCA use o mesmo formato em todos os bullets
+   - Varie: extensão (curto vs. descritivo), foco (técnico vs. estratégico), estrutura gramatical
+   - Mescle 2-3 estilos dentro da mesma experiência (mas com predominância do estilo principal)
+   - Crie ritmo de leitura dinâmico e envolvente
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💎 **DIRETRIZES DE QUALIDADE:**
+
+✅ FAÇA:
+• Infira atividades realistas do cargo usando conhecimento profissional
+• Demonstre valor e impacto sem precisar de números inventados
+• Varie formato, extensão e foco entre os bullets
+• Use competências como ferramentas que geraram resultados
+• Mostre protagonismo e domínio técnico
+• Descreva contexto e finalidade das atividades
+
+❌ EVITE:
+• Inventar números, percentuais ou métricas específicas não mencionadas
+• Adicionar ferramentas/tecnologias não citadas pelo usuário
+• Usar finais genéricos: "otimizando resultados", "garantindo eficiência", "melhorando processos"
+• Bullets idênticos ou muito similares
+• Listar competências sem contexto: "Experiência em X, Y e Z"
+• Repetir o mesmo verbo de ação mais de 2 vezes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 **EXEMPLOS DE EXCELÊNCIA:**
+
+**VARIAÇÃO DENTRO DE UM MESMO ESTILO (RESULTADO E IMPACTO):**
+✓ Analisou dados de vendas com SQL e Python, identificando padrões sazonais que direcionaram campanha promocional de fim de ano
+✓ Dashboards em Power BI para KPIs comerciais - acesso executivo a insights em tempo real
+✓ Implementou validação automatizada de dados, eliminando inconsistências em relatórios mensais e aumentando confiabilidade das análises
+✓ Colaborou com equipe comercial interpretando dados de mercado e traduzindo em recomendações acionáveis
+
+**Note:** Mesmo sendo todos do estilo "Resultado e Impacto", há variação em:
+- Extensão (bullet 2 é mais curto)
+- Estrutura gramatical (bullet 2 usa fragmento)
+- Foco (técnico vs. colaborativo)
+- Nível de detalhe
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎬 **AGORA EXECUTE:**
+
+**DADOS DA EXPERIÊNCIA:**
 - Cargo: ${request.position}
-- Empresa: ${request.company}
-- Período: ${duration}
-- Atividades descritas pelo usuário: "${request.userDescription}"
-- Palavras-chave fornecidas: ${request.keywords}
+- Atividades descritas: "${request.userDescription}"
+- Competências a integrar: ${request.keywords}
+- Estilo dominante: ${selectedStyle}
 
-🚨 **REGRAS CRÍTICAS - NÃO INVENTE INFORMAÇÕES:**
+**PROCESSO:**
+1. Pense sobre responsabilidades típicas de um(a) ${request.position}
+2. Combine esse conhecimento com as atividades descritas
+3. Gere 4-6 bullets VARIADOS que demonstrem valor e competência
+4. Integre TODAS as competências de forma natural
+5. Varie formato e foco entre os bullets (mesmo dentro do estilo ${selectedStyle})
 
-1. **NUNCA ADICIONE INFORMAÇÕES FALSAS**:
-   ❌ NÃO invente porcentagens, números ou métricas que o usuário não mencionou
-   ❌ NÃO mencione ferramentas, sistemas ou tecnologias não citadas pelo usuário
-   ❌ NÃO adicione atividades que o usuário não descreveu
-   ❌ NÃO invente resultados ou conquistas não mencionadas
-   ❌ NÃO adicione metodologias (Lean, Six Sigma, etc.) não citadas
+**IMPORTANTE:**
+Retorne APENAS os bullets, um por linha, cada um iniciando com "•"
+Não inclua explicações, comentários ou cabeçalhos - APENAS os bullets.`;
+  }
 
-2. **USE APENAS O QUE FOI FORNECIDO**:
-   ✅ Base-se EXCLUSIVAMENTE na descrição: "${request.userDescription}"
-   ✅ Use SOMENTE as palavras-chave fornecidas: ${request.keywords}
-   ✅ Transforme as atividades reais em linguagem profissional
-   ✅ Cada bullet deve refletir UMA atividade real mencionada pelo usuário
+  // Instruções específicas por estilo
+  private static getStyleInstructions(style: string, request: ExperienceRequest): string {
+    const styles = {
+      'RESULTADO E IMPACTO': `
+📊 **Foque em RESULTADOS e IMPACTO:**
+- Cada bullet deve mostrar o RESULTADO da atividade
+- Estrutura: Verbo + Ação + Tecnologia/Método + Resultado/Impacto
+- Enfatize: "identificando...", "direcionando...", "tornando...", "eliminando..."
+- Use as competências (${request.keywords}) como FERRAMENTAS que geraram impacto
+- Exemplo: "Analisou dados financeiros usando Excel avançado, identificando oportunidades de redução de custos em contratos"`,
 
-3. **ESTRUTURA DOS BULLETS** (3-6 bullets):
-   • Verbo de ação + atividade real descrita + contexto baseado na descrição
-   • NUNCA termine com frases genéricas: "otimizando resultados", "contribuindo para objetivos", "garantindo eficiência"
-   • Seja ESPECÍFICO sobre o que foi feito, baseado no texto do usuário
+      'ATIVIDADE E CONTEXTO': `
+🔄 **Foque em ATIVIDADES e CONTEXTO:**
+- Cada bullet deve descrever uma atividade clara com seu contexto
+- Estrutura: Verbo + Atividade específica + Contexto/Finalidade
+- Enfatize: "realizou...", "elaborou...", "participou...", "executou..."
+- Integre as competências (${request.keywords}) nas descrições de atividades
+- Exemplo: "Elaborou relatórios gerenciais em Power BI, consolidando dados de múltiplas fontes para análise da diretoria"`,
 
-4. **FINAIS PROIBIDOS**:
-   ❌ "otimizando resultados da área"
-   ❌ "contribuindo para objetivos organizacionais"
-   ❌ "garantindo eficiência operacional"
-   ❌ "melhorando processos internos"
-   ❌ "apoiando a equipe"
+      'METODOLOGIA E EXECUÇÃO': `
+⚙️ **Foque em METODOLOGIA e EXECUÇÃO:**
+- Cada bullet deve mostrar COMO a atividade foi executada
+- Estrutura: Verbo + Metodologia/Abordagem + Execução + Finalidade
+- Enfatize: "aplicou...", "executou...", "coordenou...", "implementou..."
+- Use as competências (${request.keywords}) como métodos aplicados
+- Exemplo: "Aplicou metodologia ágil na coordenação de projetos, facilitando adaptação rápida a mudanças de escopo"`,
 
-📝 **EXEMPLO DE TRANSFORMAÇÃO CORRETA:**
+      'RESPONSABILIDADE E ESCOPO': `
+👔 **Foque em RESPONSABILIDADE e ESCOPO:**
+- Cada bullet deve mostrar o ESCOPO da responsabilidade
+- Estrutura: "Responsável por..." / "Gerenciou..." + Escopo + Atividades-chave
+- Enfatize: "responsável por...", "gerenciou...", "administrou...", "liderou..."
+- Integre as competências (${request.keywords}) no escopo das responsabilidades
+- Exemplo: "Responsável pela gestão completa do processo de compras, desde cotação até negociação com fornecedores"`,
 
-**ENTRADA:**
-- Atividades: "Controlava máquinas florestais, fazia manutenção preventiva, coordenava equipe"
-- Palavras-chave: manutenção, operações florestais, gestão de equipe
+      'COLABORAÇÃO E COORDENAÇÃO': `
+🤝 **Foque em COLABORAÇÃO e COORDENAÇÃO:**
+- Cada bullet deve mostrar TRABALHO EM EQUIPE e ARTICULAÇÃO
+- Estrutura: Verbo + Colaboração/Coordenação + Equipes/Áreas + Objetivo
+- Enfatize: "colaborou...", "articulou...", "apoiou...", "facilitou..."
+- Use as competências (${request.keywords}) no contexto colaborativo
+- Exemplo: "Colaborou com equipes de produto e tecnologia na definição de requisitos, garantindo alinhamento técnico-estratégico"`,
 
-**SAÍDA CORRETA:**
-• Controlou operações de máquinas florestais, assegurando disponibilidade e performance dos equipamentos
-• Executou manutenção preventiva em equipamentos, identificando e corrigindo falhas mecânicas
-• Coordenou equipe de operadores, distribuindo atividades e acompanhando execução das tarefas
+      'OTIMIZAÇÃO E MELHORIA': `
+📈 **Foque em OTIMIZAÇÃO e MELHORIA:**
+- Cada bullet deve mostrar MELHORIAS implementadas
+- Estrutura: Verbo + Identificação/Análise + Ação de melhoria + Benefício
+- Enfatize: "identificou...", "otimizou...", "revisou...", "automatizou...", "propôs..."
+- Integre as competências (${request.keywords}) como ferramentas de otimização
+- Exemplo: "Identificou ineficiências no processo de atendimento e propôs novo fluxo que melhorou tempo de resposta ao cliente"`
+    };
 
-**SAÍDA ERRADA (NÃO FAÇA ISSO):**
-• Gerenciou frota de 50 máquinas ❌ (INVENTOU NÚMERO) utilizando sistema SAP ❌ (INVENTOU FERRAMENTA), reduzindo downtime em 30% ❌ (INVENTOU MÉTRICA)
-• Implementou metodologia Lean Six Sigma ❌ (INVENTOU METODOLOGIA) nas operações florestais
-
-🎯 **AGORA TRANSFORME AS ATIVIDADES:**
-Texto do usuário: "${request.userDescription}"
-Palavras-chave: ${request.keywords}
-
-Gere 3-6 bullets profissionais baseados APENAS nas informações fornecidas. NÃO invente números, ferramentas ou resultados.`;
+    return styles[style] || styles['ATIVIDADE E CONTEXTO'];
   }
 
   // 🔒 REMOVIDO: callGrokAPI() - agora usa backend seguro via SecureApiService
 
-  // Fallback caso GROK falhe
+  // Fallback caso GROK falhe - MELHORADO para usar conhecimento do cargo
   private static generateFallbackDescription(request: ExperienceRequest): ExperienceResponse {
-    
-    // Fallback inteligente baseado no texto do usuário
+
+    console.log('⚠️ Usando fallback inteligente baseado em conhecimento do cargo');
+
     const keywords = request.keywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
     const description = request.userDescription.toLowerCase();
-    
-    const bullets = [];
-    
-    // Analisar atividades específicas mencionadas
-    if (description.includes('controle') || description.includes('controlava')) {
-      bullets.push(`• Administrou controle de processos operacionais, mantendo registros atualizados e precisos.`);
-    } else if (description.includes('organiz') || description.includes('arquivo')) {
-      bullets.push(`• Estruturou sistema de organização documental, facilitando acesso rápido às informações.`);
-    } else if (description.includes('atend') || description.includes('telefone')) {
-      bullets.push(`• Realizou atendimento ao cliente via telefone, solucionando dúvidas e direcionando demandas.`);
-    } else if (description.includes('planilha') || description.includes('excel')) {
-      bullets.push(`• Elaborou planilhas de controle e acompanhamento, automatizando cálculos e relatórios.`);
-    } else {
-      bullets.push(`• Executou atividades operacionais do cargo ${request.position.toLowerCase()}, seguindo procedimentos estabelecidos.`);
-    }
-    
-    // Calcular quantidade de bullets baseada nas palavras-chave (3-8 bullets)
-    const targetBullets = Math.min(Math.max(3, keywords.length + 1), 8);
-    
-    // Adicionar bullets baseados nas palavras-chave
-    const specificEndings = [
-      'utilizando ferramentas digitais especializadas.',
-      'seguindo normas e procedimentos internos.',
-      'mantendo comunicação efetiva com equipe.',
-      'priorizando qualidade e precisão dos resultados.',
-      'cumprindo prazos estabelecidos pela gestão.',
-      'aplicando melhores práticas do setor.',
-      'garantindo conformidade com regulamentações.'
-    ];
-    
-    const verbs = [
-      'Aplicou conhecimentos em',
-      'Utilizou ferramentas de', 
-      'Operou sistemas de',
-      'Gerenciou processos de',
-      'Coordenou atividades de',
-      'Desenvolveu rotinas de',
-      'Implementou procedimentos de'
-    ];
-    
-    // Corrigir ortografia de palavras-chave comuns
-    const correctedKeywords = keywords.map(keyword => {
-      const corrections = {
-        'elatórios': 'relatórios',
-        'relatóios': 'relatórios',
-        'planilhas': 'planilhas',
-        'telefone': 'telefone',
-        'arquivo': 'arquivo'
-      };
-      return corrections[keyword.toLowerCase()] || keyword;
-    });
-    
-    correctedKeywords.forEach((keyword, index) => {
-      if (bullets.length < targetBullets) {
-        const verb = verbs[index % verbs.length];
-        const ending = specificEndings[index % specificEndings.length];
-        bullets.push(`• ${verb} ${keyword}, ${ending}`);
+    const position = request.position.toLowerCase();
+
+    const bullets: string[] = [];
+
+    // Base de conhecimento: atividades típicas por categoria de cargo
+    const cargoKnowledge: Record<string, string[]> = {
+      // Engenharia e Técnico
+      'engenheiro': [
+        'Desenvolveu projetos técnicos aplicando {keywords}, garantindo conformidade com normas e especificações',
+        'Realizou análises e cálculos especializados utilizando {keywords} para otimização de processos',
+        'Coordenou implementação de melhorias técnicas em {keywords}, acompanhando resultados e ajustes'
+      ],
+      'técnico': [
+        'Executou manutenção e operação de sistemas utilizando {keywords}, assegurando funcionamento adequado',
+        'Realizou inspeções e testes com {keywords}, documentando resultados e não-conformidades',
+        'Apoiou equipe técnica na resolução de problemas aplicando conhecimentos em {keywords}'
+      ],
+      // Análise e Dados
+      'analista': [
+        'Analisou dados e informações utilizando {keywords}, gerando insights para tomada de decisão',
+        'Elaborou relatórios e apresentações com {keywords}, comunicando resultados a stakeholders',
+        'Colaborou com áreas de negócio aplicando {keywords} para solução de demandas analíticas'
+      ],
+      'cientista de dados': [
+        'Desenvolveu modelos analíticos aplicando {keywords} para previsão e classificação de dados',
+        'Realizou exploração e tratamento de dados com {keywords}, preparando bases para análise',
+        'Criou visualizações e dashboards utilizando {keywords} para comunicação de insights'
+      ],
+      // Desenvolvimento
+      'desenvolvedor': [
+        'Desenvolveu funcionalidades e sistemas utilizando {keywords}, seguindo boas práticas de código',
+        'Realizou testes e debugging com {keywords}, garantindo qualidade das entregas',
+        'Colaborou com equipe em code reviews aplicando {keywords} para manutenção de padrões'
+      ],
+      'programador': [
+        'Implementou soluções de software com {keywords}, atendendo requisitos funcionais e técnicos',
+        'Realizou manutenção e evolução de sistemas aplicando {keywords} de forma eficiente',
+        'Participou de cerimônias ágeis utilizando conhecimentos em {keywords} para planejamento'
+      ],
+      // Gestão e Coordenação
+      'gerente': [
+        'Gerenciou equipe e processos aplicando {keywords}, acompanhando performance e desenvolvimento',
+        'Coordenou projetos estratégicos utilizando {keywords} para alinhamento de entregas e prazos',
+        'Analisou indicadores de gestão com {keywords}, propondo ações de melhoria contínua'
+      ],
+      'coordenador': [
+        'Coordenou atividades operacionais utilizando {keywords}, distribuindo demandas e acompanhando execução',
+        'Facilitou comunicação entre áreas aplicando {keywords} para alinhamento de processos',
+        'Monitorou resultados e métricas com {keywords}, identificando oportunidades de otimização'
+      ],
+      // Administrativo e Operacional
+      'assistente': [
+        'Executou rotinas administrativas aplicando {keywords}, mantendo organização e controle de processos',
+        'Apoiou equipe em atividades operacionais utilizando {keywords} para agilizar demandas',
+        'Elaborou documentos e planilhas com {keywords}, garantindo precisão das informações'
+      ],
+      'auxiliar': [
+        'Realizou atividades de suporte operacional aplicando {keywords} conforme procedimentos estabelecidos',
+        'Manteve organização e controle utilizando {keywords} para facilitar acesso a informações',
+        'Colaborou com equipe na execução de tarefas com {keywords}, cumprindo prazos e padrões'
+      ],
+      // Comercial e Vendas
+      'vendedor': [
+        'Realizou atendimento e negociação com clientes aplicando {keywords} para identificar necessidades',
+        'Apresentou produtos e soluções utilizando {keywords}, destacando benefícios e diferenciais',
+        'Acompanhou pipeline comercial com {keywords}, gerenciando oportunidades até fechamento'
+      ],
+      'consultor': [
+        'Conduziu diagnósticos e análises aplicando {keywords} para identificar oportunidades de melhoria',
+        'Desenvolveu propostas e soluções utilizando {keywords}, alinhadas aos objetivos do cliente',
+        'Apresentou recomendações estratégicas com {keywords}, demonstrando valor e retorno esperado'
+      ],
+      // Atendimento e Suporte
+      'atendente': [
+        'Realizou atendimento multicanal aplicando {keywords}, solucionando dúvidas e demandas de clientes',
+        'Registrou e acompanhou solicitações utilizando {keywords}, garantindo resolução adequada',
+        'Manteve comunicação empática com {keywords}, buscando satisfação e fidelização de clientes'
+      ],
+      // Padrão genérico
+      'default': [
+        'Executou atividades da função aplicando {keywords}, contribuindo para resultados da área',
+        'Utilizou ferramentas e metodologias de {keywords} no desenvolvimento das responsabilidades',
+        'Colaborou com equipe aplicando conhecimentos em {keywords} para alcance de objetivos'
+      ]
+    };
+
+    // Identificar categoria do cargo
+    let cargoTemplates = cargoKnowledge.default;
+    for (const [key, templates] of Object.entries(cargoKnowledge)) {
+      if (position.includes(key)) {
+        cargoTemplates = templates;
+        break;
       }
-    });
-    
-    // Adicionar bullets extras se necessário para atingir o mínimo
-    const extraBullets = [
-      '• Colaborou com equipe multidisciplinar, compartilhando informações e alinhando atividades.',
-      '• Participou de reuniões setoriais, contribuindo com sugestões e feedback construtivo.',
-      '• Manteve organização do ambiente de trabalho, otimizando fluxo de atividades diárias.'
-    ];
-    
-    let extraIndex = 0;
-    while (bullets.length < Math.max(3, targetBullets) && extraIndex < extraBullets.length) {
-      bullets.push(extraBullets[extraIndex]);
-      extraIndex++;
+    }
+
+    // Função auxiliar para distribuir keywords nos bullets
+    const distributeKeywords = (templates: string[], keywords: string[]): string[] => {
+      const result: string[] = [];
+      const keywordsPerBullet = Math.ceil(keywords.length / Math.min(templates.length, 5));
+
+      for (let i = 0; i < Math.min(templates.length, 5); i++) {
+        const startIdx = i * keywordsPerBullet;
+        const endIdx = Math.min(startIdx + keywordsPerBullet, keywords.length);
+        const bulletKeywords = keywords.slice(startIdx, endIdx);
+
+        if (bulletKeywords.length > 0) {
+          const keywordText = bulletKeywords.join(', ');
+          const bullet = templates[i].replace('{keywords}', keywordText);
+          result.push(`• ${bullet}`);
+        }
+      }
+
+      return result;
+    };
+
+    // Se há keywords, distribuir entre bullets baseados no cargo
+    if (keywords.length > 0) {
+      bullets.push(...distributeKeywords(cargoTemplates, keywords));
+    } else {
+      // Se não há keywords, usar descrição genérica
+      bullets.push(`• Executou atividades inerentes ao cargo de ${request.position}, aplicando conhecimentos técnicos e operacionais`);
+      bullets.push(`• Colaborou com equipe no desenvolvimento de processos e rotinas da função`);
+      bullets.push(`• Manteve atualização profissional e aplicação de boas práticas na área de atuação`);
+    }
+
+    // Se tem descrição do usuário, tentar adicionar bullet específico
+    if (description && description.length > 10) {
+      if (description.includes('equipe') || description.includes('time')) {
+        bullets.push('• Trabalhou de forma colaborativa com equipe, compartilhando conhecimentos e alinhando esforços para resultados coletivos');
+      } else if (description.includes('projeto') || description.includes('projetos')) {
+        bullets.push('• Participou ativamente de projetos da área, contribuindo com expertise técnica e acompanhamento de entregas');
+      } else if (description.includes('cliente') || description.includes('clientes')) {
+        bullets.push('• Manteve relacionamento próximo com clientes, compreendendo necessidades e garantindo qualidade do atendimento');
+      }
     }
 
     return {

@@ -1,6 +1,8 @@
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Template } from '@/types/templates';
+
+// 🚀 PERFORMANCE: Dynamic import de html2canvas (561KB) apenas quando necessário
+type Html2CanvasType = typeof import('html2canvas').default;
 
 interface PDFExportOptions {
   fileName?: string;
@@ -128,6 +130,9 @@ export class PDFExportService {
           error: 'Elemento não encontrado para exportação'
         };
       }
+
+      // 🚀 PERFORMANCE: Carregar html2canvas dinamicamente (561KB)
+      const html2canvas: Html2CanvasType = (await import('html2canvas')).default;
 
       // Configurações para alta qualidade mantendo proporções
       const canvas = await html2canvas(element, {

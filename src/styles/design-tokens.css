@@ -43,6 +43,55 @@
   --ring: 222.2 84% 4.9%;
   --radius: 0.5rem;
 
+  /* Nova Paleta Premium 2025 */
+  /* Emerald - Verde Sucesso */
+  --emerald-50: 167 85% 97%;
+  --emerald-100: 168 76% 92%;
+  --emerald-200: 168 80% 84%;
+  --emerald-300: 169 77% 72%;
+  --emerald-400: 168 76% 60%;
+  --emerald-500: 160 84% 39%; /* #10B981 */
+  --emerald-600: 161 94% 30%; /* #059669 */
+  --emerald-700: 163 94% 24%;
+  --emerald-800: 163 88% 20%;
+  --emerald-900: 164 86% 16%;
+
+  /* Blue - Azul Profissional */
+  --blue-50: 214 100% 97%;
+  --blue-100: 214 95% 93%;
+  --blue-200: 213 97% 87%;
+  --blue-300: 212 96% 78%;
+  --blue-400: 213 94% 68%;
+  --blue-500: 217 91% 60%; /* #3B82F6 */
+  --blue-600: 221 83% 53%;
+  --blue-700: 224 76% 48%;
+  --blue-800: 226 71% 40%; /* #1E40AF */
+  --blue-900: 224 64% 33%;
+
+  /* Violet - Roxo Premium */
+  --violet-50: 250 100% 98%;
+  --violet-100: 251 91% 95%;
+  --violet-200: 251 95% 92%;
+  --violet-300: 252 95% 85%;
+  --violet-400: 255 92% 76%;
+  --violet-500: 258 90% 66%; /* #8B5CF6 */
+  --violet-600: 262 83% 58%;
+  --violet-700: 263 70% 50%; /* #7C3AED */
+  --violet-800: 263 69% 42%;
+  --violet-900: 264 67% 35%;
+
+  /* Slate - Neutros Modernos */
+  --slate-50: 210 40% 98%; /* #f8fafc */
+  --slate-100: 210 40% 96%;
+  --slate-200: 214 32% 91%;
+  --slate-300: 213 27% 84%;
+  --slate-400: 215 20% 65%;
+  --slate-500: 215 16% 47%; /* #64748b */
+  --slate-600: 215 19% 35%;
+  --slate-700: 215 25% 27%;
+  --slate-800: 217 33% 17%; /* #1e293b */
+  --slate-900: 222 47% 11%;
+
   /* Enhanced Primary Scale */
   --primary-50: 222 100% 97%;
   --primary-100: 222 100% 95%;
@@ -246,4 +295,183 @@
   background: linear-gradient(90deg,
     hsl(var(--resume-skill-tag)) 0%,
     hsl(var(--resume-skill-tag) / 0.9) 100%);
+}
+
+/* ============================================
+   GRADIENTES PREMIUM 2025
+   ============================================ */
+
+/* Hero Gradients */
+.bg-gradient-hero-purple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+}
+
+.bg-gradient-hero-subtle {
+  background: linear-gradient(120deg,
+    hsl(var(--blue-50)) 0%,
+    hsl(var(--blue-100)) 50%,
+    hsl(var(--violet-50)) 100%);
+}
+
+.bg-gradient-hero-vibrant {
+  background: linear-gradient(135deg,
+    #0ea5e9 0%,
+    #06b6d4 25%,
+    hsl(var(--emerald-500)) 75%,
+    #14b8a6 100%);
+}
+
+/* CTA Gradients */
+.bg-gradient-emerald {
+  background: linear-gradient(135deg,
+    hsl(var(--emerald-500)) 0%,
+    hsl(var(--emerald-600)) 100%);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(135deg,
+    hsl(var(--blue-500)) 0%,
+    hsl(var(--blue-600)) 100%);
+}
+
+.bg-gradient-violet {
+  background: linear-gradient(135deg,
+    hsl(var(--violet-500)) 0%,
+    hsl(var(--violet-700)) 100%);
+}
+
+/* Premium Badge Gradient */
+.bg-gradient-premium {
+  background: linear-gradient(135deg,
+    hsl(var(--violet-500)) 0%,
+    hsl(var(--violet-700)) 100%);
+}
+
+/* ============================================
+   SOMBRAS MODERNAS
+   ============================================ */
+
+.shadow-card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.08);
+}
+
+.shadow-premium {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.shadow-emerald {
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 0 2px 6px rgba(16, 185, 129, 0.2);
+}
+
+.shadow-blue {
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4), 0 2px 6px rgba(59, 130, 246, 0.2);
+}
+
+/* ============================================
+   ANIMAÇÕES PREMIUM
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  50%, 100% {
+    left: 100%;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s infinite linear;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  background-size: 2000px 100%;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+/* ============================================
+   CLASSES UTILITÁRIAS PREMIUM
+   ============================================ */
+
+.text-gradient {
+  background: linear-gradient(135deg,
+    hsl(var(--blue-500)),
+    hsl(var(--violet-500)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hover-lift {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px) scale(1.02);
 }

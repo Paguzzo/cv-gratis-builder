@@ -87,6 +87,21 @@ export function Experience() {
     const experience = watchedExperience[index];
     if (!experience.keywords || !experience.position) return;
 
+    // Alerta quando descrição está vazia ou muito curta
+    if (!experience.description || experience.description.trim().length < 15) {
+      const confirmGenerate = window.confirm(
+        '⚠️ ATENÇÃO: Você não preencheu "O que você fazia no dia a dia" (ou preencheu muito pouco).\n\n' +
+        '✨ RECOMENDAÇÃO: Para resultados MUITO MELHORES, descreva brevemente suas atividades principais. Exemplo:\n' +
+        '"Desenvolvia sistemas web, coordenava equipe de 5 pessoas, implementava melhorias nos processos"\n\n' +
+        '❓ Deseja continuar mesmo assim?\n' +
+        '(A IA gerará bullets baseados apenas no cargo e competências, que podem ser mais genéricos)'
+      );
+
+      if (!confirmGenerate) {
+        return; // Usuário cancelou
+      }
+    }
+
     setIsGeneratingAI(index);
 
     try {
@@ -105,9 +120,17 @@ export function Experience() {
 
       if (response.success && response.content) {
         form.setValue(`experience.${index}.description`, response.content);
+
+        // Informar se usou fallback
+        if (response.source === 'fallback') {
+          console.warn('⚠️ Gerado usando fallback inteligente baseado no cargo');
+        } else {
+          console.log('✅ Gerado usando GROK AI');
+        }
       }
     } catch (error) {
       console.error('Erro ao gerar descrição:', error);
+      alert('❌ Erro ao gerar descrição com IA. Por favor, tente novamente.');
     } finally {
       setIsGeneratingAI(null);
     }

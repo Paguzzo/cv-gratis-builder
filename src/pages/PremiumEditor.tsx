@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CombinedProvider } from '@/contexts/CombinedProvider';
 import { useCurriculumData } from '@/hooks/useCurriculumData';
+import { useCompletionTracker } from '@/hooks/useCompletionTracker';
 import { TemplateRenderer } from '@/components/templates/TemplateRenderer';
 import { ErrorBoundary, TemplateErrorBoundary } from '@/components/error';
 import { Button } from '@/components/ui/button';
 import { JobAIChat as CareerAIChat } from '@/components/ui/jobai-chat';
 import { CurriculumChecker } from '@/components/ui/curriculum-checker';
 import { CoverLetterGenerator } from '@/components/ui/cover-letter-generator';
+import { CompletionBadgeWithTooltip } from '@/components/ui/completion-badge';
+import { CompletionModal } from '@/components/ui/completion-modal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -280,6 +283,11 @@ export default function PremiumEditor() {
   const lastWarningTimeRef = useRef(0);
   const WARNING_COOLDOWN = 60000; // 1 minuto entre avisos
 
+  // 🎯 Sistema de rastreamento de conclusão
+  const completion = useCompletionTracker();
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  // const { clearAllData } = useCurriculumData(); // ❌ REMOVIDO: Hook não pode ser chamado fora do Provider
+
   // Obter dados do currículo - PRIORIZAR LOCALSTORAGE
   const getCurriculumData = () => {
     try {
@@ -297,10 +305,13 @@ export default function PremiumEditor() {
         return JSON.parse(savedData);
       }
 
-      // Fallback para hook
-      const { data } = useCurriculumData();
-      console.log('✅ Dados carregados do hook useCurriculumData');
-      return data;
+      // ❌ REMOVIDO: Hook não pode ser chamado dentro de função regular
+      // const { data } = useCurriculumData();
+      // console.log('✅ Dados carregados do hook useCurriculumData');
+      // return data;
+
+      console.log('⚠️ Nenhum dado encontrado em localStorage');
+      return null;
     } catch (error) {
       console.error('❌ Erro ao obter dados do currículo:', error);
       return null;
@@ -942,7 +953,74 @@ export default function PremiumEditor() {
     }
   }, [fontStyle, fontSize, lineSpacing, selectedColor, hasUserCustomizations]);
 
+  // 🎯 Monitorar conclusão de todas as ações
+  useEffect(() => {
+    if (completion.isComplete) {
+      console.log('✅ Todas as ações completas! Abrindo modal de conclusão');
+      setCompletionModalOpen(true);
+    }
+  }, [completion.isComplete]);
 
+  // 🎯 Handlers do sistema de conclusão
+  const handleConfirmClean = () => {
+    console.log('🧹 Limpando todos os dados...');
+
+    // Limpar dados do completion tracker
+    completion.clear();
+
+    // Limpar TODOS os dados do currículo do localStorage
+    try {
+      localStorage.removeItem('cvgratis-curriculum');
+      localStorage.removeItem('cvgratis-curriculum-finalized');
+      localStorage.removeItem('cvgratis-template-config');
+      console.log('✅ Dados do currículo removidos do localStorage');
+
+      toast.success('Dados limpos com sucesso! Voltando para página inicial...');
+      setCompletionModalOpen(false);
+
+      // Aguardar um pouco e redirecionar
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (error) {
+      console.error('❌ Erro ao limpar dados:', error);
+      toast.error('Erro ao limpar dados. Tente novamente.');
+    }
+  };
+
+  const handleReviewAgain = () => {
+    console.log('🔄 Usuário quer revisar novamente');
+    completion.reset();
+    setCompletionModalOpen(false);
+    toast.info('Você pode fazer novos downloads e impressões');
+  };
+
+  const handleTryToExit = () => {
+    if (completion.hasPendingActions) {
+      // Tem ações pendentes - mostrar aviso
+      setCompletionModalOpen(true);
+    } else {
+      // Tudo completo, pode sair
+      navigate('/');
+    }
+  };
+
+  // 🎯 Interceptar tentativa de sair da página
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (completion.hasPendingActions) {
+        e.preventDefault();
+        e.returnValue = 'Você ainda não completou todas as ações (download e impressão). Tem certeza que deseja sair?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [completion.hasPendingActions]);
 
   const handleBackToEditing = () => {
     // Ir para criar-curriculo com o template premium selecionado mantendo contexto premium
@@ -1032,12 +1110,26 @@ export default function PremiumEditor() {
                 /* Aplicar estilos dinâmicos do editor */
                 ${stylesheetContent}
                 
-                /* Configurações específicas para impressão */
+                /* Configurações específicas para impressão - PREMIUM SEM TEXTOS EXTRAS */
                 @page {
-                  margin: 1cm;
+                  margin: 0;
                   size: A4;
                 }
-                
+
+                /* Remover cabeçalhos e rodapés padrão do navegador */
+                @media print {
+                  body::before,
+                  body::after {
+                    display: none !important;
+                  }
+
+                  /* Adicionar margem interna no conteúdo ao invés de margem da página */
+                  body {
+                    margin: 0 !important;
+                    padding: 1cm !important;
+                  }
+                }
+
                 /* Remover transformações do preview */
                 .template-premium-preview {
                   transform: none !important;
@@ -1095,12 +1187,16 @@ export default function PremiumEditor() {
         // Aguardar carregar antes de imprimir
         setTimeout(() => {
           printWindow.print();
+
+          // 🎯 Marcar impressão como completa após iniciar impressão
+          completion.markPrintComplete();
+
           setTimeout(() => {
             printWindow.close();
           }, 1000);
         }, 800);
-        
-        toast.success('Abrindo janela de impressão formatada...');
+
+        toast.success('✅ Impressão completa! ' + (completion.state.downloadCompleted ? '' : 'Não esqueça de baixar o PDF'));
       }
     }
   };
@@ -1234,8 +1330,11 @@ export default function PremiumEditor() {
       // Salvar o PDF
       const fileName = `curriculo-${selectedTemplate.name}-${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
-      
-      toast.success('PDF gerado com sucesso!');
+
+      // 🎯 Marcar download como completo
+      completion.markDownloadComplete();
+
+      toast.success('✅ Download completo! ' + (completion.state.printCompleted ? '' : 'Não esqueça de imprimir'));
       console.log('✅ PDF gerado com sucesso:', fileName);
       
     } catch (error) {
@@ -1924,6 +2023,15 @@ ${percentage >= 85
           }
         `}</style>
         <div className="h-screen bg-gray-50 overflow-hidden flex flex-col">
+
+        {/* 🎯 Badge flutuante de conclusão */}
+        <CompletionBadgeWithTooltip
+          downloadCompleted={completion.state.downloadCompleted}
+          printCompleted={completion.state.printCompleted}
+          isComplete={completion.isComplete}
+          onClick={() => setCompletionModalOpen(true)}
+        />
+
         {/* Header Fixo */}
         <header className="bg-white shadow-sm border-b flex-shrink-0 z-10">
           <div className="px-4 py-4">
@@ -2440,6 +2548,18 @@ ${percentage >= 85
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* 🎯 Modal de conclusão */}
+        <CompletionModal
+          open={completionModalOpen}
+          onOpenChange={setCompletionModalOpen}
+          completedActions={completion.completedActions}
+          pendingActions={completion.pendingActions}
+          isComplete={completion.isComplete}
+          onConfirmClean={handleConfirmClean}
+          onReview={handleReviewAgain}
+          onContinue={() => setCompletionModalOpen(false)}
+        />
 
             </div>
       </CombinedProvider>

@@ -2,17 +2,21 @@
 
 ## Informações de Login
 
-### Painel Administrativo
+### Painel Administrativo (Autenticação Local)
 - **URL de Acesso**: http://localhost:8080/admin-login
 - **Usuário**: `admin`
-- **Senha**: `Admin@2024!`
+- **Senha**: `Cvgratis@917705`
+
+### ⚠️ IMPORTANTE
+O sistema atualmente usa autenticação LOCAL (hardcoded no AdminContext.tsx), não autenticação via backend.
+As credenciais estão definidas em: `src/contexts/AdminContext.tsx`
 
 ### Segurança
 
 #### Hash da Senha
 A senha está armazenada de forma segura usando bcrypt com 10 rounds de salt:
 ```
-$2b$10$PP6NZicoSzFQSTyL9MfzI.Ht0z54F28NlFvTZxQXj1qx9qCcpUjrK
+$2b$10$4uScXlHI7SP3G3wB/YfKeOLOAZFLJASg4v5Ow9GnD1SCjyLCU6X7S
 ```
 
 #### JWT Secret
@@ -30,7 +34,7 @@ cv-gratis-super-secret-jwt-key-2024-production-change-this
 POST /api/secure/admin/login
 Body: {
   "username": "admin",
-  "password": "Admin@2024!"
+  "password": "Cvgratis@917705"
 }
 
 Response: {
@@ -147,7 +151,7 @@ npm run dev
 1. Acesse http://localhost:8080/admin-login
 2. Digite:
    - Usuário: `admin`
-   - Senha: `Admin@2024!`
+   - Senha: `Cvgratis@917705`
 3. Clique em "Entrar no Painel"
 4. Você será redirecionado para /admin
 

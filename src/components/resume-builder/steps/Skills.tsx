@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useSkills } from '@/contexts/SkillsContext';
-import { X, Search } from 'lucide-react';
+import { X, Search, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const skillsSchema = z.object({
@@ -55,7 +55,8 @@ export function Skills() {
   const { state, setSkills } = useSkills();
   const [selectedSkills, setSelectedSkills] = useState(state.skills);
   const [filteredSkills, setFilteredSkills] = useState(predefinedSkills);
-  
+  const [customSkillInput, setCustomSkillInput] = useState('');
+
   const form = useForm<SkillsFormData>({
     resolver: zodResolver(skillsSchema),
     defaultValues: {
@@ -107,6 +108,26 @@ export function Skills() {
       };
       setSelectedSkills(prev => [...prev, newSkill]);
       form.setValue('search', '');
+    }
+  };
+
+  const addCustomSkillFromInput = () => {
+    const skillName = customSkillInput.trim();
+    if (skillName && !selectedSkills.some(skill => skill.name.toLowerCase() === skillName.toLowerCase())) {
+      const newSkill = {
+        id: `skill-${Date.now()}`,
+        name: skillName,
+        category: 'other' as const
+      };
+      setSelectedSkills(prev => [...prev, newSkill]);
+      setCustomSkillInput('');
+    }
+  };
+
+  const handleCustomKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustomSkillFromInput();
     }
   };
 
@@ -210,6 +231,32 @@ export function Skills() {
           </div>
         </div>
       )}
+
+      {/* Adicionar Outras Habilidades - Nova Seção */}
+      <div className="space-y-3 border-t pt-6">
+        <h3 className="text-lg font-semibold text-foreground">Adicionar Outras Habilidades</h3>
+        <p className="text-sm text-muted-foreground">
+          Não encontrou a habilidade que procura? Adicione quantas habilidades personalizadas desejar abaixo:
+        </p>
+        <div className="flex gap-2">
+          <Input
+            placeholder="Digite a habilidade e pressione Enter ou clique em Adicionar"
+            value={customSkillInput}
+            onChange={(e) => setCustomSkillInput(e.target.value)}
+            onKeyPress={handleCustomKeyPress}
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            onClick={addCustomSkillFromInput}
+            disabled={!customSkillInput.trim()}
+            className="whitespace-nowrap"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Adicionar
+          </Button>
+        </div>
+      </div>
 
       {/* Botão para adicionar habilidade customizada */}
       {searchValue && !filteredSkills.some(skill => skill.name.toLowerCase() === searchValue.toLowerCase()) && (

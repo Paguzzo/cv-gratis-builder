@@ -4,6 +4,7 @@ import { CombinedProvider } from '@/contexts/CombinedProvider';
 import { useTemplate } from '@/contexts/TemplateContext';
 import { useCurriculum } from '@/contexts/CurriculumContext';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useCompletionTracker } from '@/hooks/useCompletionTracker';
 import { useSafeHtml, SANITIZE_PRESETS } from '@/utils/sanitizeHtml';
 import { TemplateRenderer } from '@/components/templates/TemplateRenderer';
 import { TemplateCarousel } from '@/components/templates/TemplateCarousel';
@@ -19,6 +20,8 @@ import { TEMPLATES_CATALOG, searchTemplates, getTemplatesByCategory, getFreeTemp
 import { TEMPLATE_CATEGORIES, type TemplateCategory, type TemplateLevel } from '@/types/templateCategories';
 import { useTemplateFavorites } from '@/hooks/useTemplateFavorites';
 import { TemplateFavoriteButton } from '@/components/templates/TemplateFavoriteButton';
+import { CompletionBadgeWithTooltip } from '@/components/ui/completion-badge';
+import { CompletionModal } from '@/components/ui/completion-modal';
 // import { StripeService } from '@/services/stripeService'; // 🚨 REMOVIDO
 // Email e WhatsApp removidos para simplicidade
 import { PaymentDialog } from '@/components/ui/payment-dialog';
@@ -206,6 +209,11 @@ function TemplateSelectorContent() {
   // 🔧 NOVO: Estado de carregamento para aguardar contextos carregarem do localStorage
   const [isLoadingData, setIsLoadingData] = useState(true);
 
+  // 🎯 Sistema de rastreamento de conclusão
+  const completion = useCompletionTracker();
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  const { clearAllData } = useCurriculum();
+
   // 🔧 NOVO: useEffect para aguardar carregamento dos contextos
   useEffect(() => {
     console.log('⏳ [TemplateSelector] Aguardando carregamento de dados...');
@@ -218,6 +226,31 @@ function TemplateSelectorContent() {
 
     return () => clearTimeout(loadingTimer);
   }, []);
+
+  // 🎯 Monitorar conclusão de todas as ações
+  useEffect(() => {
+    if (completion.isComplete) {
+      console.log('✅ Todas as ações completas! Abrindo modal de conclusão');
+      setCompletionModalOpen(true);
+    }
+  }, [completion.isComplete]);
+
+  // 🎯 Interceptar tentativa de sair da página
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (completion.hasPendingActions) {
+        e.preventDefault();
+        e.returnValue = 'Você ainda não completou todas as ações (download e impressão). Tem certeza que deseja sair?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [completion.hasPendingActions]);
 
   const allTemplates = AVAILABLE_TEMPLATES;
 
@@ -589,9 +622,11 @@ function TemplateSelectorContent() {
         
         const pdfService = new PDFExportService();
         const result = await pdfService.exportTemplate(targetTemplate);
-        
+
         if (result.success) {
-          toast.success('PDF baixado com sucesso!');
+          // 🎯 Marcar download como completo
+          completion.markDownloadComplete();
+          toast.success('✅ Download completo! ' + (completion.state.printCompleted ? '' : 'Não esqueça de imprimir'));
         } else {
           throw new Error(result.error || 'Erro ao gerar PDF');
         }
@@ -633,7 +668,10 @@ function TemplateSelectorContent() {
       setIsPrinting(true);
       try {
         await PrintService.printTemplate();
-        toast.success('Imprimindo currículo...');
+
+        // 🎯 Marcar impressão como completa
+        completion.markPrintComplete();
+        toast.success('✅ Impressão completa! ' + (completion.state.downloadCompleted ? '' : 'Não esqueça de baixar o PDF'));
       } catch (error) {
         console.error('Erro ao imprimir:', error);
         toast.error('Erro ao imprimir. Tente novamente.');
@@ -663,6 +701,36 @@ function TemplateSelectorContent() {
   // Função handleSendEmail removida para simplicidade
 
   // Função handleWhatsApp removida para simplicidade
+
+  // 🎯 Handlers do sistema de conclusão
+  const handleConfirmClean = () => {
+    console.log('🧹 Limpando todos os dados...');
+
+    // Limpar dados do completion tracker
+    completion.clear();
+
+    // Limpar TODOS os dados do currículo
+    const success = clearAllData();
+
+    if (success) {
+      toast.success('Dados limpos com sucesso! Voltando para página inicial...');
+      setCompletionModalOpen(false);
+
+      // Aguardar um pouco e redirecionar
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } else {
+      toast.error('Erro ao limpar dados. Tente novamente.');
+    }
+  };
+
+  const handleReviewAgain = () => {
+    console.log('🔄 Usuário quer revisar novamente');
+    completion.reset();
+    setCompletionModalOpen(false);
+    toast.info('Você pode fazer novos downloads e impressões');
+  };
 
   const handlePaymentSuccess = () => {
     toast.success('Template desbloqueado! Você pode usar todas as funcionalidades.');
@@ -713,28 +781,37 @@ function TemplateSelectorContent() {
 
 
     return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-      {/* Header fixo */}
-      <div className="px-2 py-4 bg-white shadow-sm border-b">
+    <div className="h-screen bg-gradient-hero-subtle overflow-hidden">
+      {/* Badge flutuante de conclusão */}
+      <CompletionBadgeWithTooltip
+        downloadCompleted={completion.state.downloadCompleted}
+        printCompleted={completion.state.printCompleted}
+        isComplete={completion.isComplete}
+        onClick={() => setCompletionModalOpen(true)}
+      />
+
+      {/* Header Hero - Premium 2025 */}
+      <div className="px-4 py-6 bg-white/95 backdrop-blur-sm shadow-md border-b">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-                         <Button 
-               variant="outline" 
-               onClick={handleReturnToResume}
-               className="flex items-center gap-2 text-sm"
-             >
-               <ArrowLeft className="w-4 h-4" />
-               Voltar ao Editor
-             </Button>
-            
-            
+            <Button
+              variant="outline"
+              onClick={handleReturnToResume}
+              className="flex items-center gap-2 text-sm hover-lift"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar ao Editor
+            </Button>
           </div>
-          
-                    <div className="text-center">
-            <h1 className="text-xl font-bold text-gray-800">
-              Escolha seu Template
-              </h1>
-                         <p className="text-sm text-gray-600">
+
+          <div className="text-center">
+            <Badge className="mb-2 bg-gradient-premium text-white text-xs px-3 py-1">
+              ✨ 12 Templates Profissionais
+            </Badge>
+            <h1 className="text-2xl font-bold text-slate-800 mb-1">
+              Templates de <span className="text-gradient">Currículo Premium</span>
+            </h1>
+            <p className="text-sm text-slate-600">
                {(() => {
                  // Tentar pegar nome do context primeiro
                  if (curriculumState.data.personalInfo.name) {
@@ -809,33 +886,34 @@ function TemplateSelectorContent() {
               />
             </div>
 
-            {/* Filtros */}
+            {/* Filtros Pills Premium */}
             <div className="flex gap-2">
               <Button
-                variant={selectedLevel === 'all' ? 'default' : 'outline'}
+                variant={selectedLevel === 'all' ? 'blue' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedLevel('all')}
-                className="flex-1 text-xs"
+                className="flex-1 text-xs rounded-full"
               >
-                Todos
+                <Target className="w-3 h-3 mr-1" />
+                Todos ({allTemplates.length})
               </Button>
               <Button
-                variant={selectedLevel === 'free' ? 'default' : 'outline'}
+                variant={selectedLevel === 'free' ? 'emerald' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedLevel('free')}
-                className="flex-1 text-xs"
+                className="flex-1 text-xs rounded-full"
               >
                 <Gift className="w-3 h-3 mr-1" />
-                Grátis
+                Grátis ({filteredTemplates.filter(t => !t.isPremium).length})
               </Button>
               <Button
-                variant={selectedLevel === 'premium' ? 'default' : 'outline'}
+                variant={selectedLevel === 'premium' ? 'premium' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedLevel('premium')}
-                className="flex-1 text-xs"
+                className="flex-1 text-xs rounded-full"
               >
                 <Crown className="w-3 h-3 mr-1" />
-                Premium
+                Premium ({filteredTemplates.filter(t => t.isPremium).length})
               </Button>
             </div>
 
@@ -867,16 +945,24 @@ function TemplateSelectorContent() {
                         key={template.id}
                         onClick={() => handleTemplateSelect(template.id)}
                         className={`
-                          relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 group
+                          relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 group hover-lift shadow-card hover:shadow-card-hover
                           ${state.selectedTemplate?.id === template.id
-                            ? 'border-blue-500 bg-blue-50 shadow-md transform scale-[1.02]'
-                            : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-25 hover:shadow-sm'
+                            ? 'border-emerald-500 bg-emerald-50 shadow-emerald transform scale-[1.02]'
+                            : 'border-slate-200 bg-white hover:border-emerald-300'
                           }
                         `}
                       >
-                        <div className="flex items-center justify-between mb-2">
+                        {/* Badge Grátis */}
+                        <div className="absolute -top-2 -right-2">
+                          <Badge variant="emerald" className="text-xs px-2 py-0.5">
+                            <Gift className="w-3 h-3 mr-1" />
+                            Grátis
+                          </Badge>
+                        </div>
+
+                        <div className="flex items-center justify-between mb-2 mt-2">
                           <div className="flex items-center gap-2 flex-1">
-                            <h4 className="font-semibold text-gray-800 text-sm">{template.name}</h4>
+                            <h4 className="font-semibold text-slate-800 text-sm">{template.name}</h4>
                           </div>
                           <div className="flex items-center gap-1">
                             <TemplateFavoriteButton
@@ -888,15 +974,15 @@ function TemplateSelectorContent() {
                               className="h-7 w-7"
                             />
                             {state.selectedTemplate?.id === template.id && (
-                              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse ml-1"></div>
+                              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse ml-1"></div>
                             )}
                           </div>
                         </div>
-                    <p className="text-xs text-gray-600 mb-3">{template.description}</p>
+                    <p className="text-xs text-slate-600 mb-3">{template.description}</p>
                     
                     {/* Ações para template gratuito selecionado */}
                     {state.selectedTemplate?.id === template.id && (
-                      <div className="space-y-2 mt-3 pt-3 border-t border-blue-200">
+                      <div className="space-y-2 mt-3 pt-3 border-t border-emerald-200">
                         <div className="grid grid-cols-2 gap-2">
                           <button
                             onClick={(e) => {
@@ -904,7 +990,7 @@ function TemplateSelectorContent() {
                               handleDownload();
                             }}
                             disabled={isExporting}
-                            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
+                            className="flex items-center justify-center gap-2 bg-gradient-blue text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all hover:shadow-blue disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isExporting ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
@@ -913,14 +999,14 @@ function TemplateSelectorContent() {
                             )}
                             {isExporting ? 'Gerando...' : 'Baixar PDF'}
                           </button>
-                          
+
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handlePrint();
                             }}
                             disabled={isPrinting}
-                            className="flex items-center justify-center gap-1 bg-green-600 hover:bg-green-700 text-white py-2 px-2 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
+                            className="flex items-center justify-center gap-1 bg-gradient-emerald text-white py-2 px-2 rounded-lg text-xs font-semibold transition-all hover:shadow-emerald disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isPrinting ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
@@ -941,9 +1027,9 @@ function TemplateSelectorContent() {
 
                 {/* Templates Premium */}
             {filteredTemplates.filter(t => t.isPremium).length > 0 && (
-              <div className="p-4 border-t bg-gradient-to-r from-yellow-50 to-orange-50">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-yellow-600" />
+              <div className="p-4 border-t bg-gradient-to-br from-violet-50 to-purple-50">
+                <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                  <Crown className="w-4 h-4 text-violet-600" />
                   Templates Premium ({filteredTemplates.filter(t => t.isPremium).length})
                 </h3>
                 <div className="space-y-3">
@@ -952,20 +1038,26 @@ function TemplateSelectorContent() {
                       key={template.id}
                       onClick={() => handleTemplateSelect(template.id)}
                       className={`
-                        relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 group
+                        relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 group hover-lift shadow-card hover:shadow-premium
                         ${state.selectedTemplate?.id === template.id
-                          ? 'border-yellow-500 bg-yellow-50 shadow-md transform scale-[1.02]'
-                          : 'border-yellow-200 bg-white hover:border-yellow-400 hover:bg-yellow-25 hover:shadow-sm'
+                          ? 'border-violet-500 bg-violet-50 shadow-premium transform scale-[1.02]'
+                          : 'border-violet-200 bg-white hover:border-violet-400'
                         }
                       `}
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{template.name}</h4>
-                          <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs">
-                            <Crown className="w-2 h-2 mr-1" />
-                            Premium
-                          </Badge>
+                      {/* Badge Premium Absoluto */}
+                      <div className="absolute -top-2 -right-2">
+                        <Badge variant="premium" className="text-xs px-2 py-0.5 relative overflow-hidden">
+                          <Crown className="w-3 h-3 mr-1" />
+                          Premium
+                          {/* Shimmer effect */}
+                          <div className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-center justify-between mb-2 mt-2">
+                        <div className="flex items-center gap-2 flex-1">
+                          <h4 className="font-semibold text-slate-800 text-sm">{template.name}</h4>
                         </div>
                         <div className="flex items-center gap-1">
                           <TemplateFavoriteButton
@@ -977,19 +1069,22 @@ function TemplateSelectorContent() {
                             className="h-7 w-7"
                           />
                           {state.selectedTemplate?.id === template.id && (
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse ml-1"></div>
+                            <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse ml-1"></div>
                           )}
                         </div>
                       </div>
-                    <p className="text-xs text-gray-600 mb-3">{template.description}</p>
-                    
+                    <p className="text-xs text-slate-600 mb-3">{template.description}</p>
+
                     {/* Preço e ação para template premium */}
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-green-600">
-                        R$ {(template.price || 4.90).toFixed(2).replace('.', ',')}
-                      </span>
+                      <div>
+                        <p className="text-xs text-slate-400 line-through">R$ 29,90</p>
+                        <span className="text-lg font-bold text-violet-700">
+                          R$ {(template.price || 4.90).toFixed(2).replace('.', ',')}
+                        </span>
+                      </div>
                       {checkPremiumAccess(template) && (
-                        <Badge className="bg-green-100 text-green-800 text-xs">
+                        <Badge variant="success" className="text-xs">
                           <Check className="w-3 h-3 mr-1" />
                           Desbloqueado
                         </Badge>
@@ -998,7 +1093,7 @@ function TemplateSelectorContent() {
 
                     {/* Ações para template premium selecionado */}
                     {state.selectedTemplate?.id === template.id && (
-                      <div className="space-y-2 mt-3 pt-3 border-t border-yellow-200">
+                      <div className="space-y-2 mt-3 pt-3 border-t border-violet-200">
                         {/* Template premium: SEMPRE mostrar apenas botão de compra */}
                         <button
                           onClick={(e) => {
@@ -1006,9 +1101,9 @@ function TemplateSelectorContent() {
                             setSelectedTemplateForPayment(template);
                             setPaymentDialogOpen(true);
                           }}
-                          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white py-2 px-3 rounded-md text-xs font-medium transition-all shadow-md"
+                          className="w-full flex items-center justify-center gap-2 bg-gradient-premium text-white py-2.5 px-3 rounded-lg text-xs font-semibold transition-all shadow-premium hover:shadow-lg hover:scale-105"
                         >
-                          <Crown className="w-3 h-3" />
+                          <Crown className="w-4 h-4" />
                           Comprar Premium - R$ {(template.price || 4.90).toFixed(2).replace('.', ',')}
                         </button>
                       </div>
@@ -1313,6 +1408,17 @@ function TemplateSelectorContent() {
         </div>
       )}
 
+      {/* Modal de conclusão */}
+      <CompletionModal
+        open={completionModalOpen}
+        onOpenChange={setCompletionModalOpen}
+        completedActions={completion.completedActions}
+        pendingActions={completion.pendingActions}
+        isComplete={completion.isComplete}
+        onConfirmClean={handleConfirmClean}
+        onReview={handleReviewAgain}
+        onContinue={() => setCompletionModalOpen(false)}
+      />
 
       </div>
     );

@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, FileText, Zap, Users, Award, ChevronDown, Play, Quote, User, CheckCircle, Clock, Sparkles, Crown, Target, TrendingUp, Shield, Gift, Rocket } from "lucide-react";
 import Logo from "@/components/Logo";
 import BonusPopup from "@/components/ui/bonus-popup";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import SEOHead from "@/components/SEOHead";
 import StructuredData from "@/components/StructuredData";
+import AnimatedCounter from "@/components/AnimatedCounter";
+import LiveActivityFeed from "@/components/LiveActivityFeed";
+import "@/styles/homepage-premium.css";
 
 const Index = () => {
   const [bonusPopupOpen, setBonusPopupOpen] = useState(false);
@@ -102,27 +107,36 @@ const Index = () => {
           </div>
           <nav className="flex gap-4" aria-label="Navegação principal">
             <Button variant="outline" asChild>
-              <a href="/showcase" aria-label="Ver galeria de templates disponíveis">Ver Templates</a>
+              <Link to="/showcase" aria-label="Ver galeria de templates disponíveis">Ver Templates</Link>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="w-8 h-8 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              title="Área Administrativa"
+            >
+              <Link to="/admin-login" aria-label="Acesso à área administrativa">A</Link>
             </Button>
             <Button asChild className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
-              <a href="/criar-curriculo" aria-label="Começar a criar currículo gratuitamente agora">
+              <Link to="/criar-curriculo" aria-label="Começar a criar currículo gratuitamente agora">
                 <Gift className="w-4 h-4 mr-2" aria-hidden="true" />
                 GRÁTIS AGORA
-              </a>
+              </Link>
             </Button>
           </nav>
         </div>
       </header>
 
-      {/* Hero Section - Super Persuasivo */}
-      <section className="relative py-16 px-4 text-center bg-gradient-to-br from-blue-50 via-green-50 to-blue-50 overflow-hidden" role="region" aria-label="Seção principal - Hero">
+      {/* Hero Section - Premium 2025 */}
+      <section className="relative py-20 px-4 text-center bg-gradient-hero-subtle overflow-hidden" role="region" aria-label="Seção principal - Hero">
         {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-green-600/5"></div>
-        
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-violet-600/5"></div>
+
         <div className="max-w-6xl mx-auto relative">
-          {/* Badge de destaque */}
-          <div className="flex justify-center mb-6">
-            <Badge className="bg-green-100 text-green-800 border-green-200 px-6 py-2 text-lg font-semibold">
+          {/* Badge de destaque com animação */}
+          <div className="flex justify-center mb-6 animate-fade-in-up">
+            <Badge variant="success" className="px-8 py-3 text-base font-bold shadow-emerald hover:scale-105 transition-transform">
               🎉 100% GRATUITO - SEM CARTÃO DE CRÉDITO
             </Badge>
           </div>
@@ -131,21 +145,21 @@ const Index = () => {
             <Logo size="lg" className="justify-center mb-6" />
           </div>
 
-          <h1 className="text-4xl md:text-7xl font-black mb-6 text-foreground leading-tight">
+          <h1 className="text-4xl md:text-7xl font-black mb-6 text-slate-800 leading-tight animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
             Crie Seu Currículo{" "}
-            <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="text-gradient">
               PERFEITO
             </span>{" "}
             em 3 Minutos
           </h1>
 
           {/* Subheadline persuasivo */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <p className="text-2xl md:text-3xl text-gray-700 font-semibold mb-4">
+          <div className="max-w-4xl mx-auto mb-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <p className="text-2xl md:text-3xl text-slate-700 font-semibold mb-4">
               ⚡ IA Poderosa + Templates Profissionais = SEU EMPREGO DOS SONHOS
             </p>
-            <p className="text-xl text-gray-600">
-              Mais de <strong className="text-green-600">127.000 pessoas</strong> já conseguiram emprego usando nossos currículos. 
+            <p className="text-xl text-slate-600">
+              Junte-se a <strong className="text-emerald-600 font-bold">127.000+ profissionais</strong> que já conquistaram o emprego dos sonhos
               <br />Sua vez chegou! 🚀
             </p>
           </div>
@@ -153,10 +167,22 @@ const Index = () => {
           {/* Social Proof */}
           <div className="flex justify-center items-center gap-2 mb-8">
             <div className="flex -space-x-2">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-green-400 border-2 border-white flex items-center justify-center text-white font-bold">
-                  {String.fromCharCode(65 + i)}
-                </div>
+              {[
+                { id: 1, name: "Ana Silva" },
+                { id: 2, name: "Bruno Costa" },
+                { id: 3, name: "Carla Souza" },
+                { id: 4, name: "Daniel Lima" },
+                { id: 5, name: "Eduarda Mendes" }
+              ].map((person) => (
+                <Avatar key={person.id} className="w-10 h-10 border-2 border-white">
+                  <AvatarImage
+                    src={`https://i.pravatar.cc/150?img=${person.id + 10}`}
+                    alt={person.name}
+                  />
+                  <AvatarFallback className="bg-gradient-to-r from-blue-400 to-green-400 text-white font-bold">
+                    {person.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
               ))}
             </div>
             <div className="text-left ml-4">
@@ -172,14 +198,14 @@ const Index = () => {
           </div>
 
           {/* CTA Principal */}
-          <div className="space-y-4">
-            <Button asChild size="lg" className="text-xl px-12 py-8 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 transform hover:scale-105">
+          <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <Button asChild variant="emerald" size="xl" className="text-xl px-12 rounded-2xl">
               <a href="/criar-curriculo">
                 <Rocket className="mr-3 w-6 h-6" />
                 CRIAR MEU CURRÍCULO GRÁTIS AGORA
               </a>
             </Button>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-500 font-medium">
               ✅ Sem cadastro • ✅ Sem cartão • ✅ Download imediato
             </p>
           </div>
@@ -206,42 +232,68 @@ const Index = () => {
           
           <div className="grid md:grid-cols-2 gap-8">
             {/* GRÁTIS */}
-            <Card className="p-8 border-2 border-green-200 bg-green-50 relative overflow-hidden">
+            <Card className="p-8 border-2 border-emerald-200 bg-emerald-50 relative overflow-hidden hover-lift shadow-card hover:shadow-card-hover">
               <div className="absolute top-4 right-4">
-                <Badge className="bg-green-500 text-white">100% GRÁTIS</Badge>
+                <Badge className="bg-emerald-600 text-white border-0 text-sm px-4 py-1.5 shadow-lg">
+                  <Gift className="w-3.5 h-3.5 mr-1" />
+                  100% GRÁTIS
+                </Badge>
               </div>
               <CardContent className="p-0">
                 <div className="text-center mb-6">
-                  <Gift className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-3xl font-bold text-green-800">VERSÃO GRATUITA</h3>
-                  <p className="text-green-600 font-semibold">Para sempre, sem pegadinhas</p>
+                  <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
+                    <Gift className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-slate-800">VERSÃO GRATUITA</h3>
+                  <p className="text-emerald-700 font-semibold text-lg">Para sempre, sem pegadinhas</p>
                 </div>
                 
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span>✨ <strong>IA integrada</strong> para descrições profissionais</span>
+                    <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">✨ <strong>IA integrada</strong> para descrições profissionais</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span>🎨 <strong>2 templates</strong> modernos e elegantes</span>
+                    <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">🎨 <strong>2 templates</strong> modernos e elegantes</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span>📄 <strong>Download PDF</strong> ilimitado</span>
+                    <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">📄 <strong>Download PDF</strong> ilimitado</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span>🖨️ <strong>Impressão</strong> otimizada</span>
+                    <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">🖨️ <strong>Impressão</strong> otimizada</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span>💾 <strong>Salvamento automático</strong></span>
+                    <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">💾 <strong>Salvamento automático</strong></span>
                   </li>
                 </ul>
 
-                <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-lg py-6">
+                <Button asChild size="lg" className="w-full text-lg bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold shadow-xl hover:shadow-2xl transition-all">
                   <a href="/criar-curriculo">
+                    <Sparkles className="w-5 h-5 mr-2" />
                     COMEÇAR GRÁTIS AGORA
                   </a>
                 </Button>
@@ -249,53 +301,96 @@ const Index = () => {
             </Card>
 
             {/* PREMIUM */}
-            <Card className="p-8 border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50 relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
-                  <Crown className="w-4 h-4 mr-1" />
-                  PREMIUM
+            <Card className="p-8 border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 relative overflow-visible hover-lift shadow-card hover:shadow-premium pt-12">
+              {/* Badge "MAIS POPULAR" */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-sm px-6 py-2 shadow-lg animate-pulse-glow font-bold">
+                  🔥 MAIS POPULAR
                 </Badge>
               </div>
-              <CardContent className="p-0">
+              <div className="absolute top-4 right-4">
+                <Badge className="bg-gradient-to-r from-purple-600 to-violet-600 text-white border-0 text-sm px-4 py-1.5 relative overflow-hidden shadow-lg">
+                  <Crown className="w-3.5 h-3.5 mr-1" />
+                  PREMIUM
+                  {/* Shimmer effect */}
+                  <div className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                </Badge>
+              </div>
+              <CardContent className="p-0 pt-6">
                 <div className="text-center mb-6">
-                  <Crown className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
-                  <h3 className="text-3xl font-bold text-yellow-800">VERSÃO PREMIUM</h3>
-                  <p className="text-yellow-600 font-semibold">Apenas R$ 4,90 por template</p>
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-violet-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
+                    <Crown className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-slate-800">VERSÃO PREMIUM</h3>
+                  <div className="mt-2">
+                    <p className="text-slate-400 line-through text-sm">De R$ 29,90</p>
+                    <p className="text-violet-700 font-bold text-2xl">Apenas R$ 4,90</p>
+                    <p className="text-xs text-amber-600 font-semibold mt-1">⚡ Últimas 47 vagas neste preço!</p>
+                  </div>
                 </div>
                 
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>🏆 <strong>Tudo do GRÁTIS +</strong></span>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">🏆 <strong>Tudo do GRÁTIS +</strong></span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>🎨 <strong>10 templates exclusivos</strong> premium</span>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">🎨 <strong>10 templates exclusivos</strong> premium</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>🤖 <strong>JobAI integrado</strong> - tira dúvidas de RH</span>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">🤖 <strong>JobAI integrado</strong> - tira dúvidas de RH</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>⭐ <strong>Avaliação IA</strong> com nota 9.2/10</span>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">⭐ <strong>Avaliação IA</strong> com nota 9.2/10</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>📊 <strong>Relatório completo</strong> de melhorias</span>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">📊 <strong>Relatório completo</strong> de melhorias</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>🤖 <strong>Avaliação de qualidade</strong> do currículo por IA</span>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">🤖 <strong>Avaliação de qualidade</strong> do currículo por IA</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <Crown className="w-5 h-5 text-yellow-600" />
-                    <span>📝 <strong>Carta de Apresentação com IA</strong> - Geração automática personalizada</span>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-800">📝 <strong>Carta de Apresentação com IA</strong> - Geração automática personalizada</span>
                   </li>
                 </ul>
 
-                <Button asChild className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-lg py-6">
+                <Button asChild size="lg" className="w-full text-lg bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold shadow-xl hover:shadow-2xl transition-all">
                   <a href="/showcase">
+                    <Crown className="w-5 h-5 mr-2" />
                     VER TEMPLATES PREMIUM
                   </a>
                 </Button>
@@ -304,33 +399,33 @@ const Index = () => {
           </div>
 
           {/* Destaque da JobAI */}
-          <div className="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 text-center">
+          <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center shadow-xl">
             <div className="flex justify-center items-center gap-4 mb-4">
-              <div className="flex text-yellow-400 text-2xl">
+              <div className="flex text-yellow-300 text-2xl">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-8 h-8 fill-current" />
                 ))}
               </div>
-              <span className="text-4xl font-black text-blue-600">JobAI</span>
+              <span className="text-4xl font-black text-white">JobAI</span>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            <h3 className="text-2xl font-bold text-white mb-2">
               🤖 Sua IA Pessoal para Dúvidas de RH
             </h3>
-            <p className="text-lg text-gray-600">
-              Exclusivo para usuários PREMIUM! Nossa inteligência artificial responde suas dúvidas sobre 
+            <p className="text-lg text-blue-100">
+              Exclusivo para usuários PREMIUM! Nossa inteligência artificial responde suas dúvidas sobre
               processos seletivos, entrevistas e mercado de trabalho em tempo real.
             </p>
             <div className="grid md:grid-cols-3 gap-6 mt-6">
-              <div className="bg-white p-4 rounded-lg">
-                <h4 className="font-bold mb-2">Dúvidas de RH</h4>
+              <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <h4 className="font-bold mb-2 text-gray-800">Dúvidas de RH</h4>
                 <p className="text-sm text-gray-600">Respostas instantâneas sobre processos seletivos</p>
               </div>
-              <div className="bg-white p-4 rounded-lg">
-                <h4 className="font-bold mb-2">Dicas de Entrevista</h4>
+              <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <h4 className="font-bold mb-2 text-gray-800">Dicas de Entrevista</h4>
                 <p className="text-sm text-gray-600">Prepare-se para qualquer tipo de entrevista</p>
               </div>
-              <div className="bg-white p-4 rounded-lg">
-                <h4 className="font-bold mb-2">Mercado de Trabalho</h4>
+              <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <h4 className="font-bold mb-2 text-gray-800">Mercado de Trabalho</h4>
                 <p className="text-sm text-gray-600">Insights sobre tendências e oportunidades</p>
               </div>
             </div>

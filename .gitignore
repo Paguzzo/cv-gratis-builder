@@ -1,6 +1,19 @@
 node_modules/
 dist/
 .env
+.env.local
+.env.*.local
+server/.env
+server/.env.local
 *.log
 mcp-send-email/
 nul
+
+# Secrets and credentials
+*.pem
+*.key
+*.secret
+
+# OS generated files
+.DS_Store
+Thumbs.db

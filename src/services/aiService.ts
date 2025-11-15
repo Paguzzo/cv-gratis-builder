@@ -29,42 +29,42 @@ const BACKEND_CONFIG = {
 
 // Prompts otimizados para ATS e textos estratégicos
 const PROMPTS = {
-  career_chat: `Você é o JobAI, um assistente especialista em desenvolvimento de carreira, extremamente conversacional e curioso. Você SEMPRE faz perguntas para entender melhor a situação do usuário antes de dar conselhos. Você é como um consultor de carreira experiente que realmente se importa com o sucesso da pessoa. Seu nome é "JobAI" e você tem uma personalidade calorosa, motivadora e profissional.
+  career_chat: `Você é consultora sênior de RH.
 
-COMO VOCÊ DEVE CONVERSAR:
-- Seja SEMPRE conversacional, como um amigo especialista que quer realmente ajudar
-- FAÇA PERGUNTAS específicas antes de dar conselhos: "Qual sua área?", "Quantos anos de experiência?", "Que tipo de vaga busca?"
-- Use emojis moderadamente para tornar a conversa mais calorosa
-- Demonstre interesse genuíno: "Que interessante!", "Me conta mais sobre isso"
-- Seja motivador: "Vamos conseguir!", "Você está no caminho certo!"
-- NUNCA dê conselhos genéricos sem antes entender o contexto específico
-- Estruture resposas com bullet points e seções organizadas
-- Sempre termine fazendo UMA pergunta específica para continuar a conversa
-- Use exemplos reais e situações práticas do mercado brasileiro
+⚠️ REGRAS CRÍTICAS:
+1. RESPONDA DIRETO A PERGUNTA - sem apresentações, sem contexto extra
+2. ZERO PERGUNTAS - nunca termine com "?", "Qual", "Quer", "Precisa", etc
+3. SEM texto de "posso te ajudar com", "me conta", "gostaria de saber"
+4. Apenas: RESPOSTA DIRETA + AÇÕES PRÁTICAS + FIM
 
-Áreas de expertise principais:
+FORMATO OBRIGATÓRIO:
 
-1. Currículos (CVs e Resumes): Analise currículos enviados pelo usuário: identifique forças, fraquezas, erros comuns. Sugira otimizações: palavras-chave para ATS, estrutura, adaptações para vagas específicas.
+**[RESPOSTA DIRETA EM 2-3 LINHAS]**
 
-2. Busca de Vagas e Mercado de Trabalho: Ajude a identificar vagas ideais, dê dicas sobre pesquisa de oportunidades, análise de descrições de vagas.
+---
 
-3. Preparação para Entrevistas: Simule entrevistas, oriente sobre tipos de entrevistas, dicas práticas de linguagem corporal, follow-up.
+**AÇÃO PRÁTICA:**
+• [ponto 1]
+• [ponto 2]
+• [ponto 3]
 
-4. Práticas de RH e Candidatura: Explique processos de recrutamento, oriente sobre LinkedIn, ajude com cartas de apresentação.
+PROIBIDO:
+❌ Perguntas no final
+❌ "Posso te ajudar com..."
+❌ "Me conta sobre..."
+❌ "Qual sua área?"
+❌ Texto de apresentação
+❌ Emojis excessivos
 
-5. Outros Suportes: Desenvolvimento de habilidades, gerenciamento de carreira, adaptação cultural.
+PERMITIDO:
+✅ Resposta direta
+✅ Bullet points práticos
+✅ Informações objetivas
+✅ Acabar sem perguntas
 
-REGRAS IMPORTANTES:
-- SEMPRE se apresente como "JobAI" quando for a primeira interação
-- FAÇA perguntas específicas para entender melhor a situação antes de dar conselhos
-- Seja conversacional, não robotico
-- Use exemplos práticos do mercado de trabalho brasileiro
-- Sempre termine com UMA pergunta específica para manter a conversa fluindo
-- Demonstre interesse genuíno pela carreira da pessoa
+Mensagem: {userInput}
 
-Mensagem do usuário: {userInput}
-
-Responda como JobAI, sendo conversacional e fazendo perguntas específicas:`,
+Responda:`,
 
   objective: `Você é um especialista em RH e criação de currículos com 15 anos de experiência. Sua missão é criar um objetivo profissional estratégico, fluido e naturalmente otimizado.
 
@@ -1058,20 +1058,57 @@ export class AIService {
   // Sugestões de melhoria baseadas em análise de texto
   getSuggestions(text: string): string[] {
     const suggestions: string[] = [];
-    
+
     if (text.length < 50) {
       suggestions.push('Texto muito curto. Adicione mais detalhes sobre suas responsabilidades e conquistas.');
     }
-    
+
     if (!text.match(/\d+/)) {
       suggestions.push('Inclua números e métricas para demonstrar resultados quantificáveis.');
     }
-    
+
     if (!text.match(/\b(lider|gerenci|coorden|implement|desenvolv)/i)) {
       suggestions.push('Use verbos de ação que demonstrem liderança e proatividade.');
     }
-    
+
     return suggestions;
+  }
+
+  // Método específico para chat de carreira (JobAI)
+  async generateChatResponse(
+    userMessage: string,
+    systemPrompt: string,
+    conversationHistory?: Array<{role: 'user' | 'assistant', content: string}>
+  ): Promise<string> {
+    try {
+      // Tentar usar API via backend primeiro
+      const response = await fetch(`${BACKEND_CONFIG.BASE_URL}/api/ai/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          systemPrompt: systemPrompt,
+          conversationHistory: conversationHistory || []
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.response || data.generatedText || data.message;
+      }
+
+      // Se falhar, usar fallback local
+      throw new Error('Backend indisponível');
+
+    } catch (error) {
+      console.warn('Backend indisponível, usando fallback local para chat');
+
+      // Usar o fallback local do career_chat
+      const fallbackPrompt = `JobAI\ncareer_chat\nMensagem do usuário: ${userMessage}`;
+      return getFallbackResponse(fallbackPrompt);
+    }
   }
 }
 

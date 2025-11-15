@@ -140,6 +140,7 @@ interface CurriculumContextType {
   saveToStorage: () => void;
   loadFromStorage: () => void;
   resetCurriculum: () => void;
+  clearAllData: () => boolean;
   clearCorruptionWarning: () => void;
   restoreFromBackup: () => boolean;
   exportData: () => string;
@@ -257,6 +258,54 @@ export function CurriculumProvider({ children }: { children: React.ReactNode }) 
       dispatch({ type: 'RESET' });
       localStorage.removeItem(STORAGE_KEYS.CURRICULUM);
       console.log('🔄 Currículo resetado');
+    },
+
+    clearAllData: () => {
+      // Função robusta para limpar TODOS os dados relacionados ao currículo
+      try {
+        console.log('🧹 Iniciando limpeza completa de dados...');
+
+        // 1. Criar backup final antes de limpar
+        createBackup(state.data);
+
+        // 2. Reset do estado do contexto
+        dispatch({ type: 'RESET' });
+
+        // 3. Limpar todas as chaves relacionadas ao cvgratis
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('cvgratis-')) {
+            keysToRemove.push(key);
+          }
+        }
+
+        keysToRemove.forEach(key => {
+          localStorage.removeItem(key);
+          console.log(`  🗑️ Removido: ${key}`);
+        });
+
+        // 4. Limpar sessionStorage relacionado (se houver)
+        const sessionKeys: string[] = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const key = sessionStorage.key(i);
+          if (key && key.startsWith('cvgratis-')) {
+            sessionKeys.push(key);
+          }
+        }
+
+        sessionKeys.forEach(key => {
+          sessionStorage.removeItem(key);
+          console.log(`  🗑️ Session removido: ${key}`);
+        });
+
+        console.log(`✅ Limpeza completa! ${keysToRemove.length} itens removidos do localStorage, ${sessionKeys.length} do sessionStorage`);
+
+        return true;
+      } catch (error) {
+        console.error('❌ Erro ao limpar dados:', error);
+        return false;
+      }
     },
 
     clearCorruptionWarning: () => {

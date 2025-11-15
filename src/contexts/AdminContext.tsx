@@ -11,7 +11,7 @@ const AdminContext = createContext<AdminContextType | undefined>(undefined);
 // Credenciais administrativas
 const ADMIN_CREDENTIALS = {
   username: 'admin',
-  password: 'cvgratis@2025'
+  password: 'Cvgratis@917705'
 };
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {

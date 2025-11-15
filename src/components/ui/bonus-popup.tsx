@@ -51,8 +51,15 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
       if (result.success) {
         // Marcar que o usuário se cadastrou
         localStorage.setItem('user-signed-up-bonus', 'true');
-        localStorage.setItem('bonus-user-email', email);
-        localStorage.setItem('bonus-user-name', name);
+
+        // Salvar dados do usuário no formato correto para o admin ver
+        const userData = {
+          email,
+          name,
+          timestamp: new Date().toISOString()
+        };
+        const userKey = `bonus-user-${Date.now()}`;
+        localStorage.setItem(userKey, JSON.stringify(userData));
 
         toast({
           title: "✅ Bônus garantido! 🎉",
@@ -90,55 +97,56 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Gift className="w-6 h-6 text-yellow-600" />
+      <DialogContent className="max-w-[90vw] sm:max-w-[420px] max-h-[85vh] overflow-y-auto bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 p-4 sm:p-6">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+            <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
             🎁 BÔNUS EXCLUSIVO GRÁTIS!
           </DialogTitle>
-          <DialogDescription className="text-base">
+          <DialogDescription className="text-sm sm:text-base">
             Receba o <strong>Guia Secreto de Entrevistas</strong> (valor R$ 97) GRÁTIS no seu email!
           </DialogDescription>
         </DialogHeader>
 
-        <div className="bg-white p-6 rounded-lg border-2 border-yellow-200 my-4">
-          <h3 className="font-bold text-lg mb-3 text-gray-800">
+        <div className="bg-white p-3 sm:p-4 rounded-lg border-2 border-yellow-200 my-3">
+          <h3 className="font-bold text-base mb-2 text-gray-800">
             O que você vai receber:
           </h3>
-          <ul className="space-y-2">
-            <li className="flex items-center gap-2 text-gray-700">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+          <ul className="space-y-1.5">
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
               <span>✨ 50+ Perguntas e Respostas de Entrevista</span>
             </li>
-            <li className="flex items-center gap-2 text-gray-700">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
               <span>🎯 Técnicas de Persuasão para Impressionar</span>
             </li>
-            <li className="flex items-center gap-2 text-gray-700">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
               <span>💼 Checklist Completo do Candidato Perfeito</span>
             </li>
-            <li className="flex items-center gap-2 text-gray-700">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+            <li className="flex items-start gap-2 text-sm text-gray-700">
+              <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
               <span>🚀 Bônus: Template de Follow-up Pós-Entrevista</span>
             </li>
           </ul>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-2">
-            <Label htmlFor="bonus-name">Seu Nome *</Label>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid gap-1.5">
+            <Label htmlFor="bonus-name" className="text-sm">Seu Nome *</Label>
             <Input
               id="bonus-name"
               placeholder="Digite seu nome completo"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              className="h-10"
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="bonus-email">Seu Melhor Email *</Label>
+          <div className="grid gap-1.5">
+            <Label htmlFor="bonus-email" className="text-sm">Seu Melhor Email *</Label>
             <Input
               id="bonus-email"
               type="email"
@@ -146,26 +154,27 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="h-10"
             />
           </div>
 
-          <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3 text-sm text-yellow-800">
+          <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-2.5 text-xs sm:text-sm text-yellow-800">
             ⏰ <strong>ATENÇÃO:</strong> Esta oferta é por tempo limitado!
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-lg py-6"
+            className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-base sm:text-lg py-5 sm:py-6"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <>
-                <Mail className="w-5 h-5 mr-2 animate-pulse" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-pulse" />
                 Enviando seu bônus...
               </>
             ) : (
               <>
-                <Gift className="w-5 h-5 mr-2" />
+                <Gift className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 QUERO MEU BÔNUS GRÁTIS AGORA!
               </>
             )}

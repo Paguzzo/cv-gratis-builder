@@ -6,27 +6,50 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-muted", className)}
+      className={cn("relative overflow-hidden rounded-md bg-muted before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent", className)}
       {...props}
     />
   )
 }
 
 /**
- * Skeleton para Card de Template
+ * Skeleton para Card de Template - Premium 2025
  */
 function TemplateSkeleton() {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 space-y-4">
-      <Skeleton className="h-48 w-full" />
-      <div className="space-y-2">
-        <Skeleton className="h-6 w-3/4" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-      </div>
-      <div className="flex gap-2">
-        <Skeleton className="h-10 w-24" />
-        <Skeleton className="h-10 w-24" />
+    <div className="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-card-hover">
+      {/* Preview Image com aspect ratio A4 */}
+      <Skeleton className="w-full aspect-[210/297]" />
+
+      {/* Card Info */}
+      <div className="p-6 space-y-4">
+        {/* Title + Badge */}
+        <div className="flex items-start justify-between gap-2">
+          <Skeleton className="h-6 w-2/3" />
+          <Skeleton className="h-5 w-16 rounded-full" />
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+        </div>
+
+        {/* Features Tags */}
+        <div className="flex gap-2 flex-wrap">
+          <Skeleton className="h-6 w-24 rounded-full" />
+          <Skeleton className="h-6 w-28 rounded-full" />
+          <Skeleton className="h-6 w-20 rounded-full" />
+        </div>
+
+        {/* Price + CTA */}
+        <div className="flex items-center justify-between pt-2">
+          <div className="space-y-1">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-6 w-20" />
+          </div>
+          <Skeleton className="h-10 w-32 rounded-lg" />
+        </div>
       </div>
     </div>
   )
