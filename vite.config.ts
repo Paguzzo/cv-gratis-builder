@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     // Source maps para debug em produção
-    sourcemap: true,
+    sourcemap: false,
     // Target moderno para otimizações
     target: 'es2020',
     // Minificação otimizada
@@ -53,29 +53,6 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        // Manual chunks para otimizar caching
-        manualChunks: (id) => {
-          // Vendor chunks para bibliotecas grandes
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'react-vendor';
-            }
-            if (id.includes('@radix-ui')) {
-              return 'ui-vendor';
-            }
-            if (id.includes('stripe')) {
-              return 'stripe-vendor';
-            }
-            if (id.includes('jspdf') || id.includes('html2canvas')) {
-              return 'pdf-vendor';
-            }
-            if (id.includes('lucide-react')) {
-              return 'icons-vendor';
-            }
-            // Outras bibliotecas em vendor geral
-            return 'vendor';
-          }
-        },
         // Nomes de arquivo com hash para cache busting
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
