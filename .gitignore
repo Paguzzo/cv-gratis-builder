@@ -3,9 +3,10 @@ dist/
 .env
 .env.local
 .env.*.local
-server/.env
-server/.env.local
-server/node_modules/
+
+# Ignorar pasta server/ completamente (não compatível com Vercel serverless)
+server/
+
 *.log
 mcp-send-email/
 nul
