@@ -1,10 +1,4 @@
-# Ignorar servidor Express (não compatível com Vercel serverless)
-server/
-shared/
-
-# Arquivos de desenvolvimento
-*.md
-!README.md
+# Arquivos de desenvolvimento que não precisam no deploy
 .claude/
 scripts/
 mcp-send-email/
@@ -12,13 +6,7 @@ mcp-send-email/
 # Arquivos temporários
 *.timestamp-*.mjs
 tash
-te de conectividade*
 teste_temp.txt
 
-# Arquivos de configuração local
-.env
+# Arquivos de configuração local (não usar .env pois Vercel precisa do .env.example)
 *.local
-
-# Cache e builds locais
-node_modules/
-.git/
