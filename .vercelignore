@@ -3,10 +3,14 @@
 scripts/
 mcp-send-email/
 
+# API serverless (excede limite do plano gratuito)
+api/
+database/
+
 # Arquivos temporários
 *.timestamp-*.mjs
 tash
 teste_temp.txt
 
-# Arquivos de configuração local (não usar .env pois Vercel precisa do .env.example)
+# Arquivos de configuração local
 *.local
