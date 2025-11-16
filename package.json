@@ -72,6 +72,9 @@
     "vaul": "^0.7.9",
     "zod": "^3.22.4"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
