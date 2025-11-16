@@ -5,9 +5,13 @@ dist/
 .env.*.local
 server/.env
 server/.env.local
+server/node_modules/
 *.log
 mcp-send-email/
 nul
+
+# Vite temporary files
+*.timestamp-*.mjs
 
 # Secrets and credentials
 *.pem
@@ -17,3 +21,6 @@ nul
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Vercel
+.vercel/

@@ -2,10 +2,13 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "installCommand": "npm install --legacy-peer-deps",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':!server' ':!shared'",
   "functions": {
     "api/**/*.ts": {
       "runtime": "@vercel/node@3.0.0",
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "api/**"
     }
   },
   "rewrites": [

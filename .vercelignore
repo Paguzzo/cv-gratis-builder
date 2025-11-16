@@ -1,0 +1,24 @@
+# Ignorar servidor Express (não compatível com Vercel serverless)
+server/
+shared/
+
+# Arquivos de desenvolvimento
+*.md
+!README.md
+.claude/
+scripts/
+mcp-send-email/
+
+# Arquivos temporários
+*.timestamp-*.mjs
+tash
+te de conectividade*
+teste_temp.txt
+
+# Arquivos de configuração local
+.env
+*.local
+
+# Cache e builds locais
+node_modules/
+.git/
