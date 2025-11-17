@@ -97,7 +97,7 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] sm:max-w-[420px] max-h-[85vh] overflow-y-auto bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 p-4 sm:p-6">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[420px] max-h-[85vh] overflow-y-auto bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 p-4 sm:p-6 mx-auto">
         <DialogHeader className="space-y-2">
           <DialogTitle className="flex items-center gap-2 text-xl sm:text-2xl">
             <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />

@@ -40,11 +40,11 @@ export default function FloatingLiveCounter() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 animate-slide-in-left">
+    <div className="fixed bottom-4 left-2 sm:bottom-6 sm:left-6 z-50 animate-slide-in-left max-w-[calc(100vw-1rem)]">
       <div className={`
-        bg-gradient-to-r from-green-500 to-green-600 
-        text-white px-4 py-3 rounded-full shadow-xl
-        flex items-center gap-2 text-sm font-medium
+        bg-gradient-to-r from-green-500 to-green-600
+        text-white px-3 py-2 sm:px-4 sm:py-3 rounded-full shadow-xl
+        flex items-center gap-2 text-xs sm:text-sm font-medium
         transform transition-all duration-300
         hover:shadow-2xl hover:scale-105
         ${isAnimating ? 'scale-110 brightness-110' : ''}

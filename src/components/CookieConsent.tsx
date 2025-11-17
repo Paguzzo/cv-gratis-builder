@@ -69,39 +69,38 @@ export default function CookieConsent() {
   return (
     <>
       {/* Cookie Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-gray-200 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 bg-white border-t border-gray-200 shadow-lg">
         <Card className="max-w-6xl mx-auto">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4">
+          <CardContent className="p-3 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <Cookie className="w-5 h-5 text-amber-600" />
-                  <h3 className="font-semibold text-gray-900">
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <Cookie className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 flex-shrink-0" />
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
                     Cookies e Privacidade
                   </h3>
                 </div>
-                <p className="text-gray-600 text-sm mb-4">
-                  Utilizamos cookies para melhorar sua experiência, analisar nosso tráfego e personalizar conteúdo. 
-                  Você pode gerenciar suas preferências ou aceitar todos os cookies. 
+                <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">
+                  Utilizamos cookies para melhorar sua experiência.
                   <a href="/politica-cookies" className="text-blue-600 hover:underline ml-1">
-                    Saiba mais sobre nossa Política de Cookies
+                    Saiba mais
                   </a>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button onClick={acceptAll} className="bg-blue-600 hover:bg-blue-700">
-                    ✅ Aceitar Todos
+                  <Button onClick={acceptAll} className="bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm px-3 py-2">
+                    Aceitar
                   </Button>
-                  <Button onClick={rejectOptional} variant="outline">
-                    ❌ Apenas Essenciais
+                  <Button onClick={rejectOptional} variant="outline" className="text-xs sm:text-sm px-3 py-2">
+                    Essenciais
                   </Button>
                   <Dialog open={showSettings} onOpenChange={setShowSettings}>
                     <DialogTrigger asChild>
-                      <Button variant="outline">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Configurar
+                      <Button variant="outline" className="text-xs sm:text-sm px-3 py-2">
+                        <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                        Config
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl">
                       <DialogHeader>
                         <DialogTitle>Configurações de Cookies</DialogTitle>
                       </DialogHeader>

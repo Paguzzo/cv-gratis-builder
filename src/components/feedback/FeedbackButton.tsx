@@ -9,16 +9,16 @@ export function FeedbackButton() {
   return (
     <>
       {/* Botão Flutuante com Label */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
-        {/* Label que aparece ao passar o mouse */}
+      <div className="fixed bottom-4 right-2 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
+        {/* Label que aparece ao passar o mouse - oculto no mobile */}
         <div
           className={`
-            bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg
+            hidden sm:block bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg
             transition-all duration-300 ease-in-out whitespace-nowrap
             ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}
           `}
         >
-          <span className="text-sm font-medium">💬 Sugestões e Melhorias</span>
+          <span className="text-sm font-medium">Sugestões</span>
         </div>
 
         {/* Botão */}
@@ -27,7 +27,7 @@ export function FeedbackButton() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className="
-            h-14 w-14 rounded-full shadow-lg hover:shadow-xl
+            h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-lg hover:shadow-xl
             transition-all duration-300
             bg-gradient-to-br from-blue-500 to-blue-600
             hover:from-blue-600 hover:to-blue-700
@@ -38,10 +38,10 @@ export function FeedbackButton() {
           aria-label="Sugestões e Melhorias"
           title="Sugestões e Melhorias"
         >
-          <MessageCircle className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
+          <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-white group-hover:scale-110 transition-transform" />
 
           {/* Badge de notificação (pulso) */}
-          <span className="absolute -top-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
+          <span className="absolute -top-1 -right-1 h-3 w-3 sm:h-4 sm:w-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
         </button>
       </div>
 

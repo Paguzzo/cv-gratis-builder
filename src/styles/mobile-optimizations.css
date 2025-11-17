@@ -40,6 +40,39 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
+
+  /* CRÍTICO: Eliminar scroll horizontal no mobile */
+  html,
+  body,
+  #root {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+
+  /* Corrigir elementos que podem causar overflow */
+  section,
+  header,
+  footer,
+  main,
+  div {
+    max-width: 100%;
+  }
+
+  /* Garantir que imagens não causem overflow */
+  img,
+  video,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Corrigir transforms que podem causar overflow */
+  .transform,
+  [class*="translate"],
+  [class*="scale"] {
+    will-change: transform;
+  }
 }
 
 /* 📱 LAYOUT CONTAINERS RESPONSIVOS */
@@ -47,6 +80,28 @@
   width: 100%;
   margin: 0 auto;
   padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* CORREÇÃO: Elementos flutuantes em mobile */
+@media (max-width: 640px) {
+  .fixed {
+    /* Garantir que elementos fixos não causem overflow */
+    max-width: calc(100vw - 1rem) !important;
+  }
+
+  /* Ajustar posições fixas para não ultrapassar viewport */
+  [class*="fixed"][class*="left-6"] {
+    left: 0.5rem !important;
+  }
+
+  [class*="fixed"][class*="right-6"] {
+    right: 0.5rem !important;
+  }
+
+  [class*="fixed"][class*="bottom-6"] {
+    bottom: 1rem !important;
+  }
 }
 
 @media (min-width: 640px) {
