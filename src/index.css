@@ -150,3 +150,48 @@
     opacity: 1;
   }
 }
+
+/* ============================================
+   MOBILE HEADER & MENU STYLES
+   ============================================ */
+
+/* Garantir que nenhum elemento cause overflow */
+@layer base {
+  section, div, header, footer, main, article {
+    max-width: 100%;
+  }
+}
+
+/* Mobile Menu Animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.mobile-menu {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Prevenir overflow em textos longos */
+@media (max-width: 767px) {
+  h1, h2, h3, h4, h5, h6, p, span, a, button {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Garantir que imagens não causem overflow */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Fix para badges e botões */
+  .badge, [class*="Badge"] {
+    white-space: nowrap;
+    max-width: 100%;
+  }
+}

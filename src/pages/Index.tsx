@@ -11,6 +11,7 @@ import SEOHead from "@/components/SEOHead";
 import StructuredData from "@/components/StructuredData";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import LiveActivityFeed from "@/components/LiveActivityFeed";
+import MobileHeader from "@/components/MobileHeader";
 import "@/styles/homepage-premium.css";
 
 const Index = () => {
@@ -88,7 +89,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* SEO e Structured Data */}
       <SEOHead
         title="CVGratis - Criador de Currículos Profissionais | Templates Premium com IA"
@@ -99,35 +100,8 @@ const Index = () => {
       />
       <StructuredData type="all" />
 
-      {/* Header com Logo */}
-      <header className="py-3 sm:py-6 px-3 sm:px-4 border-b bg-white/95 backdrop-blur-sm sticky top-0 z-40" role="banner" aria-label="Cabeçalho principal">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Logo size="md" />
-          </div>
-          <nav className="flex gap-2 sm:gap-4" aria-label="Navegação principal">
-            <Button variant="outline" asChild className="text-xs sm:text-sm px-2 sm:px-4 hidden sm:inline-flex">
-              <Link to="/showcase" aria-label="Ver galeria de templates disponíveis">Ver Templates</Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className="w-7 h-7 sm:w-8 sm:h-8 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors hidden sm:inline-flex"
-              title="Área Administrativa"
-            >
-              <Link to="/admin-login" aria-label="Acesso à área administrativa">A</Link>
-            </Button>
-            <Button asChild className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-xs sm:text-sm px-3 sm:px-4">
-              <Link to="/criar-curriculo" aria-label="Começar a criar currículo gratuitamente agora">
-                <Gift className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" aria-hidden="true" />
-                <span className="hidden xs:inline">GRÁTIS</span>
-                <span className="xs:hidden">CRIAR</span>
-              </Link>
-            </Button>
-          </nav>
-        </div>
-      </header>
+      {/* Header com Menu Hambúrguer Mobile */}
+      <MobileHeader />
 
       {/* Hero Section - Premium 2025 */}
       <section className="relative py-12 sm:py-20 px-3 sm:px-4 text-center bg-gradient-hero-subtle overflow-hidden" role="region" aria-label="Seção principal - Hero">
