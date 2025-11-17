@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useCurriculum } from '@/contexts/CurriculumContext';
 import { CURRICULUM_STEPS } from '@/types/curriculum';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +18,7 @@ export function CurriculumBuilder() {
   const { state, setCurrentStep } = useCurriculum();
   const { currentStep } = state;
   const navigate = useNavigate();
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   const currentStepIndex = CURRICULUM_STEPS.findIndex(step => step.id === currentStep);
   const isFirstStep = currentStepIndex === 0;
@@ -176,6 +178,87 @@ export function CurriculumBuilder() {
           </div>
         </div>
       </div>
+
+      {/* Botão flutuante para preview mobile - aparece apenas em telas < 1024px */}
+      <button
+        onClick={() => setShowMobilePreview(true)}
+        className="lg:hidden fixed bottom-24 right-4 z-40 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 active:scale-95"
+        aria-label="Ver preview do currículo"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      </button>
+
+      {/* Modal de preview mobile */}
+      {showMobilePreview && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] flex flex-col">
+            {/* Header do modal */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Preview do Currículo
+              </h3>
+              <button
+                onClick={() => setShowMobilePreview(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Fechar preview"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            {/* Conteúdo do preview */}
+            <div className="flex-1 overflow-auto p-2">
+              <div
+                className="w-full border rounded-lg overflow-hidden bg-white shadow-sm"
+                style={{
+                  aspectRatio: '210/297',
+                  minHeight: '400px'
+                }}
+              >
+                <div className="w-full h-full transform scale-[0.45] origin-top-left" style={{ width: '222%', height: '222%' }}>
+                  <CurriculumPreview />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer do modal */}
+            <div className="p-4 border-t">
+              <button
+                onClick={() => setShowMobilePreview(false)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+              >
+                Fechar Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Estilo da scrollbar cinza para o formulário */}
       <style>{`
