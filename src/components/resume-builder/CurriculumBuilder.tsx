@@ -203,11 +203,11 @@ export function CurriculumBuilder() {
 
       {/* Modal de preview mobile */}
       {showMobilePreview && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] flex flex-col">
+        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-2">
+          <div className="bg-white rounded-lg w-full h-full max-w-[95vw] max-h-[95vh] flex flex-col">
             {/* Header do modal */}
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="flex items-center justify-between p-3 border-b shrink-0">
+              <h3 className="text-base font-semibold text-gray-800">
                 Preview do Currículo
               </h3>
               <button
@@ -233,25 +233,28 @@ export function CurriculumBuilder() {
             </div>
 
             {/* Conteúdo do preview */}
-            <div className="flex-1 overflow-auto p-2">
-              <div
-                className="w-full border rounded-lg overflow-hidden bg-white shadow-sm"
-                style={{
-                  aspectRatio: '210/297',
-                  minHeight: '400px'
-                }}
-              >
-                <div className="w-full h-full transform scale-[0.45] origin-top-left" style={{ width: '222%', height: '222%' }}>
+            <div className="flex-1 overflow-auto p-2 bg-gray-50">
+              <div className="w-full h-full flex items-start justify-center">
+                <div
+                  className="bg-white shadow-lg"
+                  style={{
+                    width: '210mm',
+                    minHeight: '297mm',
+                    transform: 'scale(0.35)',
+                    transformOrigin: 'top center',
+                    marginBottom: '-65%'
+                  }}
+                >
                   <CurriculumPreview />
                 </div>
               </div>
             </div>
 
             {/* Footer do modal */}
-            <div className="p-4 border-t">
+            <div className="p-3 border-t shrink-0">
               <button
                 onClick={() => setShowMobilePreview(false)}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg font-medium transition-colors text-sm"
               >
                 Fechar Preview
               </button>

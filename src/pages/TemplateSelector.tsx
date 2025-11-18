@@ -791,27 +791,28 @@ function TemplateSelectorContent() {
       />
 
       {/* Header Hero - Premium 2025 */}
-      <div className="px-4 py-6 bg-white/95 backdrop-blur-sm shadow-md border-b">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
+      <div className="px-4 py-3 lg:py-6 bg-white/95 backdrop-blur-sm shadow-md border-b">
+        <div className="flex flex-col lg:flex-row items-center justify-between max-w-7xl mx-auto gap-3">
+          <div className="flex items-center gap-3 w-full lg:w-auto">
             <Button
               variant="outline"
               onClick={handleReturnToResume}
-              className="flex items-center gap-2 text-sm hover-lift"
+              className="flex items-center gap-2 text-xs lg:text-sm hover-lift"
             >
               <ArrowLeft className="w-4 h-4" />
-              Voltar ao Editor
+              <span className="hidden sm:inline">Voltar ao Editor</span>
+              <span className="sm:hidden">Voltar</span>
             </Button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center w-full lg:w-auto">
             <Badge className="mb-2 bg-gradient-premium text-white text-xs px-3 py-1">
               ✨ 12 Templates Profissionais
             </Badge>
-            <h1 className="text-2xl font-bold text-slate-800 mb-1">
+            <h1 className="text-xl lg:text-2xl font-bold text-slate-800 mb-1">
               Templates de <span className="text-gradient">Currículo Premium</span>
             </h1>
-            <p className="text-sm text-slate-600">
+            <p className="text-xs lg:text-sm text-slate-600">
                {(() => {
                  // Tentar pegar nome do context primeiro
                  if (curriculumState.data.personalInfo.name) {
@@ -858,15 +859,15 @@ function TemplateSelectorContent() {
               </button>
             </div>
           </div>
-          
-          <div className="w-28" />
+
+          <div className="hidden lg:block w-28" />
               </div>
             </div>
 
       {/* Layout principal - duas colunas */}
-      <div className="flex h-full max-w-7xl mx-auto">
+      <div className="flex flex-col lg:flex-row h-full max-w-7xl mx-auto">
         {/* COLUNA ESQUERDA - Templates e Ações */}
-        <div className="w-96 bg-white border-r shadow-sm templates-sidebar">
+        <div className="w-full lg:w-96 bg-white lg:border-r shadow-sm templates-sidebar overflow-y-auto lg:overflow-visible">
           <div className="p-4 border-b bg-gray-50">
             <h2 className="text-lg font-bold text-gray-800 mb-1">Templates Disponíveis</h2>
             <p className="text-sm text-gray-600">Selecione um template abaixo</p>

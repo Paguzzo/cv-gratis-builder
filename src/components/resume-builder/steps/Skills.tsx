@@ -150,7 +150,7 @@ export function Skills() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-32">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Habilidades</h2>
         <p className="text-muted-foreground">

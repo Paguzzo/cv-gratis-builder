@@ -117,20 +117,21 @@ export function Languages() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Idioma</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              placeholder="Ex: Inglês"
-                              {...field}
-                              list={`languages-list-${index}`}
-                            />
-                            <datalist id={`languages-list-${index}`}>
-                              {commonLanguages.map((language) => (
-                                <option key={language} value={language} />
-                              ))}
-                            </datalist>
-                          </div>
-                        </FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o idioma" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {commonLanguages.map((language) => (
+                              <SelectItem key={language} value={language}>
+                                {language}
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="Outro">Outro</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
