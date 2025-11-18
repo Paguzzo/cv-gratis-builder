@@ -1500,7 +1500,7 @@ function TemplateSelectorContent() {
                   style={{
                     width: '210mm',
                     minHeight: '297mm',
-                    transform: 'scale(0.48)',
+                    transform: 'scale(0.75)',
                     transformOrigin: 'top center'
                   }}
                 >
