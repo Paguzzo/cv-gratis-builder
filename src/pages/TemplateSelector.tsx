@@ -1500,14 +1500,12 @@ function TemplateSelectorContent() {
 
             {/* Conteúdo do preview */}
             <div className="flex-1 overflow-auto bg-gray-100">
-              <div className="w-full min-h-full flex justify-center py-4">
+              <div className="w-full min-h-full flex justify-center py-1 px-1">
                 <div
-                  className="bg-white shadow-lg"
+                  className="bg-white shadow-lg w-full"
                   style={{
-                    width: '210mm',
-                    minHeight: '297mm',
-                    transform: 'scale(0.75)',
-                    transformOrigin: 'top center'
+                    maxWidth: '210mm',
+                    minHeight: '297mm'
                   }}
                 >
                   <TemplateRenderer
