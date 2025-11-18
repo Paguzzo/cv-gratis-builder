@@ -212,6 +212,10 @@ function TemplateSelectorContent() {
   // 🎯 Sistema de rastreamento de conclusão
   const completion = useCompletionTracker();
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
+
+  // 📱 Estados para preview mobile
+  const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
+  const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const { clearAllData } = useCurriculum();
 
   // 🔧 NOVO: useEffect para aguardar carregamento dos contextos
@@ -773,6 +777,12 @@ function TemplateSelectorContent() {
     }
   };
 
+  // 📱 Função para abrir preview mobile
+  const handleOpenPreview = (template: Template) => {
+    setPreviewTemplate(template);
+    setMobilePreviewOpen(true);
+  };
+
   const handleUserDataModalClose = () => {
     setUserDataModalOpen(false);
     setPendingAction(null);
@@ -980,7 +990,22 @@ function TemplateSelectorContent() {
                           </div>
                         </div>
                     <p className="text-xs text-slate-600 mb-3">{template.description}</p>
-                    
+
+                    {/* Botão de preview sempre visível no mobile */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenPreview(template);
+                      }}
+                      className="lg:hidden w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all hover:shadow-lg mb-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      Ver Preview
+                    </button>
+
                     {/* Ações para template gratuito selecionado */}
                     {state.selectedTemplate?.id === template.id && (
                       <div className="space-y-2 mt-3 pt-3 border-t border-emerald-200">
@@ -1075,6 +1100,21 @@ function TemplateSelectorContent() {
                         </div>
                       </div>
                     <p className="text-xs text-slate-600 mb-3">{template.description}</p>
+
+                    {/* Botão de preview sempre visível no mobile */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenPreview(template);
+                      }}
+                      className="lg:hidden w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all hover:shadow-lg mb-3"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      Ver Preview Premium
+                    </button>
 
                     {/* Preço e ação para template premium */}
                     <div className="flex items-center justify-between">
@@ -1420,6 +1460,71 @@ function TemplateSelectorContent() {
         onReview={handleReviewAgain}
         onContinue={() => setCompletionModalOpen(false)}
       />
+
+      {/* Modal de preview mobile */}
+      {mobilePreviewOpen && previewTemplate && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-2">
+          <div className="bg-white rounded-lg w-full h-full max-w-[95vw] max-h-[95vh] flex flex-col">
+            {/* Header do modal */}
+            <div className="flex items-center justify-between p-3 border-b shrink-0">
+              <h3 className="text-base font-semibold text-gray-800">
+                Preview: {previewTemplate.name}
+              </h3>
+              <button
+                onClick={() => setMobilePreviewOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Fechar preview"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            {/* Conteúdo do preview */}
+            <div className="flex-1 overflow-auto p-2 bg-gray-50">
+              <div className="w-full h-full flex items-start justify-center">
+                <div
+                  className="bg-white shadow-lg"
+                  style={{
+                    width: '210mm',
+                    minHeight: '297mm',
+                    transform: 'scale(0.35)',
+                    transformOrigin: 'top center',
+                    marginBottom: '-65%'
+                  }}
+                >
+                  <TemplateRenderer
+                    template={previewTemplate}
+                    data={curriculumState.data}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer do modal */}
+            <div className="p-3 border-t shrink-0">
+              <button
+                onClick={() => setMobilePreviewOpen(false)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg font-medium transition-colors text-sm"
+              >
+                Fechar Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       </div>
     );

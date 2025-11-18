@@ -62,7 +62,7 @@ export function PhotoUpload({ value, onChange, className, disabled }: PhotoUploa
     <div className={cn("flex flex-col items-center gap-4", className)}>
       <div className="relative">
         <Avatar className="w-24 h-24 cursor-pointer border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors">
-          <AvatarImage src={value} alt="Foto do perfil" />
+          <AvatarImage src={value} alt="Foto do perfil" className="object-cover" />
           <AvatarFallback className="bg-muted">
             {isLoading ? (
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />

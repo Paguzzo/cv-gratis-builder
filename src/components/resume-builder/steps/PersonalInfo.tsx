@@ -100,15 +100,16 @@ export function PersonalInfo() {
               control={form.control}
               name="isRoundPhoto"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-3 rounded-lg border hover:bg-accent cursor-pointer transition-colors">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="mt-0.5"
                     />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer">
+                  <div className="space-y-1 leading-none flex-1" onClick={() => field.onChange(!field.value)}>
+                    <FormLabel className="cursor-pointer text-base">
                       Foto Redonda
                     </FormLabel>
                     <p className="text-xs text-muted-foreground">
