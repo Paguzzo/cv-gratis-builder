@@ -85,13 +85,19 @@ function TemplateSelectorContent() {
             max-height: none !important;
             height: auto !important;
             overflow: visible !important;
-            display: block !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+            width: 100% !important;
           }
           #template-preview-container > * {
             max-height: none !important;
             height: auto !important;
             overflow: visible !important;
             display: block !important;
+            width: 100% !important;
+            max-width: 900px !important;
+            margin: 0 auto !important;
           }
           #template-preview-container * {
             max-height: none !important;
@@ -875,9 +881,9 @@ function TemplateSelectorContent() {
             </div>
 
       {/* Layout principal - duas colunas */}
-      <div className="flex flex-col lg:flex-row h-full max-w-7xl mx-auto">
+      <div className="flex flex-col lg:flex-row h-full mx-auto">
         {/* COLUNA ESQUERDA - Templates e Ações */}
-        <div className="w-full lg:w-80 bg-white lg:border-r shadow-sm templates-sidebar overflow-y-auto lg:overflow-visible">
+        <div className="w-full lg:w-72 bg-white lg:border-r shadow-sm templates-sidebar overflow-y-auto lg:overflow-visible">
           <div className="p-4 border-b bg-gray-50">
             <h2 className="text-lg font-bold text-gray-800 mb-1">Templates Disponíveis</h2>
             <p className="text-sm text-gray-600">Selecione um template abaixo</p>
@@ -1190,7 +1196,7 @@ function TemplateSelectorContent() {
         {/* COLUNA DIREITA - Preview do Currículo */}
         <div className="flex-1 bg-gray-50 preview-container overflow-y-auto"
              style={{ maxHeight: 'calc(100vh - 60px)' }}>
-          <div className="p-6 pb-20">
+          <div className="px-2 py-4 pb-20">
                                                      {state.selectedTemplate && (curriculumState.data.personalInfo.name || localStorage.getItem('cvgratis-curriculum-finalized')) ? (
                <div id="template-preview-container" className="bg-white rounded-lg shadow-lg mb-10" style={{ minHeight: 'fit-content', height: 'auto' }}>
                  <TemplateRenderer
