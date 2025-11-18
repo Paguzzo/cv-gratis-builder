@@ -1016,7 +1016,7 @@ function TemplateSelectorContent() {
                               handleDownload();
                             }}
                             disabled={isExporting}
-                            className="flex items-center justify-center gap-2 bg-gradient-blue text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all hover:shadow-blue disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all hover:bg-blue-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isExporting ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
@@ -1032,7 +1032,7 @@ function TemplateSelectorContent() {
                               handlePrint();
                             }}
                             disabled={isPrinting}
-                            className="flex items-center justify-center gap-1 bg-gradient-emerald text-white py-2 px-2 rounded-lg text-xs font-semibold transition-all hover:shadow-emerald disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center justify-center gap-1 bg-emerald-600 text-white py-2 px-2 rounded-lg text-xs font-semibold transition-all hover:bg-emerald-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isPrinting ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
@@ -1493,16 +1493,15 @@ function TemplateSelectorContent() {
             </div>
 
             {/* Conteúdo do preview */}
-            <div className="flex-1 overflow-auto p-2 bg-gray-50">
-              <div className="w-full h-full flex items-start justify-center">
+            <div className="flex-1 overflow-auto bg-gray-100">
+              <div className="w-full min-h-full flex justify-center py-4">
                 <div
                   className="bg-white shadow-lg"
                   style={{
                     width: '210mm',
                     minHeight: '297mm',
-                    transform: 'scale(0.35)',
-                    transformOrigin: 'top center',
-                    marginBottom: '-65%'
+                    transform: 'scale(0.48)',
+                    transformOrigin: 'top center'
                   }}
                 >
                   <TemplateRenderer

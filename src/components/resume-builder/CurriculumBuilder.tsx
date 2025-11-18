@@ -233,16 +233,15 @@ export function CurriculumBuilder() {
             </div>
 
             {/* Conteúdo do preview */}
-            <div className="flex-1 overflow-auto p-2 bg-gray-50">
-              <div className="w-full h-full flex items-start justify-center">
+            <div className="flex-1 overflow-auto bg-gray-100">
+              <div className="w-full min-h-full flex justify-center py-4">
                 <div
                   className="bg-white shadow-lg"
                   style={{
                     width: '210mm',
                     minHeight: '297mm',
-                    transform: 'scale(0.35)',
-                    transformOrigin: 'top center',
-                    marginBottom: '-65%'
+                    transform: 'scale(0.48)',
+                    transformOrigin: 'top center'
                   }}
                 >
                   <CurriculumPreview />
