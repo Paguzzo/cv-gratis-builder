@@ -947,7 +947,7 @@ function TemplateSelectorContent() {
             </Button>
           </div>
 
-          <div className="overflow-y-auto h-full pb-20" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+          <div className="overflow-y-auto h-full pb-4" style={{ maxHeight: 'calc(100vh - 240px)' }}>
                 {/* Templates Filtrados */}
             <div className="p-4">
               {filteredTemplates.filter(t => !t.isPremium).length > 0 && (
