@@ -85,9 +85,7 @@ function TemplateSelectorContent() {
             max-height: none !important;
             height: auto !important;
             overflow: visible !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: flex-start !important;
+            display: block !important;
             width: 100% !important;
           }
           #template-preview-container > * {
@@ -96,8 +94,6 @@ function TemplateSelectorContent() {
             overflow: visible !important;
             display: block !important;
             width: 100% !important;
-            max-width: 900px !important;
-            margin: 0 auto !important;
           }
           #template-preview-container * {
             max-height: none !important;
@@ -1196,9 +1192,9 @@ function TemplateSelectorContent() {
         {/* COLUNA DIREITA - Preview do Currículo */}
         <div className="flex-1 bg-gray-50 preview-container overflow-y-auto"
              style={{ maxHeight: 'calc(100vh - 60px)' }}>
-          <div className="px-2 py-4 pb-20">
+          <div className="py-2 pb-20">
                                                      {state.selectedTemplate && (curriculumState.data.personalInfo.name || localStorage.getItem('cvgratis-curriculum-finalized')) ? (
-               <div id="template-preview-container" className="bg-white rounded-lg shadow-lg mb-10" style={{ minHeight: 'fit-content', height: 'auto' }}>
+               <div id="template-preview-container" className="bg-white shadow-lg mb-10" style={{ minHeight: 'fit-content', height: 'auto', width: '100%' }}>
                  <TemplateRenderer
                    template={state.selectedTemplate}
                    className="pointer-events-none"

@@ -152,8 +152,8 @@ export function CurriculumBuilder() {
         {/* Coluna do Preview - altura completa sem limitações */}
         <div className="hidden lg:block">
           <div className="sticky top-6">
-            <div className="bg-white rounded-lg shadow-lg p-1">
-              <div className="text-center mb-2">
+            <div className="bg-white shadow-lg">
+              <div className="text-center py-1">
                 <h3 className="text-sm font-semibold text-gray-600">
                   Preview do Currículo
                 </h3>
@@ -162,10 +162,11 @@ export function CurriculumBuilder() {
               {/* Container sem limitação de altura para mostrar todo o conteúdo */}
               <div className="w-full">
                 <div
-                  className="w-full border rounded-lg overflow-auto bg-white shadow-sm"
+                  className="w-full overflow-auto bg-white"
                   style={{
                     minHeight: '600px',
-                    maxHeight: '85vh'
+                    maxHeight: '85vh',
+                    width: '100%'
                   }}
                 >
                   <div className="w-full h-full">
