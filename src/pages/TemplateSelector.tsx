@@ -877,7 +877,7 @@ function TemplateSelectorContent() {
       {/* Layout principal - duas colunas */}
       <div className="flex flex-col lg:flex-row h-full max-w-7xl mx-auto">
         {/* COLUNA ESQUERDA - Templates e Ações */}
-        <div className="w-full lg:w-96 bg-white lg:border-r shadow-sm templates-sidebar overflow-y-auto lg:overflow-visible">
+        <div className="w-full lg:w-80 bg-white lg:border-r shadow-sm templates-sidebar overflow-y-auto lg:overflow-visible">
           <div className="p-4 border-b bg-gray-50">
             <h2 className="text-lg font-bold text-gray-800 mb-1">Templates Disponíveis</h2>
             <p className="text-sm text-gray-600">Selecione um template abaixo</p>
@@ -1189,7 +1189,7 @@ function TemplateSelectorContent() {
 
         {/* COLUNA DIREITA - Preview do Currículo */}
         <div className="flex-1 bg-gray-50 preview-container overflow-y-auto"
-             style={{ maxHeight: 'calc(100vh - 80px)' }}>
+             style={{ maxHeight: 'calc(100vh - 60px)' }}>
           <div className="p-6 pb-20">
                                                      {state.selectedTemplate && (curriculumState.data.personalInfo.name || localStorage.getItem('cvgratis-curriculum-finalized')) ? (
                <div id="template-preview-container" className="bg-white rounded-lg shadow-lg mb-10" style={{ minHeight: 'fit-content', height: 'auto' }}>

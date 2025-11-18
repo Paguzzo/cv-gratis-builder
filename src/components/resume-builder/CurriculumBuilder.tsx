@@ -165,8 +165,8 @@ export function CurriculumBuilder() {
                   className="w-full border rounded-lg overflow-auto bg-white shadow-sm"
                   style={{
                     aspectRatio: '210/297',
-                    minHeight: '500px',
-                    maxHeight: '80vh'
+                    minHeight: '600px',
+                    maxHeight: '85vh'
                   }}
                 >
                   <div className="w-full h-full">
