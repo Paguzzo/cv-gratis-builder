@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gift, Menu, X } from "lucide-react";
+import { Gift, Menu, X, BookOpen } from "lucide-react";
 import Logo from "@/components/Logo";
 
 const MobileHeader = () => {
@@ -55,6 +55,12 @@ const MobileHeader = () => {
         <nav className="hidden md:flex gap-4" aria-label="Navegação principal">
           <Button variant="outline" asChild className="text-sm px-4">
             <Link to="/showcase" aria-label="Ver galeria de templates disponíveis">Ver Templates</Link>
+          </Button>
+          <Button variant="outline" asChild className="text-sm px-4">
+            <Link to="/blog" aria-label="Acessar blog com dicas de carreira">
+              <BookOpen className="w-4 h-4 mr-2" aria-hidden="true" />
+              Blog
+            </Link>
           </Button>
           <Button
             variant="ghost"
@@ -145,6 +151,15 @@ const MobileHeader = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
                   </svg>
                   Ver Templates
+                </Link>
+
+                <Link
+                  to="/blog"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 text-gray-700 font-medium transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <BookOpen className="w-5 h-5" />
+                  Blog
                 </Link>
 
                 <Link

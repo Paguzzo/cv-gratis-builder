@@ -20,6 +20,7 @@ const PremiumEditor = React.lazy(() => import('@/pages/PremiumEditor'));
 const PrivacyPolicy = React.lazy(() => import('@/pages/PrivacyPolicy'));
 const TermsOfService = React.lazy(() => import('@/pages/TermsOfService'));
 const CookiePolicy = React.lazy(() => import('@/pages/CookiePolicy'));
+const Blog = React.lazy(() => import('@/pages/Blog'));
 const AdminPanel = React.lazy(() => import('@/pages/AdminPanel'));
 const AdminLogin = React.lazy(() => import('@/pages/AdminLogin'));
 const AdminDashboard = React.lazy(() => import('@/pages/AdminDashboard'));
@@ -57,6 +58,7 @@ function App() {
                   <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
                   <Route path="/termos-uso" element={<TermsOfService />} />
                   <Route path="/politica-cookies" element={<CookiePolicy />} />
+                  <Route path="/blog" element={<Blog />} />
                   <Route path="/admin" element={<AdminPanel />} />
                   <Route path="/admin-login" element={<AdminLogin />} />
                   <Route path="/admin-dashboard" element={<AdminDashboard />} />
