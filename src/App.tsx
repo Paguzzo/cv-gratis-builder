@@ -21,6 +21,7 @@ const PrivacyPolicy = React.lazy(() => import('@/pages/PrivacyPolicy'));
 const TermsOfService = React.lazy(() => import('@/pages/TermsOfService'));
 const CookiePolicy = React.lazy(() => import('@/pages/CookiePolicy'));
 const Blog = React.lazy(() => import('@/pages/Blog'));
+const BlogArticle = React.lazy(() => import('@/pages/BlogArticle'));
 const AdminPanel = React.lazy(() => import('@/pages/AdminPanel'));
 const AdminLogin = React.lazy(() => import('@/pages/AdminLogin'));
 const AdminDashboard = React.lazy(() => import('@/pages/AdminDashboard'));
@@ -59,6 +60,7 @@ function App() {
                   <Route path="/termos-uso" element={<TermsOfService />} />
                   <Route path="/politica-cookies" element={<CookiePolicy />} />
                   <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogArticle />} />
                   <Route path="/admin" element={<AdminPanel />} />
                   <Route path="/admin-login" element={<AdminLogin />} />
                   <Route path="/admin-dashboard" element={<AdminDashboard />} />
