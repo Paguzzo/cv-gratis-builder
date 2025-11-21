@@ -1,24 +1,134 @@
+# robots.txt para curriculogratisonline.com
+# Ultima atualizacao: 2025-11-21
+# Gerado automaticamente com analise completa do projeto
+
+# ==========================================
+# REGRAS GLOBAIS - Todos os crawlers
+# ==========================================
+
 User-agent: *
+
+# Permitir acesso a todas as paginas publicas
 Allow: /
 
-# Permitir páginas principais
-Allow: /criar-curriculo
-Allow: /templates
-Allow: /premium-editor
+# ==========================================
+# BLOQUEIOS CRITICOS - Seguranca & API
+# ==========================================
 
-# Bloquear áreas administrativas
-Disallow: /admin/
+# Backend API endpoints (todas as rotas /api)
 Disallow: /api/
+Disallow: /health
 
-# Permitir crawlers específicos
+# Areas administrativas
+Disallow: /admin-panel/
+Disallow: /admin/
+Disallow: /admin-login/
+Disallow: /admin-premium/
+
+# ==========================================
+# BLOQUEIOS - Arquivos de desenvolvimento
+# ==========================================
+
+# Arquivos de debug (desenvolvimento)
+Disallow: /debug-localstorage.html
+Disallow: /debug-validation.html
+Disallow: /debug-validation-fix.html
+Disallow: /debug-*.html
+
+# Arquivos de teste (integracao e desenvolvimento)
+Disallow: /test-bonus-debug.html
+Disallow: /test-bonus-popup.html
+Disallow: /test-curriculum-recovery.html
+Disallow: /test-grok-integration.html
+Disallow: /test-mcp.html
+Disallow: /test-resend-direct.html
+Disallow: /test-supabase-integration.html
+Disallow: /test-validation.html
+Disallow: /test-*.html
+
+# ==========================================
+# BLOQUEIOS - Codigo-fonte & Build
+# ==========================================
+
+# Backend server (Node.js)
+Disallow: /server/
+
+# Source code
+Disallow: /src/
+
+# Dependencies
+Disallow: /node_modules/
+
+# Build output
+Disallow: /dist/
+
+# Arquivos de configuracao
+Disallow: /.env
+Disallow: /.env.example
+Disallow: /.env.local
+Disallow: /.gitignore
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /*.config.js
+Disallow: /*.config.ts
+Disallow: /tsconfig.json
+Disallow: /.claude/
+
+# Arquivos backup
+Disallow: /*_backup_original.*
+Disallow: /*.bak
+
+# Headers de configuracao
+Disallow: /_headers
+
+# ==========================================
+# PERMISSOES EXPLICITAS - Assets importantes
+# ==========================================
+
+# Permitir imagens de templates (SEO importante)
+Allow: /Templates/*.webp
+Allow: /Templates/*.png
+Allow: /Templates/*.jpg
+
+# Permitir assets publicos
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: /site.webmanifest
+Allow: /placeholder.svg
+
+# ==========================================
+# REGRAS ESPECIFICAS - Crawlers principais
+# ==========================================
+
+# Google Bot - Acesso total as paginas publicas
 User-agent: Googlebot
 Allow: /
 
+# Google Bot para Imagens - Permitir templates
+User-agent: Googlebot-Image
+Allow: /Templates/
+
+# Bing Bot - Acesso total as paginas publicas
 User-agent: Bingbot
 Allow: /
 
-# Sitemap
-Sitemap: https://www.curriculogratisonline.com/sitemap.xml
+# ==========================================
+# SITEMAP
+# ==========================================
 
-# Crawl-delay para evitar sobrecarga
-Crawl-delay: 1
+Sitemap: https://curriculogratisonline.com/sitemap.xml
+
+# ==========================================
+# PAGINAS PUBLICAS (referencia - nao afeta crawling)
+# ==========================================
+# As seguintes paginas sao publicas e estao no sitemap:
+#   /                           - Homepage
+#   /criar-curriculo            - Criador de curriculos
+#   /premium-editor             - Editor premium com IA
+#   /showcase                   - Galeria de templates
+#   /template-selector          - Seletor de templates
+#   /criar-curriculo-simples    - Criador simplificado
+#   /politica-privacidade       - Politica de privacidade
+#   /termos-uso                 - Termos de uso
+#   /politica-cookies           - Politica de cookies
+# ==========================================
