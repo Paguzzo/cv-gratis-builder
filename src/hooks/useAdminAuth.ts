@@ -118,93 +118,46 @@ export function useAdminAuth() {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }));
 
-      // 🔒 Primeiro tenta autenticação via backend
-      try {
-        const response = await SecureApiService.adminLogin(username, password);
+      // 🔐 AUTENTICAÇÃO LOCAL (funciona sem backend)
+      // Credenciais: admin / Cvgratis@917705
+      const ADMIN_USERNAME = 'admin';
+      const ADMIN_PASSWORD = 'Cvgratis@917705';
 
-        if (response.success && response.token) {
-          const expiry = new Date();
-          expiry.setHours(expiry.getHours() + 24);
+      // Validação direta das credenciais locais
+      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        const localToken = `local_admin_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+        const expiry = new Date();
+        expiry.setHours(expiry.getHours() + 24);
 
-          localStorage.setItem(TOKEN_STORAGE_KEY, response.token);
-          localStorage.setItem(TOKEN_EXPIRY_KEY, expiry.toISOString());
-          localStorage.setItem('admin-mode-enabled', 'true');
+        localStorage.setItem(TOKEN_STORAGE_KEY, localToken);
+        localStorage.setItem(TOKEN_EXPIRY_KEY, expiry.toISOString());
+        localStorage.setItem('admin-mode-enabled', 'true');
 
-          const verification = await SecureApiService.verifyAdminAuth(response.token);
-
-          if (verification.valid && verification.user) {
-            setAuthState({
-              isAuthenticated: true,
-              user: verification.user,
-              token: response.token,
-              isLoading: false,
-            });
-
-            toast({
-              title: "✅ Acesso Administrativo",
-              description: `Bem-vindo, ${verification.user.username}!`,
-              duration: 3000,
-            });
-
-            console.log('✅ Login administrativo bem-sucedido (backend)');
-            return true;
-          }
-        }
-      } catch (backendError) {
-        console.log('⚠️ Backend não disponível, usando autenticação local');
-
-        // 🔐 FALLBACK: Autenticação local quando backend não disponível
-        // Credenciais: admin / Cvgratis@917705
-        const ADMIN_USERNAME = 'admin';
-        const ADMIN_PASSWORD_HASH = 'a8f5f167f44f4964e6c998dee827110c'; // MD5 de Cvgratis@917705
-
-        // Função simples de hash MD5 (para validação básica)
-        const simpleHash = (str: string): string => {
-          let hash = 0;
-          for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
-          }
-          return Math.abs(hash).toString(16).padStart(32, '0');
+        const localUser: AdminUser = {
+          id: 'local-admin-1',
+          username: 'admin',
+          role: 'admin',
+          permissions: ['*'],
         };
 
-        // Validação direta das credenciais
-        if (username === ADMIN_USERNAME && password === 'Cvgratis@917705') {
-          const localToken = `local_admin_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-          const expiry = new Date();
-          expiry.setHours(expiry.getHours() + 24);
+        setAuthState({
+          isAuthenticated: true,
+          user: localUser,
+          token: localToken,
+          isLoading: false,
+        });
 
-          localStorage.setItem(TOKEN_STORAGE_KEY, localToken);
-          localStorage.setItem(TOKEN_EXPIRY_KEY, expiry.toISOString());
-          localStorage.setItem('admin-mode-enabled', 'true');
+        toast({
+          title: "✅ Acesso Administrativo",
+          description: `Bem-vindo, ${localUser.username}!`,
+          duration: 3000,
+        });
 
-          const localUser: AdminUser = {
-            id: 'local-admin-1',
-            username: 'admin',
-            role: 'admin',
-            permissions: ['*'],
-          };
-
-          setAuthState({
-            isAuthenticated: true,
-            user: localUser,
-            token: localToken,
-            isLoading: false,
-          });
-
-          toast({
-            title: "✅ Acesso Administrativo",
-            description: `Bem-vindo, ${localUser.username}!`,
-            duration: 3000,
-          });
-
-          console.log('✅ Login administrativo bem-sucedido (local)');
-          return true;
-        }
+        console.log('✅ Login administrativo bem-sucedido');
+        return true;
       }
 
-      // Login falhou
+      // Login falhou - credenciais incorretas
       setAuthState(prev => ({ ...prev, isLoading: false }));
       toast({
         title: "🚫 Credenciais Inválidas",
