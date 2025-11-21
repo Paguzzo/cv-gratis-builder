@@ -16,6 +16,7 @@ const blogArticles = [
     title: "Criador de Currículo com IA: Como a Inteligência Artificial Revoluciona sua Carreira",
     excerpt: "Descubra como a inteligência artificial pode transformar seu currículo em uma ferramenta poderosa para conquistar o emprego dos sonhos.",
     icon: Bot,
+    image: "/Blog_imagens/materia01.jfif",
     color: "from-purple-500 to-violet-600",
     bgColor: "bg-purple-50",
     borderColor: "border-purple-200",
@@ -37,6 +38,7 @@ O melhor de tudo? No CVGratis, a IA é 100% gratuita. Você não precisa pagar n
     title: "Ferramenta de Currículo Grátis: Por que Pagar se Você Pode Ter o Melhor de Graça?",
     excerpt: "Conheça os recursos profissionais que o CVGratis oferece sem cobrar nada. Templates premium, IA integrada e muito mais.",
     icon: Sparkles,
+    image: "/Blog_imagens/materia02.jfif",
     color: "from-emerald-500 to-green-600",
     bgColor: "bg-emerald-50",
     borderColor: "border-emerald-200",
@@ -60,6 +62,7 @@ Experimente o CVGratis e descubra que qualidade e gratuidade podem andar juntas.
     title: "Como Construir um Currículo Poderoso: 7 Dicas Essenciais para se Destacar",
     excerpt: "Aprenda as estratégias que fazem a diferença na hora de conquistar a atenção dos recrutadores em apenas 6 segundos.",
     icon: Target,
+    image: "/Blog_imagens/materia02.jfif",
     color: "from-blue-500 to-cyan-600",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
@@ -84,15 +87,16 @@ Sétima dica: mantenha atualizado. Um currículo desatualizado transmite desleix
   {
     id: 4,
     slug: "o-que-precisa-online-criar-curriculo",
-    title: "O que Você Precisa Online para Criar um Currículo Perfeito em 2024",
+    title: "O que Você Precisa Online para Criar um Currículo Perfeito em 2025",
     excerpt: "Descubra as ferramentas e recursos essenciais que você precisa ter acesso na internet para criar um currículo competitivo.",
     icon: FileText,
+    image: "/Blog_imagens/materia04.jfif",
     color: "from-orange-500 to-amber-600",
     bgColor: "bg-orange-50",
     borderColor: "border-orange-200",
     readTime: "5 min",
     category: "Guia",
-    content: `Criar um currículo perfeito em 2024 exige mais do que apenas um editor de texto. O mercado de trabalho evoluiu e você precisa de ferramentas que acompanhem essa evolução. Veja o que é essencial ter online.
+    content: `Criar um currículo perfeito em 2025 exige mais do que apenas um editor de texto. O mercado de trabalho evoluiu e você precisa de ferramentas que acompanhem essa evolução. Veja o que é essencial ter online.
 
 Primeiro, você precisa de uma plataforma de criação intuitiva. Esqueça o Word e suas formatações que desconfigurem a cada salvamento. O CVGratis oferece um editor visual onde você vê exatamente como seu currículo ficará no PDF final.
 
@@ -112,6 +116,7 @@ Por fim, você precisa de uma plataforma que respeite sua privacidade. Não vend
     title: "Templates de Currículo: Qual Modelo Escolher para Sua Profissão?",
     excerpt: "Guia completo para escolher o template ideal de acordo com sua área de atuação e nível de experiência.",
     icon: Palette,
+    image: "/Blog_imagens/materia05.jfif",
     color: "from-pink-500 to-rose-600",
     bgColor: "bg-pink-50",
     borderColor: "border-pink-200",
@@ -317,7 +322,6 @@ const Blog = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {blogArticles.map((article) => {
-              const IconComponent = article.icon;
               return (
                 <Card
                   key={article.id}
@@ -325,11 +329,14 @@ const Blog = () => {
                   onClick={() => setSelectedArticle(article)}
                 >
                   <CardContent className="p-0">
-                    {/* Card Header with Icon */}
-                    <div className={`bg-gradient-to-r ${article.color} p-6 flex items-center justify-center`}>
-                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-                        <IconComponent className="w-8 h-8 text-white" />
-                      </div>
+                    {/* Card Header with Image */}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-t ${article.color} opacity-20`}></div>
                     </div>
 
                     {/* Card Content */}
