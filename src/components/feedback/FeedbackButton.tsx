@@ -8,17 +8,17 @@ export function FeedbackButton() {
 
   return (
     <>
-      {/* Botão Flutuante com Label */}
-      <div className="fixed bottom-4 right-2 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
-        {/* Label que aparece ao passar o mouse - oculto no mobile */}
+      {/* Botão Flutuante com Label - posicionado acima do botão Preview no mobile */}
+      <div className="fixed bottom-48 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
+        {/* Tooltip que aparece ao passar o mouse */}
         <div
           className={`
-            hidden sm:block bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg
-            transition-all duration-300 ease-in-out whitespace-nowrap
+            bg-gray-900 text-white px-2 py-1 sm:px-4 sm:py-2 rounded-lg shadow-lg
+            transition-all duration-300 ease-in-out whitespace-nowrap text-xs sm:text-sm
             ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}
           `}
         >
-          <span className="text-sm font-medium">Sugestões</span>
+          <span className="font-medium">Sugestões</span>
         </div>
 
         {/* Botão */}

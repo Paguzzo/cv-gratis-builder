@@ -61,10 +61,10 @@ export const PremiumInfographic: React.FC<PremiumInfographicProps> = ({ data, co
           </div>
 
           {/* INFO */}
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold mb-2">{personalInfo.name}</h1>
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <h1 className="text-4xl font-bold mb-2 truncate">{personalInfo.name}</h1>
             {personalInfo.position && (
-              <p className="text-xl font-medium text-purple-100">{personalInfo.position}</p>
+              <p className="text-xl font-medium text-purple-100 truncate">{personalInfo.position}</p>
             )}
 
             {/* CONTACT ICONS */}
@@ -104,7 +104,7 @@ export const PremiumInfographic: React.FC<PremiumInfographicProps> = ({ data, co
               </div>
               <h2 className="text-xl font-bold text-gray-900">Objetivo Profissional</h2>
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed pl-13">
+            <p className="text-sm text-gray-700 leading-relaxed pl-13 break-words">
               {objective.description}
             </p>
           </section>

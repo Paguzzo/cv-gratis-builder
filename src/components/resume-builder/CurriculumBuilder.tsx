@@ -180,26 +180,36 @@ export function CurriculumBuilder() {
       </div>
 
       {/* Botão flutuante para preview mobile - aparece apenas em telas < 1024px */}
-      <button
-        onClick={() => setShowMobilePreview(true)}
-        className="lg:hidden fixed bottom-24 right-4 z-40 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 active:scale-95"
-        aria-label="Ver preview do currículo"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
-        </svg>
-      </button>
+      <div className="lg:hidden fixed bottom-32 right-4 z-40 flex flex-col items-end gap-3">
+        {/* Botão Preview com tooltip */}
+        <div className="group relative flex items-center">
+          {/* Tooltip */}
+          <span className="absolute right-full mr-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Preview
+          </span>
+          <button
+            onClick={() => setShowMobilePreview(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 active:scale-95"
+            aria-label="Ver preview do currículo"
+            title="Preview"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
 
       {/* Modal de preview mobile */}
       {showMobilePreview && (
@@ -266,7 +276,13 @@ export function CurriculumBuilder() {
           scrollbar-width: thin;
           scrollbar-color: #9ca3af #f3f4f6;
           scroll-behavior: smooth;
-          padding-bottom: 200px !important;
+          padding-bottom: 280px !important;
+        }
+
+        @media (max-width: 1023px) {
+          .step-container {
+            padding-bottom: 320px !important;
+          }
         }
 
         .step-container::-webkit-scrollbar {

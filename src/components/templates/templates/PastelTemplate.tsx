@@ -113,14 +113,14 @@ export function PastelTemplate({ data, template }: PastelTemplateProps) {
       </div>
 
       {/* Coluna Principal - Conteúdo */}
-      <div className="flex-1 px-8 py-8">
+      <div className="flex-1 min-w-0 px-6 py-8 overflow-hidden">
         {/* Perfil Pessoal */}
         {objective?.description && (
           <section className="mb-8">
             <h2 className="text-amber-700 font-bold text-lg mb-4 border-b-2 border-amber-200 pb-2">
               Perfil Pessoal
             </h2>
-            <p className="text-gray-700 leading-relaxed text-sm">
+            <p className="text-gray-700 leading-relaxed text-sm break-words">
               {objective.description}
             </p>
           </section>
@@ -149,7 +149,7 @@ export function PastelTemplate({ data, template }: PastelTemplateProps) {
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="text-gray-600 leading-relaxed text-sm mt-2">
+                    <p className="text-gray-600 leading-relaxed text-sm mt-2 break-words">
                       {exp.description}
                     </p>
                   )}
@@ -230,7 +230,7 @@ export function PastelTemplate({ data, template }: PastelTemplateProps) {
                     {project.name}
                   </h3>
                   {project.description && (
-                    <p className="text-gray-600 leading-relaxed text-sm mt-1">
+                    <p className="text-gray-600 leading-relaxed text-sm mt-1 break-words">
                       {project.description}
                     </p>
                   )}
@@ -253,7 +253,7 @@ export function PastelTemplate({ data, template }: PastelTemplateProps) {
                     {achievement.title}
                   </h3>
                   {achievement.description && (
-                    <p className="text-gray-600 leading-relaxed text-sm mt-1">
+                    <p className="text-gray-600 leading-relaxed text-sm mt-1 break-words">
                       {achievement.description}
                     </p>
                   )}

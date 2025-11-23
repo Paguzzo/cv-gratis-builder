@@ -13,7 +13,7 @@ export function MinimalTemplate({ data, template }: MinimalTemplateProps) {
   return (
     <div className="max-w-[210mm] mx-auto bg-white text-sm leading-normal flex">
       {/* Coluna Principal - Conteúdo */}
-      <div className="flex-1 pr-8 py-8 pl-8">
+      <div className="flex-1 min-w-0 pr-6 py-8 pl-6 overflow-hidden">
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl font-light text-gray-900 mb-1 tracking-wide">
@@ -30,7 +30,7 @@ export function MinimalTemplate({ data, template }: MinimalTemplateProps) {
             <h2 className="text-sm font-semibold text-gray-800 mb-3 uppercase tracking-wide">
               Objetivo
             </h2>
-            <p className="text-gray-700 leading-relaxed text-sm">
+            <p className="text-gray-700 leading-relaxed text-sm break-words">
               {objective.description}
             </p>
           </section>
@@ -73,7 +73,7 @@ export function MinimalTemplate({ data, template }: MinimalTemplateProps) {
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="text-gray-700 leading-relaxed text-sm">
+                    <p className="text-gray-700 leading-relaxed text-sm break-words">
                       {exp.description}
                     </p>
                   )}

@@ -82,7 +82,7 @@ export function ClassicTemplate({ data, template }: ClassicTemplateProps) {
             <h2 className="text-lg font-bold text-gray-800 uppercase border-b border-gray-400 pb-1 mb-3">
               Objetivo Profissional
             </h2>
-            <p className="text-gray-700 leading-relaxed text-justify">
+            <p className="text-gray-700 leading-relaxed text-justify break-words">
               {objective.description}
             </p>
           </section>
@@ -205,7 +205,7 @@ export function ClassicTemplate({ data, template }: ClassicTemplateProps) {
                 <div key={index}>
                   <h3 className="font-semibold text-gray-800">{project.name}</h3>
                   {project.description && (
-                    <p className="text-gray-700 text-sm leading-relaxed mt-1">
+                    <p className="text-gray-700 text-sm leading-relaxed mt-1 break-words">
                       {project.description}
                     </p>
                   )}
@@ -215,7 +215,7 @@ export function ClassicTemplate({ data, template }: ClassicTemplateProps) {
                 <div key={`achievement-${index}`}>
                   <h3 className="font-semibold text-gray-800">{achievement.title}</h3>
                   {achievement.description && (
-                    <p className="text-gray-700 text-sm leading-relaxed mt-1">
+                    <p className="text-gray-700 text-sm leading-relaxed mt-1 break-words">
                       {achievement.description}
                     </p>
                   )}

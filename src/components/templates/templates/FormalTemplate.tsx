@@ -173,7 +173,7 @@ export function FormalTemplate({ data, template }: FormalTemplateProps) {
         </div>
 
         {/* Conteúdo Principal */}
-        <div className="flex-1 p-10 print:p-8 bg-gray-50">
+        <div className="flex-1 min-w-0 p-8 print:p-6 bg-gray-50 overflow-hidden">
           {/* Objetivo */}
           {objective?.description && (
             <section className="mb-8">
@@ -182,7 +182,7 @@ export function FormalTemplate({ data, template }: FormalTemplateProps) {
                 <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">Objetivo Profissional</h2>
               </div>
               <div className="bg-white p-5 rounded-lg shadow-sm border-l-4 border-indigo-600">
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-700 leading-relaxed break-words">
                   {objective.description}
                 </p>
               </div>
@@ -256,7 +256,7 @@ export function FormalTemplate({ data, template }: FormalTemplateProps) {
                   <div key={index} className="bg-white p-5 rounded-lg shadow-sm border-l-4 border-indigo-600">
                     <h3 className="font-bold text-base text-gray-900">{project.name}</h3>
                     {project.description && (
-                      <p className="text-gray-700 leading-relaxed mt-2 text-sm">
+                      <p className="text-gray-700 leading-relaxed mt-2 text-sm break-words">
                         {project.description}
                       </p>
                     )}
@@ -278,7 +278,7 @@ export function FormalTemplate({ data, template }: FormalTemplateProps) {
                   <div key={index} className="bg-white p-5 rounded-lg shadow-sm border-l-4 border-indigo-600">
                     <h3 className="font-bold text-base text-gray-900">{achievement.title}</h3>
                     {achievement.description && (
-                      <p className="text-gray-700 leading-relaxed mt-2 text-sm">
+                      <p className="text-gray-700 leading-relaxed mt-2 text-sm break-words">
                         {achievement.description}
                       </p>
                     )}

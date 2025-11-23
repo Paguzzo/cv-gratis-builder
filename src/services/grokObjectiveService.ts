@@ -146,11 +146,18 @@ Output: "Analista de dados com 5 anos de experiência especializada em inteligê
 🚫 PROIBIÇÕES ABSOLUTAS:
 - ❌ Textos genéricos que servem para qualquer profissional
 - ❌ Listar palavras-chave sem contexto ("Experiência em X, Y, Z")
-- ❌ Repetir a mesma palavra/conceito múltiplas vezes
 - ❌ Inventar números, tecnologias ou certificações não mencionadas
 - ❌ Usar clichês ("profissional dinâmico", "proativo", sem contexto)
 - ❌ Frases muito curtas ou superficiais
 - ❌ Ignorar o campo "o que busca" quando fornecido
+
+⚠️ REGRA CRÍTICA DE NÃO-REPETIÇÃO:
+- ❌ NUNCA repita a mesma frase, expressão ou conceito mais de uma vez no texto final
+- ❌ Se o usuário repetiu uma informação nas palavras-chave E na descrição, USE APENAS UMA VEZ
+- ❌ Analise os dados de entrada e identifique duplicações ANTES de escrever
+- ❌ Cada competência, número ou informação específica deve aparecer NO MÁXIMO UMA VEZ
+- ❌ Varie a linguagem: não use as mesmas palavras para expressar ideias similares
+- Exemplo: Se "gestão de 140 colaboradores" aparece nas palavras-chave E na descrição, mencione APENAS UMA VEZ no texto final
 
 🎬 AGORA CRIE:
 Com base nos dados fornecidos acima, crie um objetivo profissional EXCEPCIONAL seguindo rigorosamente todas as instruções. O texto deve impressionar recrutadores e posicionar o candidato como autoridade em sua área.

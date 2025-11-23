@@ -80,7 +80,7 @@ export function CreativeTemplate({ data, template }: CreativeTemplateProps) {
                 <Palette className="w-6 h-6" />
                 Perfil Criativo
               </h2>
-              <p className="text-base leading-relaxed italic" style={{ color: template.colors.text }}>
+              <p className="text-base leading-relaxed italic break-words" style={{ color: template.colors.text }}>
                 "{data.objective.description}"
               </p>
             </div>
@@ -111,7 +111,7 @@ export function CreativeTemplate({ data, template }: CreativeTemplateProps) {
                   <h3 className="font-bold text-lg mb-3" style={{ color: template.colors.primary }}>
                     {project.name}
                   </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: template.colors.text }}>
+                  <p className="text-sm leading-relaxed break-words" style={{ color: template.colors.text }}>
                     {project.description}
                   </p>
                 </div>
@@ -157,7 +157,7 @@ export function CreativeTemplate({ data, template }: CreativeTemplateProps) {
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="text-sm leading-relaxed" style={{ color: template.colors.text }}>
+                    <p className="text-sm leading-relaxed break-words" style={{ color: template.colors.text }}>
                       {exp.description}
                     </p>
                   )}

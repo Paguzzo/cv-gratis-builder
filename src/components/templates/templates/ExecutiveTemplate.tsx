@@ -121,14 +121,14 @@ export function ExecutiveTemplate({ data, template }: ExecutiveTemplateProps) {
       </div>
 
       {/* Coluna Principal - Conteúdo */}
-      <div className="flex-1 px-8 py-8">
+      <div className="flex-1 min-w-0 px-6 py-8 overflow-hidden">
         {/* Perfil/Objetivo */}
         {objective?.description && (
           <section className="mb-8">
             <h2 className="text-slate-800 font-bold text-base mb-4 uppercase tracking-wide border-b-2 border-slate-400 pb-2">
               Perfil
             </h2>
-            <p className="text-slate-700 leading-relaxed text-sm">
+            <p className="text-slate-700 leading-relaxed text-sm break-words">
               {objective.description}
             </p>
           </section>
@@ -157,7 +157,7 @@ export function ExecutiveTemplate({ data, template }: ExecutiveTemplateProps) {
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="text-slate-700 leading-relaxed text-sm mt-2">
+                    <p className="text-slate-700 leading-relaxed text-sm mt-2 break-words">
                       {exp.description}
                     </p>
                   )}
@@ -236,7 +236,7 @@ export function ExecutiveTemplate({ data, template }: ExecutiveTemplateProps) {
                     {project.name}
                   </h3>
                   {project.description && (
-                    <p className="text-slate-600 leading-relaxed text-sm mt-1">
+                    <p className="text-slate-600 leading-relaxed text-sm mt-1 break-words">
                       {project.description}
                     </p>
                   )}
@@ -248,7 +248,7 @@ export function ExecutiveTemplate({ data, template }: ExecutiveTemplateProps) {
                     {achievement.title}
                   </h3>
                   {achievement.description && (
-                    <p className="text-slate-600 leading-relaxed text-sm mt-1">
+                    <p className="text-slate-600 leading-relaxed text-sm mt-1 break-words">
                       {achievement.description}
                     </p>
                   )}

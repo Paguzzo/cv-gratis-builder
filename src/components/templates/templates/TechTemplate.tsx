@@ -102,14 +102,14 @@ export function TechTemplate({ data, template }: TechTemplateProps) {
       </div>
 
       {/* Coluna Principal - Conteúdo */}
-      <div className="flex-1 px-8 py-8">
+      <div className="flex-1 min-w-0 px-6 py-8 overflow-hidden">
         {/* Sobre */}
         {objective?.description && (
           <section className="mb-8">
             <h2 className="text-teal-600 font-bold text-lg mb-4">
               Sobre
             </h2>
-            <p className="text-gray-700 leading-relaxed text-sm">
+            <p className="text-gray-700 leading-relaxed text-sm break-words">
               {objective.description}
             </p>
           </section>
@@ -161,7 +161,7 @@ export function TechTemplate({ data, template }: TechTemplateProps) {
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="text-gray-600 leading-relaxed text-sm mt-2">
+                    <p className="text-gray-600 leading-relaxed text-sm mt-2 break-words">
                       {exp.description}
                     </p>
                   )}
@@ -214,7 +214,7 @@ export function TechTemplate({ data, template }: TechTemplateProps) {
                     {project.name}
                   </h3>
                   {project.description && (
-                    <p className="text-gray-600 leading-relaxed text-sm mt-1">
+                    <p className="text-gray-600 leading-relaxed text-sm mt-1 break-words">
                       {project.description}
                     </p>
                   )}
@@ -237,7 +237,7 @@ export function TechTemplate({ data, template }: TechTemplateProps) {
                     {achievement.title}
                   </h3>
                   {achievement.description && (
-                    <p className="text-gray-600 leading-relaxed text-sm mt-1">
+                    <p className="text-gray-600 leading-relaxed text-sm mt-1 break-words">
                       {achievement.description}
                     </p>
                   )}

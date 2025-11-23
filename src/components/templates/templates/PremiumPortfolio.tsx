@@ -55,10 +55,10 @@ export const PremiumPortfolio: React.FC<PremiumPortfolioProps> = ({ data, config
 
         <div className="relative z-10">
           <div className="flex items-start justify-between gap-6 mb-6">
-            <div className="flex-1">
-              <h1 className="text-5xl font-bold mb-3 tracking-tight">{personalInfo.name}</h1>
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <h1 className="text-5xl font-bold mb-3 tracking-tight truncate">{personalInfo.name}</h1>
               {personalInfo.position && (
-                <p className="text-2xl text-blue-400 font-medium mb-4">{personalInfo.position}</p>
+                <p className="text-2xl text-blue-400 font-medium mb-4 truncate">{personalInfo.position}</p>
               )}
 
               {/* Contact Info */}
@@ -109,7 +109,7 @@ export const PremiumPortfolio: React.FC<PremiumPortfolioProps> = ({ data, config
                 <Lightbulb className="w-5 h-5 text-yellow-400" />
                 <h2 className="text-lg font-bold">Sobre Mim</h2>
               </div>
-              <p className="text-sm text-gray-200 leading-relaxed">
+              <p className="text-sm text-gray-200 leading-relaxed break-words">
                 {objective.description}
               </p>
             </div>

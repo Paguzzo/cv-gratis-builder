@@ -124,7 +124,7 @@ export function ProfessionalTemplate({ data, template }: ProfessionalTemplatePro
                 </div>
                 <h2 className="font-bold text-base uppercase tracking-wide">Sobre</h2>
               </div>
-              <p className="text-sm text-gray-200 leading-relaxed">
+              <p className="text-sm text-gray-200 leading-relaxed break-words">
                 {objective.description}
               </p>
             </section>
@@ -194,7 +194,7 @@ export function ProfessionalTemplate({ data, template }: ProfessionalTemplatePro
         </div>
 
         {/* Coluna Principal */}
-        <div className="flex-1 bg-gray-50 p-8 print:p-6">
+        <div className="flex-1 min-w-0 bg-gray-50 p-6 print:p-5 overflow-hidden">
           {/* Experiência Profissional */}
           {experience.length > 0 && (
             <section className="mb-8">
@@ -268,7 +268,7 @@ export function ProfessionalTemplate({ data, template }: ProfessionalTemplatePro
                   <div key={index} className="bg-white p-5 rounded-xl shadow-md border-l-4 border-purple-500">
                     <h3 className="font-bold text-base text-gray-900">{project.name}</h3>
                     {project.description && (
-                      <p className="text-gray-700 text-sm leading-relaxed mt-2">
+                      <p className="text-gray-700 text-sm leading-relaxed mt-2 break-words">
                         {project.description}
                       </p>
                     )}
@@ -292,7 +292,7 @@ export function ProfessionalTemplate({ data, template }: ProfessionalTemplatePro
                   <div key={index} className="bg-white p-5 rounded-xl shadow-md border-l-4 border-yellow-500">
                     <h3 className="font-bold text-base text-gray-900">{achievement.title}</h3>
                     {achievement.description && (
-                      <p className="text-gray-700 text-sm leading-relaxed mt-2">
+                      <p className="text-gray-700 text-sm leading-relaxed mt-2 break-words">
                         {achievement.description}
                       </p>
                     )}
