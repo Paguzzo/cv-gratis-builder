@@ -4,6 +4,7 @@ import { useCurriculumData } from '@/hooks/useCurriculumData';
 import { Loader2 } from 'lucide-react';
 
 // 🚀 LAZY LOADING: Carregar templates apenas quando necessário
+const FreeModernTemplate = React.lazy(() => import('./templates/FreeModern').then(m => ({ default: m.FreeModern })));
 const ModernTemplate = React.lazy(() => import('./templates/ModernTemplate').then(m => ({ default: m.ModernTemplate })));
 const ExecutiveTemplate = React.lazy(() => import('./templates/ExecutiveTemplate').then(m => ({ default: m.ExecutiveTemplate })));
 const TechTemplate = React.lazy(() => import('./templates/TechTemplate').then(m => ({ default: m.TechTemplate })));
@@ -40,7 +41,7 @@ export function TemplateRenderer({ template, className, forExport = false }: Tem
   const renderTemplate = () => {
     switch (template.id) {
       case 'free-modern':
-        return <ModernTemplate data={data} template={template} />;
+        return <FreeModernTemplate data={data} template={template} />;
       case 'free-classic':
         return <ClassicTemplate data={data} template={template} />;
       case 'premium-executive':
