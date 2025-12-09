@@ -103,3 +103,48 @@ ESLint configuration in `eslint.config.js`:
 - TypeScript ESLint rules
 - React hooks and refresh plugins
 - Unused variables warnings disabled for development flexibility
+
+## IMPORTANT: Project Guidelines and Workflow
+
+### Project Status
+**This project is COMPLETED and in maintenance mode.**
+- The codebase is considered FROZEN
+- Only perform adjustments and bug fixes explicitly requested
+- Do NOT make improvements, refactoring, or optimizations unless specifically asked
+- Do NOT add new features or functionality without explicit approval
+
+### Approval Requirements
+**When to request approval:**
+- ONLY when making actual code changes to the project
+- When modifying existing functionality
+- When the request is ambiguous and could be interpreted in multiple ways
+
+**When approval is NOT required:**
+- Bug fixes and corrections that restore intended functionality
+- Adjustments explicitly requested by the user
+- Following direct instructions with clear requirements
+
+### Execution Philosophy
+**CRITICAL RULES:**
+1. **Execute ONLY what is requested** - Do not add extra improvements or optimizations
+2. **Keep the version frozen** - Make only the minimum necessary changes
+3. **No proactive changes** - Never modify code that wasn't explicitly mentioned
+4. **No refactoring** - Keep existing code structure even if it could be "improved"
+5. **No code cleanup** - Don't fix formatting, comments, or unused imports unless requested
+6. **Strict scope** - If asked to fix X, only fix X. Don't also fix Y, Z, and add feature W.
+
+### Examples of What NOT to Do
+❌ "I noticed this code could be improved, so I also..."
+❌ "While fixing X, I took the opportunity to refactor Y..."
+❌ "I added error handling for edge cases..."
+❌ "I updated the types to be more strict..."
+❌ "I cleaned up the imports and formatting..."
+
+### Examples of What TO Do
+✅ Read the exact request
+✅ Make only the changes explicitly requested
+✅ Test that the specific issue is fixed
+✅ Commit only the modified files
+✅ Move on
+
+**Remember: This is a production application. Every change must be intentional, minimal, and explicitly requested.**
