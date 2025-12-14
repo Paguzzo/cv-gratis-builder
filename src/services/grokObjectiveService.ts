@@ -68,94 +68,58 @@ export class GrokObjectiveService {
   private static buildGrokPrompt(request: ObjectiveRequest): string {
     const { keywords, seekingFor, description, position } = request;
 
-    return `Você é um ESPECIALISTA SÊNIOR em Recursos Humanos e desenvolvimento de carreira, com mais de 15 anos de experiência criando currículos de alto impacto para executivos e profissionais de mercado.
+    return `Você é um especialista em Recursos Humanos criando um objetivo profissional de alto impacto para um currículo.
 
-📋 DADOS DO CANDIDATO:
-Palavras-chave estratégicas: ${keywords}
-${description ? `Descrição base: ${description}` : ''}
-${position || seekingFor ? `O que busca: ${position || seekingFor}` : ''}
+DADOS FORNECIDOS:
+- Competências-chave: ${keywords}
+${description ? `- Contexto: ${description}` : ''}
+${position || seekingFor ? `- Objetivo de carreira: ${position || seekingFor}` : ''}
 
-🎯 SUA MISSÃO:
-Criar um objetivo profissional EXCEPCIONAL de 3-5 frases que seja:
-• ESPECÍFICO e personalizado para este candidato
-• IMPACTANTE e memorável para recrutadores
-• NATURAL e fluido na leitura
-• ESTRATÉGICO ao posicionar o candidato no mercado
+REGRAS CRÍTICAS (NÃO VIOLE ESTAS REGRAS):
 
-✅ INSTRUÇÕES DETALHADAS:
+1. NUNCA REPITA palavras ou conceitos - cada competência deve aparecer UMA ÚNICA VEZ
+2. INTEGRE as competências de forma NATURAL em frases fluidas, não as liste
+3. SEJA ESPECÍFICO - evite frases genéricas que servem para qualquer profissional
+4. Use TODAS as competências fornecidas de forma orgânica e contextualizada
 
-1️⃣ ANÁLISE PROFUNDA:
-   - Identifique o nível de senioridade mencionado na descrição (júnior/pleno/sênior/especialista)
-   - Extraia a área de atuação principal das palavras-chave
-   - Identifique competências técnicas vs. comportamentais
-   - Reconheça padrões de especialização ou nichos mencionados
+ESTRUTURA DO TEXTO (3-4 frases):
 
-2️⃣ INTEGRAÇÃO DAS PALAVRAS-CHAVE:
-   - Use TODAS as palavras-chave fornecidas de forma ORGÂNICA
-   - Não liste as palavras mecanicamente
-   - Transforme-as em narrativa profissional coerente
-   - Crie conexões lógicas entre elas
-   - Adicione verbos de ação e contexto que as tornem vivas
+Frase 1 - POSICIONAMENTO:
+Apresente o profissional com sua área principal e contexto (se houver anos de experiência, mencione).
+Exemplo: "Especialista em operações florestais com 12 anos dedicados à gestão de atividades de silvicultura."
 
-3️⃣ APROVEITAMENTO DA DESCRIÇÃO:
-   - Extraia informações específicas mencionadas (anos de experiência, setores, realizações)
-   - Use o contexto para enriquecer o texto
-   - Mantenha fidelidade aos dados fornecidos
-   - Expanda conceitos de forma inteligente sem inventar
+Frase 2 - EXPERTISE INTEGRADA:
+Integre as competências-chave de forma natural, mostrando COMO são aplicadas (não apenas liste).
+ATENÇÃO: Se uma competência já foi mencionada, use sinônimos ou reformule - NUNCA repita.
+Exemplo: "Expertise em coordenação de equipes próprias e terceirizadas, com foco em otimização de custos operacionais e implementação de processos mecanizados que aumentam produtividade."
 
-4️⃣ USO DO CAMPO "O QUE BUSCA":
-   - Se fornecido, integre como objetivo de carreira na ÚLTIMA frase
-   - Conecte com as competências mencionadas
-   - Demonstre como o candidato agregará valor nessa busca
-   - Seja específico sobre o tipo de contribuição desejada
+Frase 3 - VALOR E IMPACTO:
+Demonstre o valor entregue e diferenciais profissionais.
+Exemplo: "Reconhecido por implementar soluções que equilibram eficiência operacional com sustentabilidade, gerando resultados mensuráveis e redução de desperdícios."
 
-📝 ESTRUTURA ESTRATÉGICA:
+Frase 4 - OBJETIVO (se fornecido):
+Se "objetivo de carreira" foi informado, integre aqui conectando com as competências.
+Se NÃO foi fornecido, faça uma frase de fechamento sobre impacto/visão profissional.
 
-• Frase 1 (POSICIONAMENTO):
-  Apresentação profissional + nível de senioridade + área de especialização principal
-  Exemplo: "Especialista em [área] com [X anos] de experiência focada em [nicho específico]"
+EXEMPLO COMPLETO (para o caso do usuário):
 
-• Frase 2 (COMPETÊNCIAS TÉCNICAS):
-  Integre as palavras-chave técnicas de forma natural, mostrando domínio
-  Exemplo: "Comprovada expertise em [competência 1], [competência 2] e [competência 3], com histórico de [resultado]"
+Input: "Gestão das atividades de silvicultura, gestão de equipe própria e terceira, gestão de custos, mecanização"
 
-• Frase 3 (DIFERENCIAIS):
-  Destaque competências comportamentais, soft skills ou abordagem única
-  Exemplo: "Reconhecido por [diferencial 1] e [diferencial 2], sempre orientado a [valor]"
+CORRETO ✅:
+"Especialista em operações de silvicultura com sólida experiência na coordenação integrada de atividades florestais. Expertise comprovada na liderança de equipes próprias e terceirizadas, com foco em otimização de custos operacionais e implementação de processos mecanizados que elevam produtividade. Reconhecido por desenvolver soluções que equilibram eficiência, sustentabilidade e resultados financeiros mensuráveis. Comprometido com a excelência operacional e a evolução contínua das práticas de gestão florestal."
 
-• Frase 4 (VALOR ENTREGUE):
-  Demonstre o impacto/valor que o profissional gera
-  Exemplo: "Focado em entregar [tipo de resultado] através de [abordagem/metodologia]"
+ERRADO ❌ (NÃO FAÇA ASSIM):
+"Especialista em Gestão de silvicultura com foco em gestão de equipe própria e terceira. Comprovada expertise em gestão de equipe própria e terceira, gestão de custos, mecanização..."
+(Problema: repete "gestão de equipe própria e terceira" duas vezes, lista palavras sem contexto)
 
-• Frase 5 (OBJETIVO - OPCIONAL):
-  Se "o que busca" foi fornecido, integre aqui de forma estratégica
-  Exemplo: "Busco contribuir em [área/posição desejada] onde possa aplicar minha experiência em [competências] para [objetivo específico]"
+DIRETRIZES FINAIS:
+- Cada competência aparece UMA VEZ no texto
+- Use sinônimos e reformulações para evitar repetição
+- Adicione VERBOS DE AÇÃO e CONTEXTO às competências
+- O texto deve fluir naturalmente como uma narrativa profissional
+- Seja conciso mas impactante
 
-💡 EXEMPLOS DE QUALIDADE:
-
-EXEMPLO 1 (COM "O QUE BUSCA"):
-Input: keywords="gestão de projetos, metodologias ágeis, liderança de equipes", description="10 anos em TI, coordenando projetos de transformação digital", seekingFor="Posição de gerência em empresas de tecnologia"
-
-Output: "Profissional com 10 anos de experiência em Tecnologia da Informação, especializado em gestão de projetos de transformação digital. Expertise consolidada em metodologias ágeis, com histórico de liderança de equipes multidisciplinares em ambientes dinâmicos e inovadores. Reconhecido por implementar processos eficientes que aceleram entregas e maximizam resultados estratégicos. Busco posição de gerência em empresas de tecnologia onde possa aplicar minha experiência em gestão ágil para impulsionar a inovação e o crescimento organizacional."
-
-EXEMPLO 2 (SEM "O QUE BUSCA"):
-Input: keywords="análise de dados, business intelligence, SQL, Python", description="Analista com 5 anos focado em inteligência de mercado"
-
-Output: "Analista de dados com 5 anos de experiência especializada em inteligência de mercado e suporte a decisões estratégicas. Domínio avançado de SQL e Python para desenvolvimento de soluções de Business Intelligence que transformam dados complexos em insights acionáveis. Capacidade comprovada de identificar tendências, otimizar processos e gerar valor através de análises preditivas. Comprometido com a excelência analítica e a entrega de recomendações fundamentadas que impulsionam o crescimento do negócio."
-
-🚫 PROIBIÇÕES ABSOLUTAS:
-- ❌ Textos genéricos que servem para qualquer profissional
-- ❌ Listar palavras-chave sem contexto ("Experiência em X, Y, Z")
-- ❌ Repetir a mesma palavra/conceito múltiplas vezes
-- ❌ Inventar números, tecnologias ou certificações não mencionadas
-- ❌ Usar clichês ("profissional dinâmico", "proativo", sem contexto)
-- ❌ Frases muito curtas ou superficiais
-- ❌ Ignorar o campo "o que busca" quando fornecido
-
-🎬 AGORA CRIE:
-Com base nos dados fornecidos acima, crie um objetivo profissional EXCEPCIONAL seguindo rigorosamente todas as instruções. O texto deve impressionar recrutadores e posicionar o candidato como autoridade em sua área.
-
-IMPORTANTE: Use APENAS as informações fornecidas. Não invente dados, mas seja criativo ao expandir e contextualizar o que foi dado.`;
+AGORA CRIE o objetivo profissional seguindo RIGOROSAMENTE as regras acima:`;
   }
 
   // 🔒 REMOVIDO: callGrokAPI() - agora usa backend seguro via SecureApiService

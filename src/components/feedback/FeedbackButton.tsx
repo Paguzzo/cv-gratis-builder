@@ -9,7 +9,7 @@ export function FeedbackButton() {
   return (
     <>
       {/* Botão Flutuante com Label */}
-      <div className="fixed bottom-4 right-2 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
+      <div className="fixed bottom-20 right-2 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3">
         {/* Label que aparece ao passar o mouse - oculto no mobile */}
         <div
           className={`

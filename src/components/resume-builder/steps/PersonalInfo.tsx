@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,6 +31,13 @@ export function PersonalInfo() {
   const form = useForm<PersonalInfoForm>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: state.data,
+  });
+
+  // Watch hasDriverLicense para reatividade garantida
+  const hasDriverLicense = useWatch({
+    control: form.control,
+    name: 'hasDriverLicense',
+    defaultValue: false,
   });
 
   // Reset form when state.data changes (when coming back from template selector)
@@ -229,23 +236,27 @@ export function PersonalInfo() {
               control={form.control}
               name="hasDriverLicense"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-3 rounded-lg border hover:bg-accent cursor-pointer transition-colors">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="mt-0.5"
                     />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer">
+                  <div className="space-y-1 leading-none flex-1" onClick={() => field.onChange(!field.value)}>
+                    <FormLabel className="cursor-pointer text-base">
                       Possui Carteira de Motorista (CNH)
                     </FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Marque se você possui habilitação para dirigir
+                    </p>
                   </div>
                 </FormItem>
               )}
             />
 
-            {form.watch('hasDriverLicense') && (
+            {hasDriverLicense && (
               <FormField
                 control={form.control}
                 name="driverLicenseCategories"
@@ -266,7 +277,7 @@ export function PersonalInfo() {
                               }
                             }}
                           />
-                          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
                             {category}
                           </label>
                         </div>
