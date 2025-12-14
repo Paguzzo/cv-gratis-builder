@@ -151,26 +151,99 @@ www.curriculogratisonline.com
       pdfFileName: ebookData.fileName
     };
 
-    // Chamar API de envio de email
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
+    let result: any;
+    let sendMethod = 'API Backend';
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Erro HTTP: ${response.status}`);
+    try {
+      // TENTATIVA 1: Chamar API de envio de email via backend
+      console.log('📧 Tentando enviar via API backend /api/send-email...');
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(10000) // 10s timeout
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.message || `Erro HTTP: ${response.status}`);
+      }
+
+      result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Falha no envio via backend');
+      }
+
+      console.log('✅ Email enviado via backend API');
+    } catch (backendError) {
+      console.warn('⚠️ Falha no backend, tentando Resend direto...', backendError);
+
+      // TENTATIVA 2: FALLBACK - Enviar diretamente via Resend (apenas se backend falhar)
+      const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
+
+      if (!resendApiKey || resendApiKey === 'your_resend_api_key_here') {
+        throw new Error('Chave da API Resend não configurada. Configure VITE_RESEND_API_KEY no arquivo .env');
+      }
+
+      console.log('📧 Enviando via Resend API diretamente...');
+      sendMethod = 'Resend Direto';
+
+      const resendPayload = {
+        from: 'CV Grátis Online <contato@app.curriculogratisonline.com>',
+        to: [email],
+        subject: payload.subject,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 30px 20px; text-align: center;">
+              <h1 style="margin: 0; font-size: 24px;">🎁 Seu Bônus Exclusivo!</h1>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">CV Grátis Online</p>
+            </div>
+            <div style="padding: 30px 20px; background: white;">
+              ${payload.message.split('\n').map(line => `<p style="margin: 0 0 15px 0;">${line}</p>`).join('')}
+              <div style="background: #f0f9ff; padding: 15px; border-radius: 6px; border-left: 4px solid #2563eb; margin: 20px 0;">
+                <p style="margin: 0;"><strong>📎 Guia em PDF anexado!</strong></p>
+                <p style="margin: 10px 0 0 0;">Seu guia está anexado a este email no formato PDF.</p>
+              </div>
+            </div>
+            <div style="padding: 20px; text-align: center; background: #f8f9fa; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; font-size: 13px; color: #6b7280;">
+                Enviado via <strong>CurriculoGratisOnline.com</strong> 🚀
+              </p>
+            </div>
+          </div>
+        `,
+        attachments: [{
+          filename: ebookData.fileName,
+          content: ebookData.base64Content
+        }]
+      };
+
+      const resendResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resendPayload)
+      });
+
+      if (!resendResponse.ok) {
+        const errorText = await resendResponse.text();
+        console.error('❌ Erro Resend:', errorText);
+        throw new Error(`Resend API Error: ${resendResponse.status} - ${errorText}`);
+      }
+
+      result = await resendResponse.json();
+      console.log('✅ Email enviado via Resend direto! ID:', result.id);
     }
-
-    const result = await response.json();
 
     // Registrar envio
     await registerEbookSend(name, email);
 
-    console.log('✅ Ebook enviado com sucesso para:', email);
+    console.log(`✅ Ebook enviado com sucesso para: ${email} (método: ${sendMethod})`);
 
     return {
       success: true,
@@ -180,7 +253,7 @@ www.curriculogratisonline.com
     console.error('❌ Erro ao enviar ebook:', error);
     return {
       success: false,
-      message: 'Erro ao enviar ebook',
+      message: 'Erro ao enviar ebook. Por favor, tente novamente ou entre em contato conosco.',
       error: error instanceof Error ? error.message : 'Erro desconhecido'
     };
   }

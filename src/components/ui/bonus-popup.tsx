@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Gift, Mail, CheckCircle, X, AlertTriangle } from "lucide-react";
+import { Gift, Mail, CheckCircle, X, AlertTriangle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { sendEbookToLead, isEbookConfigured } from "@/services/ebookService";
 
@@ -16,6 +16,8 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,9 +25,10 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
 
     if (!email || !name) {
       toast({
-        title: "Campos obrigatórios",
+        title: "❌ Campos obrigatórios",
         description: "Por favor, preencha seu nome e email.",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 4000
       });
       return;
     }
@@ -35,12 +38,15 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
       toast({
         title: "⚠️ Ebook não disponível",
         description: "O ebook ainda não foi configurado. Tente novamente mais tarde.",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 5000
       });
       return;
     }
 
     setIsSubmitting(true);
+    setSubmitSuccess(false);
+    setSubmitError('');
 
     try {
       console.log('📧 Iniciando envio do ebook para:', email);
@@ -61,35 +67,24 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
         const userKey = `bonus-user-${Date.now()}`;
         localStorage.setItem(userKey, JSON.stringify(userData));
 
-        toast({
-          title: "✅ Bônus garantido! 🎉",
-          description: `Enviamos o Guia Secreto de Entrevistas para ${email}. Verifique sua caixa de entrada!`,
-          duration: 6000
-        });
-
+        setSubmitSuccess(true);
         console.log('✅ Ebook enviado com sucesso!');
 
-        onOpenChange(false);
-        setEmail('');
-        setName('');
+        // Aguardar 4 segundos antes de fechar para o usuário ver o feedback
+        setTimeout(() => {
+          onOpenChange(false);
+          setEmail('');
+          setName('');
+          setSubmitSuccess(false);
+        }, 4000);
       } else {
         // Erro no envio
         console.error('❌ Erro ao enviar ebook:', result.message);
-
-        toast({
-          title: "❌ Erro ao enviar ebook",
-          description: result.message || "Tente novamente mais tarde.",
-          variant: "destructive"
-        });
+        setSubmitError(result.message || "Não foi possível enviar o ebook. Tente novamente.");
       }
     } catch (error) {
       console.error('❌ Erro ao processar envio:', error);
-
-      toast({
-        title: "❌ Erro ao processar",
-        description: "Ocorreu um erro inesperado. Tente novamente mais tarde.",
-        variant: "destructive"
-      });
+      setSubmitError("Erro ao processar. Por favor, tente novamente ou entre em contato conosco.");
     } finally {
       setIsSubmitting(false);
     }
@@ -159,25 +154,68 @@ const BonusPopup: React.FC<BonusPopupProps> = ({ open, onOpenChange }) => {
             />
           </div>
 
+          {/* Alerta de Sucesso */}
+          {submitSuccess && (
+            <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4 animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-green-800 text-base mb-1">
+                    ✅ Bônus Garantido! 🎉
+                  </h4>
+                  <p className="text-sm text-green-700">
+                    Enviamos o <strong>Guia Secreto de Entrevistas</strong> para <strong>{email}</strong>
+                  </p>
+                  <p className="text-xs text-green-600 mt-2">
+                    📬 Verifique sua caixa de entrada (e também a pasta de spam)!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Alerta de Erro */}
+          {submitError && !submitSuccess && (
+            <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4 animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-red-800 text-base mb-1">
+                    ❌ Erro no Envio
+                  </h4>
+                  <p className="text-sm text-red-700">{submitError}</p>
+                  <button
+                    onClick={() => setSubmitError('')}
+                    className="text-xs text-red-600 underline mt-2 hover:text-red-800"
+                  >
+                    Tentar novamente
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-2.5 text-xs sm:text-sm text-yellow-800">
             ⏰ <strong>ATENÇÃO:</strong> Esta oferta é por tempo limitado!
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-base sm:text-lg py-5 sm:py-6"
-            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-base sm:text-lg font-bold py-6 h-auto"
+            disabled={isSubmitting || submitSuccess}
           >
             {isSubmitting ? (
-              <>
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-pulse" />
-                Enviando seu bônus...
-              </>
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Enviando...
+              </span>
+            ) : submitSuccess ? (
+              <span className="flex items-center justify-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                Enviado com Sucesso!
+              </span>
             ) : (
-              <>
-                <Gift className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                QUERO MEU BÔNUS GRÁTIS AGORA!
-              </>
+              <span>QUERO MEU BÔNUS GRÁTIS!</span>
             )}
           </Button>
 

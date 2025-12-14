@@ -16,7 +16,8 @@ import {
   Mail,
   Calendar,
   Users,
-  TrendingUp
+  TrendingUp,
+  RefreshCw
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -394,20 +395,39 @@ export default function EbookManager() {
       )}
 
       {/* Lista de Leads que receberam o ebook */}
-      {leads.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
-              Leads que Receberam o Ebook
-            </CardTitle>
-            <CardDescription>
-              {leads.length} {leads.length === 1 ? 'pessoa recebeu' : 'pessoas receberam'} o ebook
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                Leads que Receberam o Ebook
+              </CardTitle>
+              <CardDescription>
+                {leads.length} {leads.length === 1 ? 'pessoa recebeu' : 'pessoas receberam'} o ebook
+              </CardDescription>
+            </div>
+            <Button
+              onClick={loadEbookData}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Atualizar
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {leads.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Mail className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+              <p className="text-sm">Nenhum lead recebeu o ebook ainda.</p>
+              <p className="text-xs mt-1">Os leads aparecerão aqui quando se cadastrarem no popup de bônus.</p>
+            </div>
+          ) : (
             <div className="space-y-3">
-              {leads.slice().reverse().slice(0, 10).map((lead) => (
+              {leads.slice().reverse().slice(0, 20).map((lead) => (
                 <div key={lead.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -431,15 +451,15 @@ export default function EbookManager() {
                 </div>
               ))}
             </div>
+          )}
 
-            {leads.length > 10 && (
-              <p className="text-sm text-gray-500 text-center mt-4">
-                Mostrando 10 de {leads.length} leads
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      )}
+          {leads.length > 20 && (
+            <p className="text-sm text-gray-500 text-center mt-4">
+              Mostrando os 20 mais recentes de {leads.length} leads
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
