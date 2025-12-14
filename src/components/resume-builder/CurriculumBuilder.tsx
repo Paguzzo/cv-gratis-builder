@@ -182,13 +182,13 @@ export function CurriculumBuilder() {
       {/* Botão flutuante para preview mobile - aparece apenas em telas < 1024px */}
       <button
         onClick={() => setShowMobilePreview(true)}
-        className="lg:hidden fixed top-20 right-4 z-40 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 active:scale-95"
+        className="lg:hidden fixed bottom-32 right-4 z-40 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 active:scale-95"
         aria-label="Ver preview do currículo"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
