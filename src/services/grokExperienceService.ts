@@ -76,147 +76,94 @@ export class GrokExperienceService {
       `de ${request.startDate} até o presente` :
       `de ${request.startDate} a ${request.endDate}`;
 
-    // Sistema melhorado de variação: combina múltiplos fatores para criar identidade única
-    const positionHash = request.position.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const companyHash = request.company.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const descriptionHash = request.userDescription.slice(0, 20).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return `Você é um especialista em Recursos Humanos criando bullets de alto impacto para uma experiência profissional em currículo.
 
-    const combinedHash = (positionHash * 7 + companyHash * 13 + descriptionHash * 3) % 6;
+DADOS DA EXPERIÊNCIA:
+- Cargo: ${request.position}
+- Empresa: ${request.company}
+- Período: ${duration}
+- Descrição das atividades: "${request.userDescription}"
+- Competências-chave: ${request.keywords}
 
-    const bulletStyles = [
-      'RESULTADO E IMPACTO',
-      'ATIVIDADE E CONTEXTO',
-      'METODOLOGIA E EXECUÇÃO',
-      'RESPONSABILIDADE E ESCOPO',
-      'COLABORAÇÃO E COORDENAÇÃO',
-      'OTIMIZAÇÃO E MELHORIA'
-    ];
-    const selectedStyle = bulletStyles[combinedHash];
+REGRAS CRÍTICAS (NÃO VIOLE):
 
-    return `Você é um ESPECIALISTA SÊNIOR em Recursos Humanos com 20 anos de experiência transformando atividades profissionais em bullets de currículo que CONQUISTAM ENTREVISTAS.
+1. GERE EXATAMENTE 3 A 5 BULLETS (não menos, não mais)
+2. CADA BULLET DEVE SER ÚNICO - varie formato, foco e estrutura
+3. INTEGRE as competências-chave de forma NATURAL (não liste mecanicamente)
+4. USE a descrição fornecida + seu conhecimento sobre o cargo "${request.position}"
+5. NUNCA repita o mesmo verbo de ação mais de uma vez
+6. SEJA ESPECÍFICO - evite frases genéricas que servem para qualquer profissional
 
-🎯 **CONTEXTO DA EXPERIÊNCIA:**
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 Cargo/Função: ${request.position}
-🏢 Empresa: ${request.company}
-📅 Período: ${duration}
-💼 O que fazia no dia-a-dia: "${request.userDescription}"
-🔑 Competências e Tecnologias: ${request.keywords}
+ESTRUTURA DE CADA BULLET:
 
-🎨 **ESTILO DOMINANTE PARA ESTA EXPERIÊNCIA: ${selectedStyle}**
-(Cada experiência do candidato deve ter formato diferente para demonstrar versatilidade)
+Formato: VERBO DE AÇÃO + ATIVIDADE ESPECÍFICA + COMPETÊNCIA/MÉTODO + RESULTADO/FINALIDADE
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Exemplo correto: "Desenvolveu dashboards gerenciais em Power BI consolidando dados de vendas, possibilitando análise de performance em tempo real"
 
-🧠 **PASSO 1: ANÁLISE DO CARGO "${request.position}"**
+VARIAÇÃO OBRIGATÓRIA:
 
-Antes de escrever os bullets, PENSE sobre este cargo:
-• Quais são as responsabilidades TÍPICAS de um(a) ${request.position}?
-• Que desafios e problemas esta função geralmente resolve?
-• Que entregáveis e resultados são esperados nesta posição?
-• Como esta função agrega valor ao negócio?
+Bullet 1 - FOCO EM RESULTADO:
+Mostre o IMPACTO da atividade (o que foi alcançado/gerado)
+Exemplo: "Analisou processos operacionais identificando gargalos, propondo melhorias que reduziram tempo de execução"
 
-Use este conhecimento para ENRIQUECER os bullets com contexto profissional realista.
-NÃO invente métricas, MAS use seu conhecimento sobre a função para dar profundidade às atividades descritas.
+Bullet 2 - FOCO EM EXECUÇÃO:
+Descreva COMO a atividade foi realizada (metodologia/ferramentas)
+Exemplo: "Coordenou equipe de 8 pessoas utilizando metodologia ágil, facilitando entregas incrementais e adaptação a mudanças"
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Bullet 3 - FOCO EM RESPONSABILIDADE:
+Defina o ESCOPO da responsabilidade
+Exemplo: "Responsável pela gestão completa do ciclo de compras, desde especificação até homologação de fornecedores"
 
-📋 **PASSO 2: SUA MISSÃO**
+Bullets 4-5 (se aplicável) - VARIE O FOCO:
+Alterne entre: colaboração, otimização, entrega técnica, articulação com áreas
+Use estruturas diferentes dos bullets anteriores
 
-Criar 4-6 bullets EXCEPCIONAIS que:
-✓ Posicionem o candidato como AUTORIDADE no cargo ${request.position}
-✓ Demonstrem VALOR TANGÍVEL e IMPACTO no negócio
-✓ Integrem TODAS as competências: ${request.keywords}
-✓ Reflitam as atividades reais: "${request.userDescription}"
-✓ Sigam PREDOMINANTEMENTE o estilo ${selectedStyle}, mas com VARIAÇÃO INTERNA
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🎯 **DIRECIONAMENTO POR ESTILO:**
-
-${this.getStyleInstructions(selectedStyle, request)}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✅ **PRINCÍPIOS DE EXCELÊNCIA:**
-
-1. **CONTEXTUALIZAÇÃO PROFUNDA:**
-   - Use seu conhecimento sobre "${request.position}" para inferir atividades típicas da função
-   - Combine: [Conhecimento do cargo] + [Descrição do usuário] + [Competências técnicas]
-   - Traga profundidade profissional sem inventar dados específicos
-
-2. **INTEGRAÇÃO ESTRATÉGICA:**
-   - Integre TODAS as competências (${request.keywords}) de forma NATURAL nas atividades
-   - Evite listar palavras-chave mecanicamente - integre-as ao contexto
-   - Crie narrativa coesa que demonstre domínio técnico E impacto profissional
-
-3. **FOCO EM VALOR E CONTRIBUIÇÃO:**
-   - Estruture: AÇÃO → MÉTODO/FERRAMENTA → RESULTADO/FINALIDADE/IMPACTO
-   - Sempre que possível, mostre o "POR QUÊ" da atividade (qual problema resolve? que valor gera?)
-   - Use verbos de ação fortes que transmitam protagonismo
-
-4. **VARIAÇÃO INTERNA OBRIGATÓRIA:**
-   - NUNCA use o mesmo formato em todos os bullets
-   - Varie: extensão (curto vs. descritivo), foco (técnico vs. estratégico), estrutura gramatical
-   - Mescle 2-3 estilos dentro da mesma experiência (mas com predominância do estilo principal)
-   - Crie ritmo de leitura dinâmico e envolvente
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💎 **DIRETRIZES DE QUALIDADE:**
+DIRETRIZES DE QUALIDADE:
 
 ✅ FAÇA:
-• Infira atividades realistas do cargo usando conhecimento profissional
-• Demonstre valor e impacto sem precisar de números inventados
-• Varie formato, extensão e foco entre os bullets
-• Use competências como ferramentas que geraram resultados
-• Mostre protagonismo e domínio técnico
-• Descreva contexto e finalidade das atividades
+- Use seu conhecimento sobre o cargo para enriquecer as atividades
+- Integre TODAS as competências (${request.keywords}) distribuídas nos bullets
+- Mostre valor e contexto profissional de cada atividade
+- Varie extensão dos bullets (alguns mais curtos, outros descritivos)
+- Use verbos de ação fortes e diferentes em cada bullet
 
-❌ EVITE:
-• Inventar números, percentuais ou métricas específicas não mencionadas
-• Adicionar ferramentas/tecnologias não citadas pelo usuário
-• Usar finais genéricos: "otimizando resultados", "garantindo eficiência", "melhorando processos"
-• Bullets idênticos ou muito similares
-• Listar competências sem contexto: "Experiência em X, Y e Z"
-• Repetir o mesmo verbo de ação mais de 2 vezes
+❌ NÃO FAÇA:
+- Inventar métricas, números ou ferramentas não mencionadas
+- Usar frases genéricas: "garantindo qualidade", "otimizando processos"
+- Listar competências sem contexto: "Atuou com X, Y e Z"
+- Repetir a mesma estrutura em todos os bullets
+- Usar o mesmo verbo mais de uma vez
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXEMPLO COMPLETO:
 
-💡 **EXEMPLOS DE EXCELÊNCIA:**
+Cargo: "Analista de Dados"
+Descrição: "Análise de dados comerciais, criação de relatórios"
+Competências: "SQL, Python, Power BI, Excel"
 
-**VARIAÇÃO DENTRO DE UM MESMO ESTILO (RESULTADO E IMPACTO):**
-✓ Analisou dados de vendas com SQL e Python, identificando padrões sazonais que direcionaram campanha promocional de fim de ano
-✓ Dashboards em Power BI para KPIs comerciais - acesso executivo a insights em tempo real
-✓ Implementou validação automatizada de dados, eliminando inconsistências em relatórios mensais e aumentando confiabilidade das análises
-✓ Colaborou com equipe comercial interpretando dados de mercado e traduzindo em recomendações acionáveis
+CORRETO ✅:
+• Analisou dados comerciais utilizando SQL e Python, identificando padrões de compra que orientaram estratégia de segmentação de clientes
+• Desenvolveu dashboards executivos em Power BI consolidando KPIs de vendas, possibilitando acompanhamento de metas em tempo real
+• Elaborou relatórios gerenciais com Excel avançado, automatizando processos de coleta e apresentando insights acionáveis à liderança
+• Colaborou com equipe comercial traduzindo análises em recomendações estratégicas para campanhas promocionais
 
-**Note:** Mesmo sendo todos do estilo "Resultado e Impacto", há variação em:
-- Extensão (bullet 2 é mais curto)
-- Estrutura gramatical (bullet 2 usa fragmento)
-- Foco (técnico vs. colaborativo)
-- Nível de detalhe
+ERRADO ❌:
+• Analisou dados utilizando SQL, Python, Power BI e Excel
+• Realizou análise de dados comerciais garantindo qualidade
+• Criou relatórios otimizando processos
+(Problemas: lista competências sem contexto, frases genéricas, sem variação, apenas 3 bullets vagos)
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IMPORTANTE SOBRE REPETIÇÕES:
 
-🎬 **AGORA EXECUTE:**
+Como o candidato pode ter VÁRIAS experiências no currículo, CADA experiência deve ter abordagem DIFERENTE.
+- Varie os verbos de ação entre experiências
+- Mude o foco e estilo narrativo
+- Use sinônimos e estruturas alternativas
 
-**DADOS DA EXPERIÊNCIA:**
-- Cargo: ${request.position}
-- Atividades descritas: "${request.userDescription}"
-- Competências a integrar: ${request.keywords}
-- Estilo dominante: ${selectedStyle}
+AGORA CRIE:
 
-**PROCESSO:**
-1. Pense sobre responsabilidades típicas de um(a) ${request.position}
-2. Combine esse conhecimento com as atividades descritas
-3. Gere 4-6 bullets VARIADOS que demonstrem valor e competência
-4. Integre TODAS as competências de forma natural
-5. Varie formato e foco entre os bullets (mesmo dentro do estilo ${selectedStyle})
+Com base nos dados fornecidos acima, gere 3 a 5 bullets de alto impacto para a experiência como ${request.position}.
 
-**IMPORTANTE:**
-Retorne APENAS os bullets, um por linha, cada um iniciando com "•"
-Não inclua explicações, comentários ou cabeçalhos - APENAS os bullets.`;
+RETORNE APENAS OS BULLETS, um por linha, iniciando com "•" - sem explicações ou comentários.`;
   }
 
   // Instruções específicas por estilo
