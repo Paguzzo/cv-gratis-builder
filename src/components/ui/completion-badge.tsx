@@ -25,7 +25,7 @@ export function CompletionBadge({
       <div
         onClick={onClick}
         className={cn(
-          "fixed top-20 right-4 z-50 cursor-pointer",
+          "fixed top-32 lg:top-20 right-4 z-50 cursor-pointer",
           "animate-in fade-in slide-in-from-top-5 duration-500",
           className
         )}
@@ -46,7 +46,7 @@ export function CompletionBadge({
     <div
       onClick={onClick}
       className={cn(
-        "fixed top-20 right-4 z-50 cursor-pointer",
+        "fixed top-32 lg:top-20 right-4 z-50 cursor-pointer",
         "animate-in fade-in slide-in-from-top-5 duration-500",
         className
       )}
@@ -121,7 +121,7 @@ export function CompletionBadgeWithTooltip({
       />
 
       {/* Tooltip */}
-      <div className="fixed top-32 right-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+      <div className="fixed top-44 lg:top-32 right-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
         <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 shadow-xl max-w-[200px]">
           <p className="font-semibold mb-1">
             {isComplete ? 'Tudo pronto!' : 'Checklist de conclusão'}
