@@ -652,6 +652,96 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Banner Promocional LocalizaCEP */}
+      <section className="py-8 sm:py-12 px-3 sm:px-4 bg-gradient-to-br from-slate-50 to-gray-100">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-blue-950 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-700 hover:shadow-blue-500/20 transition-all duration-300 hover:scale-[1.01]">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+              {/* Ícone */}
+              <div className="flex-shrink-0">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="40"
+                    height="40"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-white"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Conteúdo Central */}
+              <div className="flex-1 text-center sm:text-left">
+                {/* Badge e Rating */}
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mb-3">
+                  <Badge className="bg-emerald-500 text-white border-0 px-3 py-1 text-sm font-bold shadow-lg">
+                    100% Gratuito
+                  </Badge>
+                  <div className="flex items-center gap-1.5">
+                    <div className="flex text-yellow-400">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-current" />
+                      ))}
+                    </div>
+                    <span className="text-sm font-semibold text-blue-200">4.8</span>
+                  </div>
+                </div>
+
+                {/* Título */}
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 leading-tight">
+                  Descubra o CEP de Qualquer Localização no Brasil
+                </h3>
+
+                {/* Subtítulo com features */}
+                <p className="text-sm sm:text-base text-slate-300 mb-3">
+                  Consulta rápida e gratuita • Mais de 1.250 avaliações • Resultados instantâneos • Fácil de usar
+                </p>
+
+                {/* Footer - Parceiro */}
+                <p className="text-xs sm:text-sm text-slate-400 italic">
+                  Parceiro oficial do CVGratisOnline.com • LocalizaCEP.com
+                </p>
+              </div>
+
+              {/* CTA Button */}
+              <div className="flex-shrink-0 w-full sm:w-auto">
+                <a
+                  href="https://localizacep.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/50 hover:shadow-xl hover:shadow-blue-500/70 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base w-full sm:w-auto group"
+                >
+                  <span>Consultar CEP</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="group-hover:translate-x-1 transition-transform"
+                  >
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 sm:py-12 px-3 sm:px-4" role="contentinfo" aria-label="Rodapé do site">
         <div className="max-w-6xl mx-auto">
